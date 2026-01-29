@@ -1,6 +1,7 @@
 import express, { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import authRoutes from './routes/auth.routes';
 
 dotenv.config();
 
@@ -37,12 +38,9 @@ app.get('/health', (_req: Request, res: Response) => {
 });
 
 /**
- * API Routes will be added here
- * Example:
- * app.use('/api/auth', authRoutes);
- * app.use('/api/users', userRoutes);
- * app.use('/api/reviews', reviewRoutes);
+ * API Routes
  */
+app.use('/api/auth', authRoutes);
 
 /**
  * 404 Handler

@@ -70,16 +70,14 @@ const UserSchema: Schema = new Schema(
  * Pre-save hook to hash password
  */
 UserSchema.pre('save', async function (next) {
-    const user = this as IUser;
-
     // Only hash password if it's modified and exists
-    if (!user.isModified('password') || !user.password) {
+    if (!this.isModified('password') || !this.password) {
         return next();
     }
 
     try {
         const salt = await bcrypt.genSalt(10);
-        user.password = await bcrypt.hash(user.password, salt);
+        this.password = await bcrypt.hash(this.password as string, salt);
         next();
     } catch (error: any) {
         next(error);
@@ -92,11 +90,10 @@ UserSchema.pre('save', async function (next) {
 UserSchema.methods.comparePassword = async function (
     candidatePassword: string
 ): Promise<boolean> {
-    const user = this as IUser;
-    if (!user.password) {
+    if (!this.password) {
         return false;
     }
-    return await bcrypt.compare(candidatePassword, user.password);
+    return await bcrypt.compare(candidatePassword, this.password);
 };
 
 /**
