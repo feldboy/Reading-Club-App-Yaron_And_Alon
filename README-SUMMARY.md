@@ -46,16 +46,33 @@ main → develop → feature branches
 
 ### 5. **Timeline - ריאליסטי**
 
-| Week | Yaron | Alon | Integration Point |
-|------|-------|------|-------------------|
-| 1 | Backend Setup + Auth API | Frontend Setup + Auth Pages | Test login flow |
-| 2 | OAuth + User API | Profile Pages + OAuth UI | Test profile editing |
-| 3 | Reviews API + AI | Review Components + Feed | Test full CRUD |
-| 4 | - | Comments/Likes API + UI + Books API | Test social features |
-| 5 | Testing + Docs | UI Polish | E2E testing |
-| 6 | Deployment | Deployment | Video + Submit |
+| Week | Yaron | Alon | Integration Point | Status |
+|------|-------|------|-------------------|--------|
+| 1 | ✅ Backend Setup + Auth API | Frontend Setup + Auth Pages | Test login flow | ✅ Backend Done |
+| 2 | 🔄 OAuth + User API + Tests + Swagger | Profile Pages + OAuth UI | Test profile editing | 🔄 In Progress |
+| 3 | Reviews API + AI | Review Components + Feed | Test full CRUD | ⬜ Pending |
+| 4 | - | Comments/Likes API + UI + Books API | Test social features | ⬜ Pending |
+| 5 | Testing + Docs | UI Polish | E2E testing | ⬜ Pending |
+| 6 | Deployment | Deployment | Video + Submit | ⬜ Pending |
 
-### 6. **נקודות אינטגרציה ברורות**
+### 6. **נוכחיות - מה השתנה מהתכנית?**
+
+> [!NOTE]
+> **עדכון אחרון:** 29 ינואר 2026
+> 
+> **מה הושלם:**
+> - ✅ Backend setup מלא
+> - ✅ Authentication API (JWT) - register, login, logout, refresh
+> - ✅ User model עם תמיכה ב-OAuth
+> - ✅ Middleware for protected routes
+> 
+> **צעדים הבאים:**
+> 1. 🔄 Google OAuth integration (Yaron)
+> 2. 🔄 User Profile API endpoints (Yaron)
+> 3. 🔄 Jest + Swagger setup (Yaron)
+> 4. ⬜ Frontend setup (Alon)
+
+### 7. **נקודות אינטגרציה ברורות**
 
 אחרי כל phase יש "Integration Point" - נקודת בדיקה משותפת:
 - ✅ Week 1 - Test login flow

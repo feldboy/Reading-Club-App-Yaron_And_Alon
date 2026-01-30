@@ -2,6 +2,8 @@ import express, { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth.routes';
+import userRoutes from './routes/user.routes';
+import { setupSwagger } from './config/swagger.config';
 
 dotenv.config();
 
@@ -26,6 +28,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static('uploads'));
 
 /**
+ * Swagger Documentation
+ */
+setupSwagger(app);
+
+/**
  * Basic health check endpoint
  */
 app.get('/health', (_req: Request, res: Response) => {
@@ -41,6 +48,7 @@ app.get('/health', (_req: Request, res: Response) => {
  * API Routes
  */
 app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
 
 /**
  * 404 Handler

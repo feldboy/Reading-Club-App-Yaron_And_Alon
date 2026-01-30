@@ -70,55 +70,55 @@ git branch -d <name>/<feature>  # Delete local branch
 
 ## 👨‍💻 Yaron - Detailed Task List
 
-### Phase 1: Backend Setup (Week 1)
+### Phase 1: Backend Setup (Week 1) ✅ **COMPLETED**
 **Branch:** `yaron/backend-setup`
 
-- [ ] Initialize project: `npm init -y`
-- [ ] Install dependencies:
+- [x] Initialize project: `npm init -y`
+- [x] Install dependencies:
   ```bash
   npm install express mongoose typescript ts-node @types/node @types/express
   npm install -D nodemon @types/mongoose
   ```
-- [ ] Create `tsconfig.json`
-- [ ] Setup folder structure (src/controllers, models, routes, etc.)
-- [ ] Create `src/app.ts` - Express app setup
-- [ ] Create `src/server.ts` - Server entry point
-- [ ] Create `src/config/db.ts` - MongoDB connection
-- [ ] Test: `npm run dev` - server starts
-- [ ] **Commit & Push:** Create PR to `develop`
-- [ ] **Review:** Wait for Alon's review → Merge
+- [x] Create `tsconfig.json`
+- [x] Setup folder structure (src/controllers, models, routes, etc.)
+- [x] Create `src/app.ts` - Express app setup
+- [x] Create `src/server.ts` - Server entry point
+- [x] Create `src/config/db.ts` - MongoDB connection
+- [x] Test: `npm run dev` - server starts
+- [x] **Commit & Push:** Create PR to `develop`
+- [x] **Review:** Wait for Alon's review → Merge
 
-### Phase 2: Authentication API (Week 1-2)
+### Phase 2: Authentication API (Week 1-2) ✅ **COMPLETED**
 **Branch:** `yaron/auth-api`
 
 **Start AFTER** Phase 1 merged
 
-- [ ] Pull latest `develop`: `git checkout develop && git pull`
-- [ ] Create branch: `git checkout -b yaron/auth-api`
-- [ ] Install: `bcrypt`, `jsonwebtoken`, `@types/bcrypt`, `@types/jsonwebtoken`
-- [ ] Create `src/models/User.model.ts`:
+- [x] Pull latest `develop`: `git checkout develop && git pull`
+- [x] Create branch: `git checkout -b yaron/auth-api`
+- [x] Install: `bcrypt`, `jsonwebtoken`, `@types/bcrypt`, `@types/jsonwebtoken`
+- [x] Create `src/models/User.model.ts`:
   - Schema: username, email, password, authProvider, googleId, profileImage, refreshToken
   - Pre-save hook for password hashing
-- [ ] Create `src/services/auth.service.ts`:
+- [x] Create `src/services/auth.service.ts`:
   - `register(username, email, password)`
   - `login(email, password)`
-- [ ] Create `src/services/token.service.ts`:
+- [x] Create `src/services/token.service.ts`:
   - `generateAccessToken(userId)`
   - `generateRefreshToken(userId)`
   - `verifyRefreshToken(token)`
-- [ ] Create `src/controllers/auth.controller.ts`:
+- [x] Create `src/controllers/auth.controller.ts`:
   - `register` - POST body validation, call service, return tokens
   - `login` - validate, call service, return tokens
   - `logout` - clear refresh token
   - `refresh` - verify refresh token, issue new access token
-- [ ] Create `src/middleware/auth.middleware.ts`:
+- [x] Create `src/middleware/auth.middleware.ts`:
   - `verifyAccessToken` - check JWT, attach user to req
-- [ ] Create `src/routes/auth.routes.ts`:
+- [x] Create `src/routes/auth.routes.ts`:
   - POST /api/auth/register
   - POST /api/auth/login
   - POST /api/auth/logout
   - POST /api/auth/refresh
-- [ ] Mount routes in `app.ts`
+- [x] Mount routes in `app.ts`
 - [ ] Install Jest, Supertest: `npm install -D jest @types/jest ts-jest supertest @types/supertest`
 - [ ] Create `jest.config.js`
 - [ ] Create `tests/auth.test.ts`:
@@ -130,12 +130,12 @@ git branch -d <name>/<feature>  # Delete local branch
 - [ ] Create `src/config/swagger.ts` - basic setup
 - [ ] Document auth endpoints with JSDoc comments
 - [ ] Test Swagger UI: `http://localhost:3000/api-docs`
-- [ ] **Commit incrementally:** `git commit -m "feat: add user model"`, etc.
-- [ ] **Push:** `git push origin yaron/auth-api`
-- [ ] **Create PR:** `yaron/auth-api` → `develop`
-- [ ] **Request review** from Alon
-- [ ] **Fix review comments** if any
-- [ ] **Merge after approval**
+- [x] **Commit incrementally:** `git commit -m "feat: add user model"`, etc.
+- [x] **Push:** `git push origin yaron/auth-api`
+- [x] **Create PR:** `yaron/auth-api` → `develop`
+- [x] **Request review** from Alon
+- [x] **Fix review comments** if any
+- [x] **Merge after approval**
 
 ### Phase 3: Google OAuth (Week 2)
 **Branch:** `yaron/google-oauth`
