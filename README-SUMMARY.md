@@ -49,28 +49,32 @@ main → develop → feature branches
 | Week | Yaron | Alon | Integration Point | Status |
 |------|-------|------|-------------------|--------|
 | 1 | ✅ Backend Setup + Auth API | Frontend Setup + Auth Pages | Test login flow | ✅ Backend Done |
-| 2 | 🔄 OAuth + User API + Tests + Swagger | Profile Pages + OAuth UI | Test profile editing | 🔄 In Progress |
+| 2 | ✅ OAuth + User API + Books API + Tests + Swagger | Profile Pages + OAuth UI | Test profile editing | ✅ Backend Done |
 | 3 | Reviews API + AI | Review Components + Feed | Test full CRUD | ⬜ Pending |
-| 4 | - | Comments/Likes API + UI + Books API | Test social features | ⬜ Pending |
+| 4 | - | Comments/Likes API + UI | Test social features | ⬜ Pending |
 | 5 | Testing + Docs | UI Polish | E2E testing | ⬜ Pending |
 | 6 | Deployment | Deployment | Video + Submit | ⬜ Pending |
 
 ### 6. **נוכחיות - מה השתנה מהתכנית?**
 
 > [!NOTE]
-> **עדכון אחרון:** 29 ינואר 2026
+> **עדכון אחרון:** 30 ינואר 2026
 > 
 > **מה הושלם:**
 > - ✅ Backend setup מלא
 > - ✅ Authentication API (JWT) - register, login, logout, refresh
 > - ✅ User model עם תמיכה ב-OAuth
 > - ✅ Middleware for protected routes
+> - ✅ Google OAuth integration (Passport.js + Google Strategy)
+> - ✅ User Profile API (GET, PUT, image upload)
+> - ✅ Google Books API integration (search, details, genre)
+> - ✅ Jest testing - 32 tests passing
+> - ✅ Swagger documentation - כל ה-endpoints מתועדים
 > 
 > **צעדים הבאים:**
-> 1. 🔄 Google OAuth integration (Yaron)
-> 2. 🔄 User Profile API endpoints (Yaron)
-> 3. 🔄 Jest + Swagger setup (Yaron)
-> 4. ⬜ Frontend setup (Alon)
+> 1. ⬜ Frontend setup (Alon)
+> 2. ⬜ Reviews API (Yaron)
+> 3. ⬜ AI Integration - Gemini (Yaron)
 
 ### 7. **נקודות אינטגרציה ברורות**
 

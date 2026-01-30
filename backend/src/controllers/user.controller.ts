@@ -33,7 +33,15 @@ import { deleteProfileImage } from '../middleware/upload.middleware';
  */
 export const getProfile = async (req: Request, res: Response): Promise<void> => {
     try {
-        const userId = (req as any).user.userId;
+        const userId = req.tokenPayload?.userId;
+
+        if (!userId) {
+            res.status(401).json({
+                status: 'error',
+                message: 'Unauthorized',
+            });
+            return;
+        }
 
         const user = await userService.getUserProfile(userId);
 
@@ -93,7 +101,16 @@ export const getProfile = async (req: Request, res: Response): Promise<void> => 
  */
 export const updateProfile = async (req: Request, res: Response): Promise<void> => {
     try {
-        const userId = (req as any).user.userId;
+        const userId = req.tokenPayload?.userId;
+
+        if (!userId) {
+            res.status(401).json({
+                status: 'error',
+                message: 'Unauthorized',
+            });
+            return;
+        }
+
         const updates = req.body;
 
         const updatedUser = await userService.updateUserProfile(userId, updates);
@@ -156,7 +173,15 @@ export const updateProfile = async (req: Request, res: Response): Promise<void> 
  */
 export const uploadProfileImage = async (req: Request, res: Response): Promise<void> => {
     try {
-        const userId = (req as any).user.userId;
+        const userId = req.tokenPayload?.userId;
+
+        if (!userId) {
+            res.status(401).json({
+                status: 'error',
+                message: 'Unauthorized',
+            });
+            return;
+        }
 
         if (!req.file) {
             res.status(400).json({
