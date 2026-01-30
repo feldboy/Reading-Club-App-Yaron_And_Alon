@@ -5,6 +5,8 @@ import passport from 'passport';
 import authRoutes from './routes/auth.routes';
 import userRoutes from './routes/user.routes';
 import booksRoutes from './routes/books.routes';
+import commentRoutes from './routes/comment.routes';
+import reviewRoutes from './routes/review.routes';
 import { setupSwagger } from './config/swagger.config';
 import { setupPassport } from './config/passport.config';
 
@@ -57,6 +59,8 @@ app.get('/health', (_req: Request, res: Response) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/books', booksRoutes);
+app.use('/api', commentRoutes);
+app.use('/api', reviewRoutes);
 
 /**
  * 404 Handler
