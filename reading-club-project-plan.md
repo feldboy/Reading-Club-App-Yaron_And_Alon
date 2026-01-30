@@ -73,18 +73,18 @@ git branch -d <name>/<feature>  # Delete local branch
 ### Phase 1: Backend Setup (Week 1)
 **Branch:** `yaron/backend-setup`
 
-- [ ] Initialize project: `npm init -y`
-- [ ] Install dependencies:
+- [x] Initialize project: `npm init -y`
+- [x] Install dependencies:
   ```bash
   npm install express mongoose typescript ts-node @types/node @types/express
   npm install -D nodemon @types/mongoose
   ```
-- [ ] Create `tsconfig.json`
-- [ ] Setup folder structure (src/controllers, models, routes, etc.)
-- [ ] Create `src/app.ts` - Express app setup
-- [ ] Create `src/server.ts` - Server entry point
-- [ ] Create `src/config/db.ts` - MongoDB connection
-- [ ] Test: `npm run dev` - server starts
+- [x] Create `tsconfig.json`
+- [x] Setup folder structure (src/controllers, models, routes, etc.)
+- [x] Create `src/app.ts` - Express app setup
+- [x] Create `src/server.ts` - Server entry point
+- [x] Create `src/config/db.ts` - MongoDB connection
+- [x] Test: `npm run dev` - server starts
 - [ ] **Commit & Push:** Create PR to `develop`
 - [ ] **Review:** Wait for Alon's review → Merge
 
@@ -95,31 +95,35 @@ git branch -d <name>/<feature>  # Delete local branch
 
 - [ ] Pull latest `develop`: `git checkout develop && git pull`
 - [ ] Create branch: `git checkout -b yaron/auth-api`
-- [ ] Install: `bcrypt`, `jsonwebtoken`, `@types/bcrypt`, `@types/jsonwebtoken`
-- [ ] Create `src/models/User.model.ts`:
+- [x] Install: `bcrypt`, `jsonwebtoken`, `@types/bcrypt`, `@types/jsonwebtoken`
+- [x] Create `src/models/User.model.ts`:
   - Schema: username, email, password, authProvider, googleId, profileImage, refreshToken
   - Pre-save hook for password hashing
-- [ ] Create `src/services/auth.service.ts`:
+- [x] Create `src/services/auth.service.ts`:
   - `register(username, email, password)`
   - `login(email, password)`
-- [ ] Create `src/services/token.service.ts`:
+  - `logout(userId)`
+  - `refreshAccessToken(userId, refreshToken)`
+- [x] Create `src/services/token.service.ts`:
   - `generateAccessToken(userId)`
   - `generateRefreshToken(userId)`
   - `verifyRefreshToken(token)`
-- [ ] Create `src/controllers/auth.controller.ts`:
+  - `verifyAccessToken(token)`
+  - `generateTokenPair(payload)`
+- [x] Create `src/controllers/auth.controller.ts`:
   - `register` - POST body validation, call service, return tokens
   - `login` - validate, call service, return tokens
   - `logout` - clear refresh token
   - `refresh` - verify refresh token, issue new access token
-- [ ] Create `src/middleware/auth.middleware.ts`:
+- [x] Create `src/middleware/auth.middleware.ts`:
   - `verifyAccessToken` - check JWT, attach user to req
-- [ ] Create `src/routes/auth.routes.ts`:
+- [x] Create `src/routes/auth.routes.ts`:
   - POST /api/auth/register
   - POST /api/auth/login
   - POST /api/auth/logout
   - POST /api/auth/refresh
-- [ ] Mount routes in `app.ts`
-- [ ] Install Jest, Supertest: `npm install -D jest @types/jest ts-jest supertest @types/supertest`
+- [x] Mount routes in `app.ts`
+- [x] Install Jest, Supertest: `npm install -D jest @types/jest ts-jest supertest @types/supertest`
 - [ ] Create `jest.config.js`
 - [ ] Create `tests/auth.test.ts`:
   - Test register (success, duplicate user)
@@ -128,7 +132,7 @@ git branch -d <name>/<feature>  # Delete local branch
 - [ ] Run tests: `npm test` - ensure all pass
 - [ ] Install Swagger: `npm install swagger-jsdoc swagger-ui-express @types/swagger-ui-express`
 - [ ] Create `src/config/swagger.ts` - basic setup
-- [ ] Document auth endpoints with JSDoc comments
+- [x] Document auth endpoints with JSDoc comments
 - [ ] Test Swagger UI: `http://localhost:3000/api-docs`
 - [ ] **Commit incrementally:** `git commit -m "feat: add user model"`, etc.
 - [ ] **Push:** `git push origin yaron/auth-api`
@@ -299,34 +303,34 @@ git branch -d <name>/<feature>  # Delete local branch
 ### Phase 1: Frontend Setup (Week 1)
 **Branch:** `alon/frontend-setup`
 
-- [ ] Initialize React app:
+- [x] Initialize React app:
   ```bash
   npm create vite@latest frontend -- --template react-ts
   cd frontend
   npm install
   ```
-- [ ] Install dependencies:
+- [x] Install dependencies:
   ```bash
   npm install react-router-dom axios
   npm install -D @types/react-router-dom
   ```
-- [ ] Setup folder structure (src/components, pages, context, services, etc.)
-- [ ] Create `src/routes.tsx` - basic route definitions
-- [ ] Create `src/services/api.ts`:
+- [x] Setup folder structure (src/components, pages, context, services, etc.)
+- [x] Create `src/routes.tsx` - basic route definitions
+- [x] Create `src/services/api.ts`:
   - Axios instance with `baseURL = http://localhost:3000/api`
   - Request interceptor to add JWT token
   - Response interceptor for error handling
-- [ ] Create `src/context/AuthContext.tsx` (skeleton):
+- [x] Create `src/context/AuthContext.tsx` (skeleton):
   - State: user, isAuthenticated, loading
   - Functions: login, logout, register (placeholders)
-- [ ] Create `src/components/layout/Navbar.tsx`:
+- [x] Create `src/components/layout/Navbar.tsx`:
   - Logo, navigation links
   - Login/Logout button (conditional)
-- [ ] Create `src/components/layout/Footer.tsx`
-- [ ] Create `src/App.tsx`:
+- [x] Create `src/components/layout/Footer.tsx`
+- [x] Create `src/App.tsx`:
   - AuthContext provider
   - Router setup
-- [ ] Test: `npm run dev` - app runs
+- [x] Test: `npm run dev` - app runs
 - [ ] **Commit & Push → PR → Review by Yaron → Merge**
 
 ### Phase 2: Authentication Pages (Week 1-2)
