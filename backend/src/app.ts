@@ -59,8 +59,8 @@ app.get('/health', (_req: Request, res: Response) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/books', booksRoutes);
-app.use('/api', commentRoutes);
-app.use('/api', reviewRoutes);
+app.use('/api/comments', commentRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 /**
  * 404 Handler
