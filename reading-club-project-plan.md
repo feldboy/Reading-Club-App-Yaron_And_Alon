@@ -467,30 +467,34 @@ git branch -d <name>/<feature>  # Delete local branch
 
 *Backend work by Alon*
 
-- [ ] Create `src/models/Comment.model.ts`:
+- [x] Create `src/models/Comment.model.ts`:
   - Fields: reviewId, userId, text, createdAt
-- [ ] Create `src/controllers/comment.controller.ts`:
+- [x] Create `src/models/Review.model.ts`:
+  - Fields: userId, bookTitle, bookAuthor, bookImage, bookISBN, rating, reviewText, googleBookId, likes[], likesCount, commentsCount
+- [x] Create `src/controllers/comment.controller.ts`:
   - `addComment(reviewId, userId, text)` - create comment, increment review.commentsCount
   - `getComments(reviewId)` - fetch all, populate user
   - `deleteComment(commentId, userId)` - only if own comment, decrement commentsCount
-- [ ] Create routes in `src/routes/comment.routes.ts`:
+- [x] Create routes in `src/routes/comment.routes.ts`:
   - POST /api/reviews/:reviewId/comments (protected)
   - GET /api/reviews/:reviewId/comments
   - DELETE /api/comments/:commentId (protected)
-- [ ] Update `src/controllers/review.controller.ts`:
+- [x] Create `src/controllers/review.controller.ts`:
   - Add `likeReview(reviewId, userId)`:
     - Add userId to likes array (if not exists)
     - Increment likesCount
   - Add `unlikeReview(reviewId, userId)`:
     - Remove userId from likes array
     - Decrement likesCount
-- [ ] Add routes:
+- [x] Create routes in `src/routes/review.routes.ts`:
   - POST /api/reviews/:id/like (protected)
   - DELETE /api/reviews/:id/like (protected)
-- [ ] Create tests:
+- [x] Mount routes in `app.ts`
+- [x] Create `jest.config.js`
+- [x] Create tests:
   - `tests/comment.test.ts` - add, get, delete
-  - Update `tests/review.test.ts` - test like/unlike
-- [ ] Update Swagger
+  - `tests/review.test.ts` - test like/unlike
+- [x] Update Swagger (JSDoc comments added to all endpoints)
 - [ ] **Commit & Push → PR → Review by Yaron → Merge**
 
 ### Phase 6B: Comments & Likes UI (Week 4)
