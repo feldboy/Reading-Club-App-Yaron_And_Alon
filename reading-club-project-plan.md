@@ -70,111 +70,136 @@ git branch -d <name>/<feature>  # Delete local branch
 
 ## 👨‍💻 Yaron - Detailed Task List
 
-### Phase 1: Backend Setup (Week 1)
+### Phase 1: Backend Setup (Week 1) ✅ **COMPLETED**
 **Branch:** `yaron/backend-setup`
 
-- [ ] Initialize project: `npm init -y`
-- [ ] Install dependencies:
+- [x] Initialize project: `npm init -y`
+- [x] Install dependencies:
   ```bash
   npm install express mongoose typescript ts-node @types/node @types/express
   npm install -D nodemon @types/mongoose
   ```
-- [ ] Create `tsconfig.json`
-- [ ] Setup folder structure (src/controllers, models, routes, etc.)
-- [ ] Create `src/app.ts` - Express app setup
-- [ ] Create `src/server.ts` - Server entry point
-- [ ] Create `src/config/db.ts` - MongoDB connection
-- [ ] Test: `npm run dev` - server starts
-- [ ] **Commit & Push:** Create PR to `develop`
-- [ ] **Review:** Wait for Alon's review → Merge
+- [x] Create `tsconfig.json`
+- [x] Setup folder structure (src/controllers, models, routes, etc.)
+- [x] Create `src/app.ts` - Express app setup
+- [x] Create `src/server.ts` - Server entry point
+- [x] Create `src/config/db.ts` - MongoDB connection
+- [x] Test: `npm run dev` - server starts
+- [x] **Commit & Push:** Create PR to `develop`
+- [x] **Review:** Wait for Alon's review → Merge
 
-### Phase 2: Authentication API (Week 1-2)
+### Phase 2: Authentication API (Week 1-2) ✅ **COMPLETED**
 **Branch:** `yaron/auth-api`
 
 **Start AFTER** Phase 1 merged
 
-- [ ] Pull latest `develop`: `git checkout develop && git pull`
-- [ ] Create branch: `git checkout -b yaron/auth-api`
-- [ ] Install: `bcrypt`, `jsonwebtoken`, `@types/bcrypt`, `@types/jsonwebtoken`
-- [ ] Create `src/models/User.model.ts`:
+- [x] Pull latest `develop`: `git checkout develop && git pull`
+- [x] Create branch: `git checkout -b yaron/auth-api`
+- [x] Install: `bcrypt`, `jsonwebtoken`, `@types/bcrypt`, `@types/jsonwebtoken`
+- [x] Create `src/models/User.model.ts`:
   - Schema: username, email, password, authProvider, googleId, profileImage, refreshToken
   - Pre-save hook for password hashing
-- [ ] Create `src/services/auth.service.ts`:
+- [x] Create `src/services/auth.service.ts`:
   - `register(username, email, password)`
   - `login(email, password)`
-- [ ] Create `src/services/token.service.ts`:
+- [x] Create `src/services/token.service.ts`:
   - `generateAccessToken(userId)`
   - `generateRefreshToken(userId)`
   - `verifyRefreshToken(token)`
-- [ ] Create `src/controllers/auth.controller.ts`:
+- [x] Create `src/controllers/auth.controller.ts`:
   - `register` - POST body validation, call service, return tokens
   - `login` - validate, call service, return tokens
   - `logout` - clear refresh token
   - `refresh` - verify refresh token, issue new access token
-- [ ] Create `src/middleware/auth.middleware.ts`:
+- [x] Create `src/middleware/auth.middleware.ts`:
   - `verifyAccessToken` - check JWT, attach user to req
-- [ ] Create `src/routes/auth.routes.ts`:
+- [x] Create `src/routes/auth.routes.ts`:
   - POST /api/auth/register
   - POST /api/auth/login
   - POST /api/auth/logout
   - POST /api/auth/refresh
-- [ ] Mount routes in `app.ts`
-- [ ] Install Jest, Supertest: `npm install -D jest @types/jest ts-jest supertest @types/supertest`
-- [ ] Create `jest.config.js`
-- [ ] Create `tests/auth.test.ts`:
+- [x] Mount routes in `app.ts`
+- [x] Install Jest, Supertest: `npm install -D jest @types/jest ts-jest supertest @types/supertest`
+- [x] Create `jest.config.js`
+- [x] Create `tests/auth.test.ts`:
   - Test register (success, duplicate user)
   - Test login (success, wrong password)
   - Test refresh token flow
-- [ ] Run tests: `npm test` - ensure all pass
-- [ ] Install Swagger: `npm install swagger-jsdoc swagger-ui-express @types/swagger-ui-express`
-- [ ] Create `src/config/swagger.ts` - basic setup
-- [ ] Document auth endpoints with JSDoc comments
-- [ ] Test Swagger UI: `http://localhost:3000/api-docs`
-- [ ] **Commit incrementally:** `git commit -m "feat: add user model"`, etc.
-- [ ] **Push:** `git push origin yaron/auth-api`
-- [ ] **Create PR:** `yaron/auth-api` → `develop`
-- [ ] **Request review** from Alon
-- [ ] **Fix review comments** if any
-- [ ] **Merge after approval**
+- [x] Run tests: `npm test` - ensure all pass (19 tests)
+- [x] Install Swagger: `npm install swagger-jsdoc swagger-ui-express @types/swagger-ui-express`
+- [x] Create `src/config/swagger.ts` - basic setup
+- [x] Document auth endpoints with JSDoc comments
+- [x] Test Swagger UI: `http://localhost:3000/api-docs`
+- [x] **Commit incrementally:** `git commit -m "feat: add user model"`, etc.
+- [x] **Push:** `git push origin yaron/auth-api`
+- [x] **Create PR:** `yaron/auth-api` → `develop`
+- [x] **Request review** from Alon
+- [x] **Fix review comments** if any
+- [x] **Merge after approval**
 
-### Phase 3: Google OAuth (Week 2)
+### Phase 3: Google OAuth (Week 2) ✅ **COMPLETED**
 **Branch:** `yaron/google-oauth`
 
-- [ ] Install: `passport`, `passport-google-oauth20`, `@types/passport`
-- [ ] Get Google OAuth credentials (Client ID, Secret)
-- [ ] Create `src/config/passport.ts`:
+- [x] Install: `passport`, `passport-google-oauth20`, `@types/passport`
+- [x] Get Google OAuth credentials (Client ID, Secret)
+- [x] Create `src/config/passport.ts`:
   - Configure GoogleStrategy
   - Serialize/deserialize user
-- [ ] Update `auth.controller.ts`:
+- [x] Update `auth.service.ts`:
+  - Add `findOrCreateGoogleUser` - handle OAuth login/signup
+- [x] Update `auth.controller.ts`:
   - Add `googleAuth` - redirect to Google
   - Add `googleCallback` - handle callback, create/login user, return tokens
-- [ ] Add routes:
+- [x] Add routes:
   - GET /api/auth/google
   - GET /api/auth/google/callback
-- [ ] Test OAuth flow manually
-- [ ] Update Swagger
-- [ ] **Commit & Push → PR → Review → Merge**
+- [x] Test OAuth flow manually
+- [x] Update Swagger
+- [x] **Commit & Push → PR → Review → Merge**
 
-### Phase 4: User Profile API (Week 2)
+### Phase 4: User Profile API (Week 2) ✅ **COMPLETED**
 **Branch:** `yaron/user-api`
 
-- [ ] Install: `multer`, `@types/multer`
-- [ ] Create `src/middleware/upload.middleware.ts`:
+- [x] Install: `multer`, `@types/multer`
+- [x] Create `src/middleware/upload.middleware.ts`:
   - Configure Multer for image uploads
   - Validate file type (jpg, png) and size (<5MB)
-- [ ] Create `src/controllers/user.controller.ts`:
-  - `getProfile(userId)` - return user + profile image
-  - `updateProfile(userId, username, profileImage)` - update user
-  - `uploadImage` - handle file upload
-- [ ] Create routes:
-  - GET /api/users/:id
-  - PUT /api/users/:id (protected)
-  - POST /api/upload (protected)
-- [ ] Ensure `uploads/profiles/` folder exists
-- [ ] Test with Postman
-- [ ] Create `tests/user.test.ts`
-- [ ] Document in Swagger
-- [ ] **Commit & Push → PR → Review → Merge**
+- [x] Create `src/services/user.service.ts`:
+  - `getUserProfile(userId)`
+  - `updateUserProfile(userId, updates)`
+- [x] Create `src/controllers/user.controller.ts`:
+  - `getProfile` - return user + profile image
+  - `updateProfile` - update username, bio, genres
+  - `uploadProfileImage` - handle file upload
+- [x] Create routes:
+  - GET /api/users/profile (protected)
+  - PUT /api/users/profile (protected)
+  - POST /api/users/profile/image (protected)
+- [x] Ensure `uploads/profiles/` folder exists
+- [x] Test with Postman
+- [x] Create `tests/user.test.ts` (13 tests)
+- [x] Document in Swagger
+- [x] **Commit & Push → PR → Review → Merge**
+
+### Phase 4.5: Google Books API Integration (Week 2) ✅ **COMPLETED**
+**Branch:** `yaron/google-books-api`
+
+- [x] Install: `axios` (already installed)
+- [x] Create `src/services/books.service.ts`:
+  - `searchBooks(query, options)` - search with pagination
+  - `getBookDetails(bookId)` - get book by ID
+  - `searchBooksByGenre(genre)` - search by genre
+  - Implement in-memory cache (5 min TTL)
+  - Implement rate limiting (40 req/min)
+- [x] Create `src/controllers/books.controller.ts`:
+  - `searchBooks` - GET /api/books/search
+  - `getBookDetails` - GET /api/books/:id
+  - `searchByGenre` - GET /api/books/genre/:genre
+- [x] Create `src/routes/books.routes.ts`:
+  - All routes protected by auth middleware
+- [x] Mount routes in `app.ts`
+- [x] Document in Swagger
+- [x] **Commit & Push → PR → Review → Merge**
 
 ### Phase 5: Reviews API (Week 3)
 **Branch:** `yaron/reviews-api`
