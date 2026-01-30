@@ -11,6 +11,8 @@ export interface IUser extends Document {
     authProvider: 'local' | 'google';
     googleId?: string;
     profileImage: string;
+    bio?: string;
+    favoriteGenres?: string[];
     refreshToken?: string;
     createdAt: Date;
     updatedAt: Date;
@@ -55,6 +57,15 @@ const UserSchema: Schema = new Schema(
         profileImage: {
             type: String,
             default: '/uploads/profiles/default-avatar.png',
+        },
+        bio: {
+            type: String,
+            maxlength: [500, 'Bio cannot exceed 500 characters'],
+            default: '',
+        },
+        favoriteGenres: {
+            type: [String],
+            default: [],
         },
         refreshToken: {
             type: String,

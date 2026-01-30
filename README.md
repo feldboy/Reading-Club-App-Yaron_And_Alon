@@ -87,10 +87,24 @@ feature branches (yaron/*, alon/*)
 
 ## 📅 Progress
 
-- ✅ **Week 1** - Backend Setup (Yaron)
-- ⬜ **Week 1** - Frontend Setup (Alon)
-- ⬜ **Week 1-2** - Authentication (Both)
-- ⬜ **Week 2** - User Profiles (Both)
+### Current Status: Week 2 - Advanced Backend ✅🚀
+
+- ✅ **Week 1** - Backend Setup (Yaron) - **COMPLETED**
+- ✅ **Week 1-2** - Authentication API (Yaron) - **COMPLETED**
+  - JWT-based auth with register, login, logout, refresh
+  - User model with OAuth support ready
+  - Middleware for protected routes
+  - 19 passing tests
+- ✅ **Week 2** - Advanced Features (Yaron) - **COMPLETED**
+  - ✅ Google OAuth integration (Passport.js)
+  - ✅ User Profile API (GET, PUT, upload image)
+  - ✅ Google Books API integration (search, details, genre)
+  - ✅ Jest testing setup (32 tests passing)
+  - ✅ Swagger documentation (all endpoints)
+- 🔄 **Week 2-3** - Next Steps
+  - ⬜ Frontend Setup (Alon)
+  - ⬜ Reviews API (Yaron)
+  - ⬜ AI Integration (Yaron)
 - ⬜ **Week 3** - Reviews Feature (Both)
 - ⬜ **Week 4** - Social Features (Both)
 - ⬜ **Week 5** - Testing & Polish (Both)

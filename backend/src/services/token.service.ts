@@ -20,18 +20,18 @@ export interface TokenPayload {
  * Generate access token (short-lived)
  */
 export const generateAccessToken = (payload: TokenPayload): string => {
-    return jwt.sign(payload, ACCESS_TOKEN_SECRET as jwt.Secret, {
+    return jwt.sign(payload, ACCESS_TOKEN_SECRET, {
         expiresIn: ACCESS_TOKEN_EXPIRES,
-    });
+    } as any);
 };
 
 /**
  * Generate refresh token (long-lived)
  */
 export const generateRefreshToken = (payload: TokenPayload): string => {
-    return jwt.sign(payload, REFRESH_TOKEN_SECRET as jwt.Secret, {
+    return jwt.sign(payload, REFRESH_TOKEN_SECRET, {
         expiresIn: REFRESH_TOKEN_EXPIRES,
-    });
+    } as any);
 };
 
 /**

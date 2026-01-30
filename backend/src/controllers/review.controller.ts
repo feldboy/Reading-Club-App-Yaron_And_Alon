@@ -27,7 +27,7 @@ import Review from '../models/Review.model';
 export const likeReview = async (req: Request, res: Response): Promise<void> => {
     try {
         const { id } = req.params;
-        const userId = req.user?.userId;
+        const userId = req.tokenPayload?.userId;
 
         if (!userId) {
             res.status(401).json({
@@ -103,7 +103,7 @@ export const likeReview = async (req: Request, res: Response): Promise<void> => 
 export const unlikeReview = async (req: Request, res: Response): Promise<void> => {
     try {
         const { id } = req.params;
-        const userId = req.user?.userId;
+        const userId = req.tokenPayload?.userId;
 
         if (!userId) {
             res.status(401).json({

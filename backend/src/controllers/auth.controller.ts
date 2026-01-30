@@ -165,7 +165,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
  */
 export const logout = async (req: Request, res: Response): Promise<void> => {
     try {
-        const userId = req.user?.userId;
+        const userId = req.tokenPayload?.userId;
 
         if (!userId) {
             res.status(401).json({
@@ -244,6 +244,95 @@ export const refresh = async (req: Request, res: Response): Promise<void> => {
         res.status(401).json({
             status: 'error',
             message: error.message || 'Token refresh failed',
+        });
+    }
+};
+
+/**
+ * @swagger
+ * /api/auth/google:
+ *   get:
+ *     summary: Initiate Google OAuth flow
+ *     tags: [Auth]
+ *     description: Redirects to Google consent screen for authentication
+ *     responses:
+ *       302:
+ *         description: Redirect to Google
+ */
+export const googleAuth = (): void => {
+    // This is handled by Passport middleware
+    // Redirect happens automatically
+};
+
+/**
+ * @swagger
+ * /api/auth/google/callback:
+ *   get:
+ *     summary: Google OAuth callback
+ *     tags: [Auth]
+ *     description: Handles the callback from Google OAuth and issues JWT tokens
+ *     parameters:
+ *       - in: query
+ *         name: code
+ *         schema:
+ *           type: string
+ *         description: Authorization code from Google
+ *     responses:
+ *       200:
+ *         description: Successfully authenticated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     user:
+ *                       $ref: '#/components/schemas/User'
+ *                     accessToken:
+ *                       type: string
+ *                     refreshToken:
+ *                       type: string
+ *       401:
+ *         description: Authentication failed
+ */
+export const googleAuthCallback = async (req: Request, res: Response): Promise<void> => {
+    try {
+        // req.user is set by Passport middleware
+        const googleUser = (req as any).user;
+
+        if (!googleUser) {
+            res.status(401).json({
+                status: 'error',
+                message: 'Google authentication failed',
+            });
+            return;
+        }
+
+        // Find or create user
+        const result = await authService.findOrCreateGoogleUser(googleUser);
+
+        // Remove password from response
+        const userResponse = result.user.toObject();
+        delete (userResponse as any).password;
+        delete (userResponse as any).refreshToken;
+
+        res.status(200).json({
+            status: 'success',
+            message: 'Google authentication successful',
+            data: {
+                user: userResponse,
+                accessToken: result.accessToken,
+                refreshToken: result.refreshToken,
+            },
+        });
+    } catch (error: any) {
+        res.status(500).json({
+            status: 'error',
+            message: error.message || 'Authentication failed',
         });
     }
 };
