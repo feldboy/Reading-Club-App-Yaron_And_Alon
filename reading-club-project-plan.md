@@ -1,69 +1,69 @@
 # 📚 Reading Club App - Git Workflow & Developer Tasks
 
-## 🌳 Git Branch Strategy
+## 🌳 Git Branch Strategy (Updated - Simplified)
 
-### Branch Structure
-```
-main (production)
-  ↓
-develop (integration)
-  ↓
-  ├── yaron/backend-setup
-  ├── yaron/auth-api
-  ├── yaron/user-api
-  ├── yaron/reviews-api
-  ├── yaron/ai-integration
-  ├── yaron/testing-docs
-  ├── yaron/deployment
-  ├── alon/frontend-setup  
-  ├── alon/auth-pages
-  ├── alon/profile-pages
-  ├── alon/review-components
-  ├── alon/comments-likes-api
-  ├── alon/comments-likes-ui
-  ├── alon/ai-ui
-  ├── alon/google-books-api
-  └── alon/ui-polish
-```
+### New Simplified Workflow
+
+**Main Principles:**
+1. **main** - Production-ready code only
+2. **develop** - Integration branch (optional, can merge directly to main)
+3. **Personal dev branch** - Each developer has ONE active branch at a time
+
+**For Yaron:**
+- Work on: `yaron/dev` (or feature-specific name if preferred)
+- Push regularly to keep remote updated
+- When ready: Create PR → Review → Merge → Delete branch
+- Next feature: Create new `yaron/dev`
+
+**For Alon:**
+- Work on: `alon/dev` (or feature-specific name if preferred)
+- Same workflow as above
+
+**Benefits:**
+- ✅ No branch clutter
+- ✅ Cleaner git history
+- ✅ Easier to manage
+- ✅ Clear ownership
 
 ### Workflow Rules
 
 1. **Never commit to `main` directly**
-2. **All work branches from `develop`**
-3. **Branch naming:** `<name>/<feature-description>`
-4. **Small commits** - one logical change per commit
-5. **Pull Request required** for all merges to `develop`
+2. **One active development branch** per developer
+3. **Branch naming:** `<name>/dev` or `<name>/<feature-name>`
+4. **Small, frequent commits** - one logical change per commit
+5. **Pull Request required** for all merges to `main`
 6. **Code review** by the other developer before merge
-7. **Merge to `main`** only after full testing on `develop`
+7. **Delete branch after merge** - keep repo clean
 
 ### Git Commands Quick Reference
 
 ```bash
-# Start new feature
-git checkout develop
-git pull origin develop
-git checkout -b <name>/<feature>
+# Start new work cycle
+git checkout main
+git pull origin main
+git checkout -b yaron/dev  # or specific feature name
 
-# Work on feature - make small commits
+# Work and commit regularly
 git add <files>
 git commit -m "type: description"  # types: feat, fix, docs, test, refactor
+git push origin yaron/dev
 
-# Push and create PR
-git push origin <name>/<feature>
-# Go to GitHub → Create Pull Request → Request review
+# Sync with main if needed (during long development)
+git checkout main
+git pull origin main
+git checkout yaron/dev
+git merge main
+# Resolve conflicts if any
+git push origin yaron/dev
 
-# Update your branch with latest develop
-git checkout develop
-git pull origin develop
-git checkout <name>/<feature>
-git merge develop
-# Resolve any conflicts
-git push origin <name>/<feature>
+# Create PR when ready
+# Go to GitHub → Create Pull Request → Request review from Alon
 
-# After PR approved and merged
-git checkout develop
-git pull origin develop
-git branch -d <name>/<feature>  # Delete local branch
+# After PR merged
+git checkout main
+git pull origin main
+git branch -D yaron/dev  # Delete local branch
+git push origin --delete yaron/dev  # Delete remote branch (optional)
 ```
 
 ---
