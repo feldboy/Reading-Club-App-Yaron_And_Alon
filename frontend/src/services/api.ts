@@ -1,4 +1,5 @@
-import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosError } from 'axios';
+import axios, { AxiosError } from 'axios';
+import type { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 
 /**
  * Axios instance with base configuration

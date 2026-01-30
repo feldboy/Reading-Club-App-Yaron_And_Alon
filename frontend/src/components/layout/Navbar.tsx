@@ -8,6 +8,14 @@ import './Navbar.css';
 const Navbar = () => {
     const { isAuthenticated, user, logout } = useAuth();
 
+    const handleLogout = async () => {
+        try {
+            await logout();
+        } catch (error) {
+            console.error('Logout error:', error);
+        }
+    };
+
     return (
         <nav className="navbar">
             <div className="navbar-container">
@@ -36,7 +44,7 @@ const Navbar = () => {
                                 <span className="navbar-user">Hello, {user?.username}</span>
                             </li>
                             <li className="navbar-item">
-                                <button onClick={logout} className="navbar-button">
+                                <button onClick={handleLogout} className="navbar-button">
                                     Logout
                                 </button>
                             </li>

@@ -1,6 +1,9 @@
-import { createBrowserRouter, Outlet } from 'react-router-dom';
+import { createBrowserRouter, Outlet, Navigate } from 'react-router-dom';
+import { useAuth } from './context/AuthContext';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 
 /**
  * Layout component with Navbar and Footer
@@ -18,11 +21,31 @@ const Layout = () => {
 };
 
 /**
+ * Protected Route Wrapper
+ * Redirects to login if not authenticated
+ */
+const ProtectedRoute = ({ children }: { children: React.ReactElement }) => {
+    const { isAuthenticated, loading } = useAuth();
+
+    if (loading) {
+        return (
+            <div style={{ textAlign: 'center', padding: '2rem' }}>
+                Loading...
+            </div>
+        );
+    }
+
+    if (!isAuthenticated) {
+        return <Navigate to="/login" replace />;
+    }
+
+    return children;
+};
+
+/**
  * Placeholder components - will be created in later phases
  */
 const HomePage = () => <div>Home Page - Coming Soon</div>;
-const LoginPage = () => <div>Login Page - Coming Soon</div>;
-const RegisterPage = () => <div>Register Page - Coming Soon</div>;
 const ProfilePage = () => <div>Profile Page - Coming Soon</div>;
 const CreateReviewPage = () => <div>Create Review Page - Coming Soon</div>;
 
@@ -48,11 +71,19 @@ export const router = createBrowserRouter([
             },
             {
                 path: 'profile',
-                element: <ProfilePage />,
+                element: (
+                    <ProtectedRoute>
+                        <ProfilePage />
+                    </ProtectedRoute>
+                ),
             },
             {
                 path: 'create-review',
-                element: <CreateReviewPage />,
+                element: (
+                    <ProtectedRoute>
+                        <CreateReviewPage />
+                    </ProtectedRoute>
+                ),
             },
         ],
     },

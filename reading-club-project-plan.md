@@ -340,34 +340,34 @@ git branch -d <name>/<feature>  # Delete local branch
 
 - [ ] Pull latest `develop`
 - [ ] Create branch: `git checkout -b alon/auth-pages`
-- [ ] Create `src/services/auth.api.ts`:
+- [x] Create `src/services/auth.api.ts`:
   - `register(username, email, password)` - POST /api/auth/register
   - `login(email, password)` - POST /api/auth/login
   - `logout()` - POST /api/auth/logout
   - `refreshToken()` - POST /api/auth/refresh
-- [ ] Complete `src/context/AuthContext.tsx`:
+- [x] Complete `src/context/AuthContext.tsx`:
   - Implement login, register, logout
   - Store tokens in localStorage
-  - Auto-refresh logic (before token expires)
+  - Auto-refresh logic (before token expires) - handled in api.ts interceptor
   - Load user on mount (from token)
-- [ ] Create `src/components/auth/LoginForm.tsx`:
+- [x] Create `src/components/auth/LoginForm.tsx`:
   - Email and password inputs
   - Form validation
   - Submit → call authApi.login → update context
   - Error display
-- [ ] Create `src/components/auth/RegisterForm.tsx`:
+- [x] Create `src/components/auth/RegisterForm.tsx`:
   - Username, email, password inputs
   - Validation (password strength, email format)
-  - Submit → call authApi.register → redirect to login
-- [ ] Create `src/pages/LoginPage.tsx`:
+  - Submit → call authApi.register → redirect to home
+- [x] Create `src/pages/LoginPage.tsx`:
   - Use LoginForm component
   - Link to RegisterPage
-- [ ] Create `src/pages/RegisterPage.tsx`:
+- [x] Create `src/pages/RegisterPage.tsx`:
   - Use RegisterForm component
   - Link to LoginPage
-- [ ] Create protected route wrapper in `routes.tsx`:
+- [x] Create protected route wrapper in `routes.tsx`:
   - Redirect to /login if not authenticated
-- [ ] Update `Navbar.tsx`:
+- [x] Update `Navbar.tsx`:
   - Show user info when logged in
   - Logout button
 - [ ] Test full flow: register → login → see navbar update → logout

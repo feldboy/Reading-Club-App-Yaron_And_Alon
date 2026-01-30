@@ -1,4 +1,6 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import * as authApi from '../services/auth.api';
+import api from '../services/api';
 
 /**
  * User interface
@@ -19,7 +21,7 @@ interface AuthContextType {
     loading: boolean;
     login: (email: string, password: string) => Promise<void>;
     register: (username: string, email: string, password: string) => Promise<void>;
-    logout: () => void;
+    logout: () => Promise<void>;
 }
 
 /**
@@ -39,46 +41,93 @@ interface AuthProviderProps {
  */
 export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [user, setUser] = useState<User | null>(null);
-    const [loading, setLoading] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(true);
 
     /**
-     * Login function (placeholder - will be implemented in Phase 2)
+     * Load user from token on mount
+     */
+    useEffect(() => {
+        const loadUser = async () => {
+            const accessToken = localStorage.getItem('accessToken');
+            if (accessToken) {
+                try {
+                    // Try to decode token and get user info
+                    // For now, we'll just check if token exists
+                    // In a real app, you might want to call an endpoint to get user info
+                    const tokenParts = accessToken.split('.');
+                    if (tokenParts.length === 3) {
+                        const payload = JSON.parse(atob(tokenParts[1]));
+                        // Token exists and is valid format, but we don't have user info yet
+                        // We'll set user when they login/register
+                    }
+                } catch (error) {
+                    // Invalid token, clear it
+                    localStorage.removeItem('accessToken');
+                    localStorage.removeItem('refreshToken');
+                }
+            }
+            setLoading(false);
+        };
+
+        loadUser();
+    }, []);
+
+    /**
+     * Login function
      */
     const login = async (email: string, password: string): Promise<void> => {
         setLoading(true);
         try {
-            // TODO: Implement in Phase 2
-            console.log('Login:', email, password);
+            const response = await authApi.login(email, password);
+            
+            // Store tokens
+            localStorage.setItem('accessToken', response.data.accessToken);
+            localStorage.setItem('refreshToken', response.data.refreshToken);
+            
+            // Set user
+            setUser(response.data.user);
             setLoading(false);
-        } catch (error) {
+        } catch (error: any) {
             setLoading(false);
-            throw error;
+            throw new Error(error.response?.data?.message || 'Login failed');
         }
     };
 
     /**
-     * Register function (placeholder - will be implemented in Phase 2)
+     * Register function
      */
     const register = async (username: string, email: string, password: string): Promise<void> => {
         setLoading(true);
         try {
-            // TODO: Implement in Phase 2
-            console.log('Register:', username, email, password);
+            const response = await authApi.register(username, email, password);
+            
+            // Store tokens
+            localStorage.setItem('accessToken', response.data.accessToken);
+            localStorage.setItem('refreshToken', response.data.refreshToken);
+            
+            // Set user
+            setUser(response.data.user);
             setLoading(false);
-        } catch (error) {
+        } catch (error: any) {
             setLoading(false);
-            throw error;
+            throw new Error(error.response?.data?.message || 'Registration failed');
         }
     };
 
     /**
-     * Logout function (placeholder - will be implemented in Phase 2)
+     * Logout function
      */
-    const logout = (): void => {
-        // TODO: Implement in Phase 2
-        setUser(null);
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
+    const logout = async (): Promise<void> => {
+        try {
+            await authApi.logout();
+        } catch (error) {
+            // Even if logout fails on server, clear local state
+            console.error('Logout error:', error);
+        } finally {
+            setUser(null);
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+        }
     };
 
     const value: AuthContextType = {
