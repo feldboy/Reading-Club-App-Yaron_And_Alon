@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import * as reviewController from '../controllers/review.controller';
 import { verifyToken } from '../middleware/auth.middleware';
+import { uploadReviewImage } from '../middleware/upload.middleware';
 
 const router = Router();
 
@@ -11,11 +12,16 @@ const router = Router();
  *   description: Review management endpoints
  */
 
-/**
- * Protected routes for likes
- */
-router.post('/reviews/:id/like', verifyToken, reviewController.likeReview);
-router.delete('/reviews/:id/like', verifyToken, reviewController.unlikeReview);
+// CRUD routes
+router.post('/', verifyToken, uploadReviewImage.single('bookImage'), reviewController.createReview);
+router.get('/', reviewController.getAllReviews);
+router.get('/:id', reviewController.getReviewById);
+router.put('/:id', verifyToken, uploadReviewImage.single('bookImage'), reviewController.updateReview);
+router.delete('/:id', verifyToken, reviewController.deleteReview);
+
+// Like/Unlike routes
+router.post('/:id/like', verifyToken, reviewController.likeReview);
+router.delete('/:id/like', verifyToken, reviewController.unlikeReview);
 
 export default router;
 
