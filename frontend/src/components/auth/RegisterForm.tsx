@@ -1,6 +1,7 @@
 import { useState, FormEvent } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
+import GoogleLoginButton from './GoogleLoginButton';
 import './AuthForm.css';
 
 /**
@@ -83,6 +84,12 @@ const RegisterForm = () => {
                 <h2 className="auth-form-title">Register</h2>
                 
                 {error && <div className="auth-error">{error}</div>}
+                
+                <GoogleLoginButton text="Sign up with Google" />
+                
+                <div className="auth-divider">
+                    <span>or</span>
+                </div>
                 
                 <div className="auth-form-group">
                     <label htmlFor="username">Username</label>

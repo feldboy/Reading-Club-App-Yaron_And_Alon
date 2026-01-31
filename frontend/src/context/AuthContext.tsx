@@ -22,6 +22,7 @@ interface AuthContextType {
     login: (email: string, password: string) => Promise<void>;
     register: (username: string, email: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
+    handleOAuthCallback: (accessToken: string, refreshToken: string, user: User) => void;
 }
 
 /**
@@ -130,6 +131,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         }
     };
 
+    /**
+     * Handle OAuth callback - store tokens and set user
+     */
+    const handleOAuthCallback = (accessToken: string, refreshToken: string, userData: User): void => {
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
+        setUser(userData);
+    };
+
     const value: AuthContextType = {
         user,
         isAuthenticated: !!user,
@@ -137,6 +147,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         login,
         register,
         logout,
+        handleOAuthCallback,
     };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

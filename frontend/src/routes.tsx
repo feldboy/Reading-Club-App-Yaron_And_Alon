@@ -5,6 +5,7 @@ import Footer from './components/layout/Footer';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ReviewDetailPage from './pages/ReviewDetailPage';
+import OAuthCallbackPage from './pages/OAuthCallbackPage';
 
 /**
  * Layout component with Navbar and Footer
@@ -69,6 +70,10 @@ export const router = createBrowserRouter([
             {
                 path: 'register',
                 element: <RegisterPage />,
+            },
+            {
+                path: 'auth/callback',
+                element: <OAuthCallbackPage />,
             },
             {
                 path: 'profile',
