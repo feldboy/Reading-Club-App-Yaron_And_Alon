@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { getComments, Comment } from '../../services/comment.api';
+import type { Comment } from '../../types/review';
+import { getComments } from '../../services/comment.api';
 import CommentItem from './CommentItem';
 import './CommentList.css';
 

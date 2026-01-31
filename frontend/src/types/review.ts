@@ -23,3 +23,18 @@ export interface Review {
     updatedAt: string;
 }
 
+/**
+ * Comment interface
+ */
+export interface Comment {
+    id: string;
+    reviewId: string;
+    user: {
+        id: string;
+        username: string;
+        profileImage: string;
+    };
+    text: string;
+    createdAt: string;
+}
+

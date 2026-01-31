@@ -1,5 +1,5 @@
 import { useAuth } from '../../context/AuthContext';
-import { Comment } from '../../services/comment.api';
+import type { Comment } from '../../types/review';
 import { deleteComment } from '../../services/comment.api';
 import './CommentItem.css';
 

@@ -1,19 +1,5 @@
 import api from './api';
-
-/**
- * Comment interface
- */
-export interface Comment {
-    id: string;
-    reviewId: string;
-    user: {
-        id: string;
-        username: string;
-        profileImage: string;
-    };
-    text: string;
-    createdAt: string;
-}
+import type { Comment } from '../types/review';
 
 /**
  * Add comment request
