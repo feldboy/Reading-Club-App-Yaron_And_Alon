@@ -39,12 +39,12 @@ export const addComment = async (req: Request, res: Response): Promise<void> => 
     try {
         const { reviewId } = req.params;
         const { text } = req.body;
-        const userId = req.user?.userId;
-
+        // Get userId from token
+        const userId = req.tokenPayload?.userId;
         if (!userId) {
             res.status(401).json({
                 status: 'error',
-                message: 'Not authenticated',
+                message: 'Unauthorized: User not authenticated',
             });
             return;
         }
@@ -203,7 +203,7 @@ export const getComments = async (req: Request, res: Response): Promise<void> =>
 export const deleteComment = async (req: Request, res: Response): Promise<void> => {
     try {
         const { commentId } = req.params;
-        const userId = req.user?.userId;
+        const userId = req.tokenPayload?.userId;
 
         if (!userId) {
             res.status(401).json({

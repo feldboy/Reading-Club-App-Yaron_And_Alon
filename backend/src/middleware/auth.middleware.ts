@@ -2,12 +2,12 @@ import { Request, Response, NextFunction } from 'express';
 import { verifyAccessToken, TokenPayload } from '../services/token.service';
 
 /**
- * Extend Express Request to include user
+ * Extend Express Request to include authenticated user data
  */
 declare global {
     namespace Express {
         interface Request {
-            user?: TokenPayload;
+            tokenPayload?: TokenPayload;
         }
     }
 }
@@ -38,7 +38,7 @@ export const verifyToken = async (
         const decoded = verifyAccessToken(token);
 
         // Attach user info to request
-        req.user = decoded;
+        req.tokenPayload = decoded;
 
         next();
     } catch (error: any) {
@@ -63,7 +63,7 @@ export const optionalAuth = async (
         if (authHeader && authHeader.startsWith('Bearer ')) {
             const token = authHeader.substring(7);
             const decoded = verifyAccessToken(token);
-            req.user = decoded;
+            req.tokenPayload = decoded;
         }
 
         next();

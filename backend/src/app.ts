@@ -1,9 +1,14 @@
 import express, { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import passport from 'passport';
 import authRoutes from './routes/auth.routes';
+import userRoutes from './routes/user.routes';
+import booksRoutes from './routes/books.routes';
 import commentRoutes from './routes/comment.routes';
 import reviewRoutes from './routes/review.routes';
+import { setupSwagger } from './config/swagger.config';
+import { setupPassport } from './config/passport.config';
 
 dotenv.config();
 
@@ -27,6 +32,15 @@ app.use(express.urlencoded({ extended: true }));
 // Serve static files (uploaded images)
 app.use('/uploads', express.static('uploads'));
 
+// Initialize Passport
+setupPassport();
+app.use(passport.initialize());
+
+/**
+ * Swagger Documentation
+ */
+setupSwagger(app);
+
 /**
  * Basic health check endpoint
  */
@@ -43,8 +57,10 @@ app.get('/health', (_req: Request, res: Response) => {
  * API Routes
  */
 app.use('/api/auth', authRoutes);
-app.use('/api', commentRoutes);
-app.use('/api', reviewRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/books', booksRoutes);
+app.use('/api/comments', commentRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 /**
  * 404 Handler

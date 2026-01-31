@@ -126,3 +126,87 @@ export const refreshAccessToken = async (
 
     return { accessToken };
 };
+
+/**
+ * Find or create user from Google OAuth
+ */
+export const findOrCreateGoogleUser = async (googleProfile: {
+    googleId: string;
+    email: string;
+    username: string;
+    profileImage?: string;
+}): Promise<{ user: IUser; accessToken: string; refreshToken: string }> => {
+    // Try to find user by Google ID
+    let user = await User.findOne({ googleId: googleProfile.googleId });
+
+    if (user) {
+        // User exists with this Google account
+        // Generate tokens
+        const tokens = generateTokenPair({
+            userId: user._id.toString(),
+            email: user.email,
+        });
+
+        // Update refresh token
+        user.refreshToken = tokens.refreshToken;
+        await user.save();
+
+        return {
+            user,
+            ...tokens,
+        };
+    }
+
+    // Check if user exists with this email (different provider)
+    user = await User.findOne({ email: googleProfile.email });
+
+    if (user) {
+        // User exists with email but different auth provider
+        // Link Google account to existing user
+        user.googleId = googleProfile.googleId;
+        user.authProvider = 'google';
+
+        // Update profile image if not set
+        if (!user.profileImage || user.profileImage.includes('default-avatar')) {
+            user.profileImage = googleProfile.profileImage || user.profileImage;
+        }
+
+        const tokens = generateTokenPair({
+            userId: user._id.toString(),
+            email: user.email,
+        });
+
+        user.refreshToken = tokens.refreshToken;
+        await user.save();
+
+        return {
+            user,
+            ...tokens,
+        };
+    }
+
+    // Create new user
+    user = new User({
+        username: googleProfile.username,
+        email: googleProfile.email,
+        googleId: googleProfile.googleId,
+        authProvider: 'google',
+        profileImage: googleProfile.profileImage || '/uploads/profiles/default-avatar.png',
+    });
+
+    await user.save();
+
+    // Generate tokens
+    const tokens = generateTokenPair({
+        userId: user._id.toString(),
+        email: user.email,
+    });
+
+    user.refreshToken = tokens.refreshToken;
+    await user.save();
+
+    return {
+        user,
+        ...tokens,
+    };
+};
