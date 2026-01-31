@@ -47,3 +47,4 @@ CommentSchema.index({ reviewId: 1, createdAt: -1 });
 
 export default mongoose.model<IComment>('Comment', CommentSchema);
 
+
