@@ -4,6 +4,7 @@ import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import ReviewDetailPage from './pages/ReviewDetailPage';
 
 /**
  * Layout component with Navbar and Footer
@@ -84,6 +85,10 @@ export const router = createBrowserRouter([
                         <CreateReviewPage />
                     </ProtectedRoute>
                 ),
+            },
+            {
+                path: 'reviews/:id',
+                element: <ReviewDetailPage />,
             },
         ],
     },

@@ -519,36 +519,39 @@ git push origin --delete yaron/dev  # Delete remote branch (optional)
 
 **Start AFTER** Phase 6A merged
 
-- [ ] Create `src/services/comment.api.ts`:
+- [x] Create `src/services/comment.api.ts`:
   - `addComment(reviewId, text)`
   - `getComments(reviewId)`
   - `deleteComment(commentId)`
-- [ ] Update `src/services/review.api.ts`:
+- [x] Create `src/services/review.api.ts`:
   - `likeReview(reviewId)`
   - `unlikeReview(reviewId)`
-- [ ] Create `src/components/comment/CommentItem.tsx`:
+- [x] Create `src/types/review.ts`:
+  - TypeScript interfaces for Review
+- [x] Create `src/components/comment/CommentItem.tsx`:
   - Display: user avatar, username, comment text, timestamp
   - Delete button (if own comment)
-- [ ] Create `src/components/comment/CommentList.tsx`:
+- [x] Create `src/components/comment/CommentList.tsx`:
   - Fetch comments for a review
   - Map to CommentItem components
-- [ ] Create `src/components/comment/CommentForm.tsx`:
+- [x] Create `src/components/comment/CommentForm.tsx`:
   - Text input
   - Submit button
   - Call addComment API
-- [ ] Create `src/components/review/LikeButton.tsx`:
+- [x] Create `src/components/review/LikeButton.tsx`:
   - Heart icon
   - Show like count
   - Toggle liked state (fill/unfill heart)
   - onClick → like or unlike API
-- [ ] Update `ReviewCard.tsx`:
+- [x] Create `src/components/review/ReviewCard.tsx`:
   - Integrate LikeButton
   - Link to ReviewDetailPage for comments
-- [ ] Complete `ReviewDetailPage.tsx`:
+- [x] Complete `ReviewDetailPage.tsx`:
   - Show full review
   - LikeButton
   - CommentList
   - CommentForm
+- [x] Update routes to include ReviewDetailPage
 - [ ] Test: like/unlike, add comment, delete comment
 - [ ] **Commit & Push → PR → Review → Merge**
 
