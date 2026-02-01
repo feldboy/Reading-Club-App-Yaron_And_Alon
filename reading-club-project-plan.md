@@ -397,14 +397,20 @@ git push origin --delete yaron/dev  # Delete remote branch (optional)
 ### Phase 3: Google OAuth UI (Week 2)
 **Branch:** `alon/google-oauth-ui`
 
-- [ ] Create `src/components/auth/GoogleLoginButton.tsx`:
+- [x] Create `src/components/auth/GoogleLoginButton.tsx`:
   - Button with Google logo
   - onClick → redirect to `http://localhost:3000/api/auth/google`
-- [ ] Handle OAuth callback:
-  - Backend redirects to frontend with token in query/hash
-  - Parse token, store in localStorage
+- [x] Create `src/pages/OAuthCallbackPage.tsx`:
+  - Handle OAuth callback from backend
+  - Parse tokens from URL query params
+  - Store tokens in localStorage
   - Update AuthContext
-- [ ] Add Google button to LoginPage and RegisterPage
+- [x] Update `src/context/AuthContext.tsx`:
+  - Add `handleOAuthCallback` function
+- [x] Update backend `auth.controller.ts`:
+  - Modify `googleAuthCallback` to redirect to frontend with tokens
+- [x] Add Google button to LoginPage and RegisterPage
+- [x] Add OAuth callback route to routes.tsx
 - [ ] Test OAuth flow end-to-end
 - [ ] **Commit & Push → PR → Review → Merge**
 
@@ -519,36 +525,39 @@ git push origin --delete yaron/dev  # Delete remote branch (optional)
 
 **Start AFTER** Phase 6A merged
 
-- [ ] Create `src/services/comment.api.ts`:
+- [x] Create `src/services/comment.api.ts`:
   - `addComment(reviewId, text)`
   - `getComments(reviewId)`
   - `deleteComment(commentId)`
-- [ ] Update `src/services/review.api.ts`:
+- [x] Create `src/services/review.api.ts`:
   - `likeReview(reviewId)`
   - `unlikeReview(reviewId)`
-- [ ] Create `src/components/comment/CommentItem.tsx`:
+- [x] Create `src/types/review.ts`:
+  - TypeScript interfaces for Review
+- [x] Create `src/components/comment/CommentItem.tsx`:
   - Display: user avatar, username, comment text, timestamp
   - Delete button (if own comment)
-- [ ] Create `src/components/comment/CommentList.tsx`:
+- [x] Create `src/components/comment/CommentList.tsx`:
   - Fetch comments for a review
   - Map to CommentItem components
-- [ ] Create `src/components/comment/CommentForm.tsx`:
+- [x] Create `src/components/comment/CommentForm.tsx`:
   - Text input
   - Submit button
   - Call addComment API
-- [ ] Create `src/components/review/LikeButton.tsx`:
+- [x] Create `src/components/review/LikeButton.tsx`:
   - Heart icon
   - Show like count
   - Toggle liked state (fill/unfill heart)
   - onClick → like or unlike API
-- [ ] Update `ReviewCard.tsx`:
+- [x] Create `src/components/review/ReviewCard.tsx`:
   - Integrate LikeButton
   - Link to ReviewDetailPage for comments
-- [ ] Complete `ReviewDetailPage.tsx`:
+- [x] Complete `ReviewDetailPage.tsx`:
   - Show full review
   - LikeButton
   - CommentList
   - CommentForm
+- [x] Update routes to include ReviewDetailPage
 - [ ] Test: like/unlike, add comment, delete comment
 - [ ] **Commit & Push → PR → Review → Merge**
 
@@ -582,18 +591,24 @@ git push origin --delete yaron/dev  # Delete remote branch (optional)
 
 *Backend work by Alon*
 
-- [ ] Get Google Books API key
-- [ ] Create `src/services/googleBooks.service.ts`:
+- [x] Get Google Books API key (configured via GOOGLE_BOOKS_API_KEY env var)
+- [x] Create `src/services/books.service.ts`:
   - `searchBooks(title)` - call Google Books API
   - `getBookDetails(bookId)` - fetch details
-- [ ] Create `src/controllers/books.controller.ts`:
+  - `searchBooksByGenre(genre)` - bonus feature
+- [x] Create `src/controllers/books.controller.ts`:
   - `search` - query param: q
   - `getDetails` - param: bookId
-- [ ] Create routes in `src/routes/books.routes.ts`:
-  - GET /api/books/search?q=title
-  - GET /api/books/:id
+  - `searchBooksByGenre` - bonus feature
+- [x] Create routes in `src/routes/books.routes.ts`:
+  - GET /api/books/search?q=title (protected)
+  - GET /api/books/:id (protected)
+  - GET /api/books/genre/:genre (protected, bonus)
+- [x] Mount routes in app.ts
+- [x] Implement caching (5 min TTL)
+- [x] Implement rate limiting (40 req/min)
+- [x] Document in Swagger (all endpoints documented)
 - [ ] Test with Postman
-- [ ] Document in Swagger
 - [ ] **Commit & Push → PR → Review → Merge**
 
 ### Phase 7C: Google Books Integration UI (Week 4)

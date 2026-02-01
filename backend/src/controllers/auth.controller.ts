@@ -305,34 +305,34 @@ export const googleAuthCallback = async (req: Request, res: Response): Promise<v
         const googleUser = (req as any).user;
 
         if (!googleUser) {
-            res.status(401).json({
-                status: 'error',
-                message: 'Google authentication failed',
-            });
+            // Redirect to frontend with error
+            const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+            res.redirect(`${frontendUrl}/auth/callback?error=authentication_failed`);
             return;
         }
 
         // Find or create user
         const result = await authService.findOrCreateGoogleUser(googleUser);
 
-        // Remove password from response
-        const userResponse = result.user.toObject();
-        delete (userResponse as any).password;
-        delete (userResponse as any).refreshToken;
+        // Prepare user data for frontend
+        const userData = {
+            id: result.user._id.toString(),
+            username: result.user.username,
+            email: result.user.email,
+            profileImage: result.user.profileImage,
+        };
 
-        res.status(200).json({
-            status: 'success',
-            message: 'Google authentication successful',
-            data: {
-                user: userResponse,
-                accessToken: result.accessToken,
-                refreshToken: result.refreshToken,
-            },
-        });
+        // Encode user data as JSON string for URL
+        const userJson = encodeURIComponent(JSON.stringify(userData));
+
+        // Redirect to frontend with tokens in query params
+        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+        const redirectUrl = `${frontendUrl}/auth/callback?accessToken=${result.accessToken}&refreshToken=${result.refreshToken}&user=${userJson}`;
+        
+        res.redirect(redirectUrl);
     } catch (error: any) {
-        res.status(500).json({
-            status: 'error',
-            message: error.message || 'Authentication failed',
-        });
+        // Redirect to frontend with error
+        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+        res.redirect(`${frontendUrl}/auth/callback?error=${encodeURIComponent(error.message || 'Authentication failed')}`);
     }
 };
