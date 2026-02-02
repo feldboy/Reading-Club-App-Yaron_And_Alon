@@ -1,6 +1,6 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import type { ReactNode } from 'react';
 import * as authApi from '../services/auth.api';
-import api from '../services/api';
 
 /**
  * User interface
@@ -47,24 +47,27 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     /**
      * Load user from token on mount
      */
+    /**
+     * Load user from token on mount
+     */
     useEffect(() => {
         const loadUser = async () => {
             const accessToken = localStorage.getItem('accessToken');
             if (accessToken) {
                 try {
-                    // Try to decode token and get user info
-                    // For now, we'll just check if token exists
-                    // In a real app, you might want to call an endpoint to get user info
-                    const tokenParts = accessToken.split('.');
-                    if (tokenParts.length === 3) {
-                        const payload = JSON.parse(atob(tokenParts[1]));
-                        // Token exists and is valid format, but we don't have user info yet
-                        // We'll set user when they login/register
+                    // Fetch user profile from API to verify token and get fresh data
+                    const response = await authApi.getProfile();
+                    if (response.data && response.data.user) {
+                        setUser(response.data.user);
+                    } else {
+                        throw new Error('Invalid response format');
                     }
                 } catch (error) {
-                    // Invalid token, clear it
+                    // Invalid token or session expired
+                    console.error('Failed to load user profile:', error);
                     localStorage.removeItem('accessToken');
                     localStorage.removeItem('refreshToken');
+                    setUser(null);
                 }
             }
             setLoading(false);
@@ -80,11 +83,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setLoading(true);
         try {
             const response = await authApi.login(email, password);
-            
+
             // Store tokens
             localStorage.setItem('accessToken', response.data.accessToken);
             localStorage.setItem('refreshToken', response.data.refreshToken);
-            
+
             // Set user
             setUser(response.data.user);
             setLoading(false);
@@ -101,11 +104,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setLoading(true);
         try {
             const response = await authApi.register(username, email, password);
-            
+
             // Store tokens
             localStorage.setItem('accessToken', response.data.accessToken);
             localStorage.setItem('refreshToken', response.data.refreshToken);
-            
+
             // Set user
             setUser(response.data.user);
             setLoading(false);
@@ -134,11 +137,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     /**
      * Handle OAuth callback - store tokens and set user
      */
-    const handleOAuthCallback = (accessToken: string, refreshToken: string, userData: User): void => {
+    const handleOAuthCallback = useCallback((accessToken: string, refreshToken: string, userData: User): void => {
         localStorage.setItem('accessToken', accessToken);
         localStorage.setItem('refreshToken', refreshToken);
         setUser(userData);
-    };
+    }, []);
 
     const value: AuthContextType = {
         user,

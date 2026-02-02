@@ -47,6 +47,7 @@ export const getProfile = async (req: Request, res: Response): Promise<void> => 
 
         if (!user) {
             res.status(404).json({
+                success: false,
                 status: 'error',
                 message: 'User not found',
             });
@@ -54,6 +55,7 @@ export const getProfile = async (req: Request, res: Response): Promise<void> => 
         }
 
         res.status(200).json({
+            success: true,
             status: 'success',
             data: { user },
         });

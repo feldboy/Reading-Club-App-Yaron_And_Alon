@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './OAuthCallbackPage.css';
@@ -14,8 +14,13 @@ const OAuthCallbackPage = () => {
     const { handleOAuthCallback } = useAuth();
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
+    const processedRef = useRef(false);
 
     useEffect(() => {
+        // Prevent double execution
+        if (processedRef.current) return;
+        processedRef.current = true;
+
         const processCallback = async () => {
             try {
                 // Check for error first
@@ -119,7 +124,8 @@ const OAuthCallbackPage = () => {
         };
 
         processCallback();
-    }, [searchParams, navigate, handleOAuthCallback]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     if (loading) {
         return (

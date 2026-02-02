@@ -26,6 +26,23 @@ app.use(
     })
 );
 
+// Security Headers & CSP
+app.use((_req: Request, res: Response, next: NextFunction) => {
+    // Permissive CSP for development - allows Google OAuth flow
+    res.setHeader(
+        'Content-Security-Policy',
+        "default-src 'self'; " +
+        "connect-src 'self' http://localhost:3000 http://localhost:5173 http://localhost:5174 https://lh3.googleusercontent.com https://fonts.googleapis.com https://fonts.gstatic.com https://accounts.google.com https://www.googleapis.com https://oauth2.googleapis.com; " +
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://accounts.google.com https://apis.google.com; " +
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com; " +
+        "font-src 'self' https://fonts.gstatic.com; " +
+        "img-src 'self' data: https://lh3.googleusercontent.com https://*.googleusercontent.com; " +
+        "frame-src https://accounts.google.com; " +
+        "form-action 'self' https://accounts.google.com;"
+    );
+    next();
+});
+
 // Body parser
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -60,7 +77,7 @@ app.get('/health', (_req: Request, res: Response) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/books', booksRoutes);
-app.use('/api/comments', commentRoutes);
+app.use('/api', commentRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/ai', aiRoutes);
 

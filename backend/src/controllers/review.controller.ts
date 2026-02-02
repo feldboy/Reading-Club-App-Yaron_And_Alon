@@ -62,13 +62,13 @@ export const createReview = async (req: Request, res: Response): Promise<void> =
         }
 
         if (!bookTitle || !bookAuthor || !rating || !reviewText) {
-            res.status(400).json({ success: false, message: 'Missing required fields' });
+            res.status(400).json({ success: false, status: 'error', message: 'Missing required fields' });
             return;
         }
 
         const numRating = parseFloat(rating);
         if (isNaN(numRating) || numRating < 1 || numRating > 5) {
-            res.status(400).json({ success: false, message: 'Rating must be between 1 and 5' });
+            res.status(400).json({ success: false, status: 'error', message: 'Rating must be between 1 and 5' });
             return;
         }
 
@@ -78,7 +78,7 @@ export const createReview = async (req: Request, res: Response): Promise<void> =
         }
 
         if (!bookImage) {
-            res.status(400).json({ success: false, message: 'Book image is required' });
+            res.status(400).json({ success: false, status: 'error', message: 'Book image is required' });
             return;
         }
 
@@ -124,9 +124,9 @@ export const getAllReviews = async (req: Request, res: Response): Promise<void> 
     try {
         const { page, limit } = req.query;
         const result = await reviewService.getAllReviews(page as string, limit as string);
-        res.status(200).json({ success: true, data: result });
+        res.status(200).json({ success: true, status: 'success', data: result });
     } catch (error: any) {
-        res.status(500).json({ success: false, message: 'Failed to retrieve reviews', error: error.message });
+        res.status(400).json({ success: false, status: 'error', message: 'Failed to retrieve reviews', error: error.message });
     }
 };
 
@@ -154,13 +154,13 @@ export const getReviewById = async (req: Request, res: Response): Promise<void> 
         const review = await reviewService.getReviewById(id);
 
         if (!review) {
-            res.status(404).json({ success: false, message: 'Review not found' });
+            res.status(404).json({ success: false, status: 'error', message: 'Review not found' });
             return;
         }
 
-        res.status(200).json({ success: true, data: review });
+        res.status(200).json({ success: true, status: 'success', data: review });
     } catch (error: any) {
-        res.status(400).json({ success: false, message: 'Failed to retrieve review', error: error.message });
+        res.status(400).json({ success: false, status: 'error', message: 'Failed to retrieve review', error: error.message });
     }
 };
 
@@ -203,6 +203,20 @@ export const getReviewById = async (req: Request, res: Response): Promise<void> 
 export const updateReview = async (req: Request, res: Response): Promise<void> => {
     try {
         const { id } = req.params;
+
+        if (req.body.rating !== undefined) {
+            const numRating = Number(req.body.rating);
+            if (isNaN(numRating) || numRating < 1 || numRating > 5) {
+                res.status(400).json({ success: false, message: 'Rating must be between 1 and 5' });
+                return;
+            }
+        }
+        // Validate review ID format
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            res.status(400).json({ success: false, message: 'Invalid review ID' });
+            return;
+        }
+
         const userId = req.tokenPayload?.userId;
 
         if (!userId) {
@@ -220,7 +234,7 @@ export const updateReview = async (req: Request, res: Response): Promise<void> =
         if (req.body.rating) {
             const numRating = parseFloat(req.body.rating);
             if (isNaN(numRating) || numRating < 1 || numRating > 5) {
-                res.status(400).json({ success: false, message: 'Rating must be between 1 and 5' });
+                res.status(400).json({ success: false, status: 'error', message: 'Rating must be between 1 and 5' });
                 return;
             }
             updates.rating = numRating;
@@ -239,13 +253,13 @@ export const updateReview = async (req: Request, res: Response): Promise<void> =
             return;
         }
 
-        res.status(200).json({ success: true, message: 'Review updated successfully', data: review });
+        res.status(200).json({ success: true, status: 'success', message: 'Review updated successfully', data: review });
     } catch (error: any) {
         if (error.message.includes('Unauthorized')) {
-            res.status(403).json({ success: false, message: error.message });
+            res.status(403).json({ success: false, status: 'error', message: error.message });
             return;
         }
-        res.status(500).json({ success: false, message: 'Failed to update review', error: error.message });
+        res.status(500).json({ success: false, status: 'error', message: 'Failed to update review', error: error.message });
     }
 };
 
@@ -280,17 +294,17 @@ export const deleteReview = async (req: Request, res: Response): Promise<void> =
         const deleted = await reviewService.deleteReview(id, userId);
 
         if (!deleted) {
-            res.status(404).json({ success: false, message: 'Review not found' });
+            res.status(404).json({ success: false, status: 'error', message: 'Review not found' });
             return;
         }
 
         res.status(204).send();
     } catch (error: any) {
         if (error.message.includes('Unauthorized')) {
-            res.status(403).json({ success: false, message: error.message });
+            res.status(403).json({ success: false, status: 'error', message: error.message });
             return;
         }
-        res.status(500).json({ success: false, message: 'Failed to delete review', error: error.message });
+        res.status(500).json({ success: false, status: 'error', message: 'Failed to delete review', error: error.message });
     }
 };
 
@@ -323,9 +337,16 @@ export const deleteReview = async (req: Request, res: Response): Promise<void> =
 export const getUserReviews = async (req: Request, res: Response): Promise<void> => {
     try {
         const { userId } = req.params;
+
+        // Validate userId first to match test expectations (returns 400 for invalid ID)
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            res.status(400).json({ success: false, message: 'Invalid user ID' });
+            return;
+        }
+
         const { page, limit } = req.query;
         const result = await reviewService.getUserReviews(userId, page as string, limit as string);
-        res.status(200).json({ success: true, data: result });
+        res.status(200).json({ success: true, status: 'success', data: result });
     } catch (error: any) {
         res.status(400).json({ success: false, message: 'Failed to retrieve user reviews', error: error.message });
     }
@@ -380,6 +401,7 @@ export const likeReview = async (req: Request, res: Response): Promise<void> => 
         const userIdObj = new mongoose.Types.ObjectId(userId);
         if (review.likes.some((likeId) => likeId.toString() === userId)) {
             res.status(400).json({
+                success: false,
                 status: 'error',
                 message: 'Review already liked',
             });
@@ -392,6 +414,7 @@ export const likeReview = async (req: Request, res: Response): Promise<void> => 
         await review.save();
 
         res.status(200).json({
+            success: true,
             status: 'success',
             message: 'Review liked successfully',
             data: {
@@ -456,6 +479,7 @@ export const unlikeReview = async (req: Request, res: Response): Promise<void> =
         const likeIndex = review.likes.findIndex((likeId) => likeId.toString() === userId);
         if (likeIndex === -1) {
             res.status(400).json({
+                success: false,
                 status: 'error',
                 message: 'Review not liked',
             });
@@ -468,6 +492,7 @@ export const unlikeReview = async (req: Request, res: Response): Promise<void> =
         await review.save();
 
         res.status(200).json({
+            success: true,
             status: 'success',
             message: 'Review unliked successfully',
             data: {

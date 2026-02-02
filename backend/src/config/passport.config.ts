@@ -1,14 +1,15 @@
 import passport from 'passport';
 import { Strategy as GoogleStrategy, Profile, VerifyCallback } from 'passport-google-oauth20';
 
-const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
-const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || '';
-const GOOGLE_CALLBACK_URL = process.env.GOOGLE_CALLBACK_URL || 'http://localhost:3000/api/auth/google/callback';
-
 /**
  * Configure Passport with Google OAuth Strategy
  */
 export const setupPassport = (): void => {
+    // Read env vars inside function to ensure dotenv has been loaded
+    const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
+    const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || '';
+    const GOOGLE_CALLBACK_URL = process.env.GOOGLE_CALLBACK_URL || 'http://localhost:3000/api/auth/google/callback';
+
     // Google OAuth Strategy - only set up if credentials are provided
     if (GOOGLE_CLIENT_ID && GOOGLE_CLIENT_SECRET) {
         passport.use(
