@@ -1,119 +1,86 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, Button, Badge, AvatarGroup, Chip, EmptyState, ClubCardSkeleton } from '../components/ui';
 import { useToggle } from '../hooks';
-
-// Mock data for clubs
-const MOCK_CLUBS = [
-    {
-        id: '1',
-        name: 'Sci-Fi Explorers',
-        description: 'Journey through the cosmos with fellow sci-fi enthusiasts. We read everything from classic Asimov to modern space operas.',
-        cover: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCAIzqYqyd-cCio_yZloTImeANixm56uBEggayTiWlRGa5-WRD1wuK2tQORc_2MCu0VaV8kF0Hvfmg2Tm3_NX-5MAYdiyicn-IQg9OBavLCGvH-89wiYbO1KdZG8Iw7rYlwW4_2gDmX9cU2fHNUyDtuG4p-NL_yHndO1W-czu7JyBqfdIEgy3n9ScBXqja3-op7MAyjrgd1tHg8plrEiQ6VOuSn1xCGUgobTsYVikqaXaauWGrTrx1lKIN2oiyvxuYf7DSqfJ8xajo',
-        memberCount: 1243,
-        currentBook: 'Project Hail Mary',
-        category: 'Sci-Fi',
-        isJoined: false,
-        members: [
-            { alt: 'Alex', src: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDxzb13e8e44ZvpqWwmv_INL3ynLBofPysC9bVk1-MR_ae-iYdaji5Joh4Sbz3We2pb67H0eEPI8NizUnqnYW70ws29XRTCm4obQPE9cATx49iu7WQcstRDqbiuisqF4i0z4ummR8Vs6NZHtXk4OEtQS4MZaiugRQKqXAWtUEKYXf6vKcLxSC3XAaI3GMd9OwUWMqSez-lctSbutupR7pzEyMgMznCbFXVWxYon-MIbi60AcBYd8Hi74Fn8oTE8ipnoPdGGZbjID-Q' },
-            { alt: 'Sarah', src: 'https://lh3.googleusercontent.com/aida-public/AB6AXuADZlG018tqvay7iyZdc6DaKQcmDmllSlTQjsN6ss6xo9MzVjDsCQ0TMeas3o8IBCqAOW_gXvTk9gKTO9tfS7AkZ1VUeWkAZtQuhdoDzkhuZxWEdAnn8f1vmAOodQrs88bugUFteO6w1OEk3BV6-DHqJuHzE_9-rFDpeRbHmTmgjHDb3OoJlpis1CfkLXAjqtfGN_XnJV3dVMa0UBgYgONWLPLo-ebQa8JeveMpQCfqzB0-cw-DSlRn5Fa_dCvi9ZHpbmizcB0GMw8' },
-            { alt: 'Mike' },
-            { alt: 'Lisa' },
-            { alt: 'John' }
-        ],
-        nextMeeting: '2 days'
-    },
-    {
-        id: '2',
-        name: 'Fantasy Realm',
-        description: 'From epic high fantasy to urban magic, we explore worlds beyond imagination.',
-        cover: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDrMI4gvpM06Dn7NUyNGBdK9QeyU8CBa_BG7mOm3ej_yKQfUvNRw6GKniJ7zzrhMLx3Aew95FBbkv1nvmxFeZBBuQ4a35BW28K6ThF8Fp7hTiwEhjx5fk-3zHwcj_CJeKCCHGhV_ARD2GLR0VKtAh5QUt_wnpJkxPIh7cBlPHVNsJzAWUBt0ytkIRUFvUMxgda4YpABYp1fAXK7Vmc1RHpTrDdoljJRzG8Qr1JvjV6fjLUNXZBGdqjPwHDB6FQghS-pjB6cd72a6Yc',
-        memberCount: 892,
-        currentBook: 'The Fourth Wing',
-        category: 'Fantasy',
-        isJoined: true,
-        members: [
-            { alt: 'Emma' },
-            { alt: 'Jack' },
-            { alt: 'Sophie' }
-        ],
-        nextMeeting: 'Tomorrow'
-    },
-    {
-        id: '3',
-        name: 'Mystery Solvers',
-        description: 'Unravel intricate plots and discover whodunit together.',
-        cover: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBMjHXPNu7p3OX38iOTwz03ViflbP58NijCag23xc-J_sXn6PUQfvKXzdnDwoK4uPme-9wAL8MrVyFnWE9F9o8tL4YGhv3Q3aV03aigwEZCKs2j8Kc79GPti3NumxpAaAEyzJYlaqI-65d1eLD1GMGpNRHbBcjGAgaEIZz4xpneXSrxpF2ZTYO2An1Dlp7O9Vndx_MZT4kdB8XxXkHj2sZHXs_xL-F0-EehfcdO-IOofElKNlIgqE5VzUNyaTepNld79KO-yuUnmA8',
-        memberCount: 567,
-        currentBook: 'The Silent Patient',
-        category: 'Mystery',
-        isJoined: false,
-        members: [
-            { alt: 'David' },
-            { alt: 'Anna' }
-        ],
-        nextMeeting: '5 days'
-    },
-    {
-        id: '4',
-        name: 'Romance Readers',
-        description: 'Fall in love with stories that make your heart flutter.',
-        cover: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCO6W5qlz7tLks66icc5fkcF7rz9v73VeU-GybzbrEPRb5aeFrcrziXUboEwiZYu6GLcDwEjiB5PN1ZnPxYqI237ZON7953gVIDfbWbUO1UqNXoEluZBu-2vQSxmNwM9BXd41iC7m7CrEJX2T5WTQWm0VmjScicG2SmD2Z3jgbE7qPYtLy2LaBRac-0FZvVHjfKsa8rHWcmkp-b4gEJf9d1sWrtGU9rilR2kXQRh5HtbZc5Ew3x8E6DKxUX0gerNEvRFt1-vOGRVNA',
-        memberCount: 1567,
-        currentBook: 'It Ends with Us',
-        category: 'Romance',
-        isJoined: false,
-        members: [
-            { alt: 'Emily' },
-            { alt: 'Rachel' },
-            { alt: 'Chris' },
-            { alt: 'Laura' }
-        ],
-        nextMeeting: '3 days'
-    },
-    {
-        id: '5',
-        name: 'Non-Fiction Minds',
-        description: 'Expand your knowledge with thought-provoking reads.',
-        cover: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDdTe2FGoMvuUVSK-gy0NOjrX3ZbbTcXrEMSYOWd9rBSrcC1xD40wkHHbPE1gxsVEPWgOW0KbvGKutg4DTQDMXZeTmHob3mzL47XEhiLqckyjeAy6KVfTRCtKk9WJism7do23TTYuQZNVWP73upZlpA_Ne8xLgxq1AktIgQJNMaewAyolwjr1O-mgKa_CJ6dLLPKoKd4-NoZrkETgGxaGeSWxvxLIolCr24i7Ik0KOzDMoAmv9TyATxckq-kX9NZA4s_JUpbEnQzfE',
-        memberCount: 432,
-        currentBook: 'Atomic Habits',
-        category: 'Non-Fiction',
-        isJoined: false,
-        members: [
-            { alt: 'Tom' },
-            { alt: 'Nancy' }
-        ],
-        nextMeeting: '1 week'
-    }
-];
+import { getClubs, joinClub, type Club } from '../services/clubs.api';
+import { useAuth } from '../context/AuthContext';
 
 const CATEGORIES = ['All', 'My Clubs', 'Sci-Fi', 'Fantasy', 'Mystery', 'Romance', 'Non-Fiction'];
 
 export default function ClubsPage() {
     const navigate = useNavigate();
+    const { user } = useAuth();
     const [selectedCategory, setSelectedCategory] = useState('All');
-    const [clubs, setClubs] = useState(MOCK_CLUBS);
-    const [isLoading] = useState(false);
+    const [clubs, setClubs] = useState<Club[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [showCreateModal, toggleCreateModal] = useToggle(false);
+
+    // Fetch clubs
+    useEffect(() => {
+        const fetchClubs = async () => {
+            setIsLoading(true);
+            try {
+                const data = await getClubs();
+                // Map backend data to UI expected format
+                const processedClubs = data.map(club => ({
+                    ...club,
+                    id: club._id, // Map _id to id
+                    memberCount: club.members.length,
+                    // Check membership - handle populate vs raw ID
+                    isJoined: user ? club.members.some((m: any) => (m._id === user.id || m === user.id)) : false,
+                    members: club.members.map((m: any) => ({
+                        alt: m.username || 'Member',
+                        src: m.profilePicture
+                    }))
+                }));
+                setClubs(processedClubs);
+            } catch (error) {
+                console.error('Failed to load clubs:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchClubs();
+    }, [user]);
 
     // Filter clubs based on category
     const filteredClubs = clubs.filter(club => {
         if (selectedCategory === 'All') return true;
-        if (selectedCategory === 'My Clubs') return club.isJoined;
+        if (selectedCategory === 'My Clubs') return (club as any).isJoined;
         return club.category === selectedCategory;
     });
 
     // Handle join/leave club
-    const handleToggleJoin = (clubId: string) => {
-        setClubs(prev => prev.map(club =>
-            club.id === clubId
-                ? { ...club, isJoined: !club.isJoined, memberCount: club.isJoined ? club.memberCount - 1 : club.memberCount + 1 }
-                : club
-        ));
+    const handleToggleJoin = async (clubId: string) => {
+        if (!user) {
+            navigate('/login');
+            return;
+        }
+
+        try {
+            // Optimistic update
+            setClubs(prev => prev.map(club => {
+                if (club._id === clubId) {
+                    const isJoined = !(club as any).isJoined;
+                    return {
+                        ...club,
+                        isJoined,
+                        memberCount: isJoined ? club.memberCount + 1 : club.memberCount - 1
+                    } as Club;
+                }
+                return club;
+            }));
+
+            await joinClub(clubId);
+            // Ideally re-fetch or use returned data
+        } catch (error) {
+            console.error('Failed to join club:', error);
+            // Revert on error could be implemented here
+        }
     };
 
-    const joinedClubsCount = clubs.filter(c => c.isJoined).length;
+    const joinedClubsCount = clubs.filter(c => (c as any).isJoined).length;
 
     return (
         <div className="bg-background-light dark:bg-background-dark font-display text-white min-h-screen pb-24">
@@ -174,7 +141,7 @@ export default function ClubsPage() {
                 ) : (
                     filteredClubs.map((club, index) => (
                         <Card
-                            key={club.id}
+                            key={club._id}
                             variant="glass"
                             className="overflow-hidden animate-fade-in"
                             style={{ animationDelay: `${index * 75}ms` } as React.CSSProperties}
@@ -183,12 +150,12 @@ export default function ClubsPage() {
                             <div className="relative h-32 overflow-hidden">
                                 <div
                                     className="absolute inset-0 bg-center bg-cover"
-                                    style={{ backgroundImage: `url("${club.cover}")` }}
+                                    style={{ backgroundImage: `url("${club.cover || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=2730&auto=format&fit=crop'}")` }}
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-background-dark via-background-dark/50 to-transparent" />
                                 <div className="absolute top-3 right-3">
-                                    <Badge variant={club.isJoined ? 'success' : 'default'}>
-                                        {club.isJoined ? 'Joined' : club.category}
+                                    <Badge variant={(club as any).isJoined ? 'success' : 'default'}>
+                                        {(club as any).isJoined ? 'Joined' : club.category}
                                     </Badge>
                                 </div>
                             </div>
@@ -199,13 +166,15 @@ export default function ClubsPage() {
                                 <p className="text-white/60 text-sm line-clamp-2 mb-4">{club.description}</p>
 
                                 {/* Current Book */}
-                                <div className="flex items-center gap-2 mb-4 p-3 bg-white/5 rounded-xl">
-                                    <span className="material-symbols-outlined text-primary text-lg">auto_stories</span>
-                                    <div>
-                                        <p className="text-[10px] text-white/40 uppercase tracking-wider">Currently Reading</p>
-                                        <p className="text-sm font-medium text-white">{club.currentBook}</p>
+                                {club.currentBook && (
+                                    <div className="flex items-center gap-2 mb-4 p-3 bg-white/5 rounded-xl">
+                                        <span className="material-symbols-outlined text-primary text-lg">auto_stories</span>
+                                        <div>
+                                            <p className="text-[10px] text-white/40 uppercase tracking-wider">Currently Reading</p>
+                                            <p className="text-sm font-medium text-white">{club.currentBook}</p>
+                                        </div>
                                     </div>
-                                </div>
+                                )}
 
                                 {/* Club Stats */}
                                 <div className="flex items-center justify-between mb-4">
@@ -215,28 +184,28 @@ export default function ClubsPage() {
                                     </div>
                                     <div className="flex items-center gap-1 text-white/40 text-xs">
                                         <span className="material-symbols-outlined text-sm">schedule</span>
-                                        Next: {club.nextMeeting}
+                                        Next: {club.nextMeeting || 'TBA'}
                                     </div>
                                 </div>
 
                                 {/* Action Buttons */}
                                 <div className="flex gap-2">
                                     <Button
-                                        variant={club.isJoined ? 'secondary' : 'primary'}
-                                        onClick={() => handleToggleJoin(club.id)}
+                                        variant={(club as any).isJoined ? 'secondary' : 'primary'}
+                                        onClick={() => handleToggleJoin(club._id)}
                                         fullWidth
                                         leftIcon={
                                             <span className="material-symbols-outlined text-lg">
-                                                {club.isJoined ? 'check' : 'group_add'}
+                                                {(club as any).isJoined ? 'check' : 'group_add'}
                                             </span>
                                         }
                                     >
-                                        {club.isJoined ? 'Joined' : 'Join Club'}
+                                        {(club as any).isJoined ? 'Joined' : 'Join Club'}
                                     </Button>
-                                    {club.isJoined && (
+                                    {(club as any).isJoined && (
                                         <Button
                                             variant="ghost"
-                                            onClick={() => navigate(`/clubs/${club.id}`)}
+                                            onClick={() => navigate(`/clubs/${club._id}`)}
                                             aria-label="View club details"
                                         >
                                             <span className="material-symbols-outlined">arrow_forward</span>

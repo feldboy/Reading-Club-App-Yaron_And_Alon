@@ -34,4 +34,11 @@ router.post(
     userController.uploadProfileImage
 );
 
+/**
+ * Wishlist routes
+ */
+router.get('/wishlist', userController.getWishlist);
+router.post('/wishlist', userController.addToWishlist);
+router.delete('/wishlist/:bookId', userController.removeFromWishlist);
+
 export default router;

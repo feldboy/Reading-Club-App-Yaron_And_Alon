@@ -611,19 +611,35 @@ git push origin --delete yaron/dev  # Delete remote branch (optional)
 - [ ] Test with Postman
 - [ ] **Commit & Push → PR → Review → Merge**
 
-### Phase 7C: Google Books Integration UI (Week 4)
+### Phase 7C: Google Books Integration UI (Week 4) ✅ **COMPLETED**
 **Branch:** `alon/books-integration-ui`
 
-- [ ] Create `src/services/books.api.ts`:
+- [x] Create `src/services/books.api.ts`:
   - `searchBooks(query)`
   - `getBookDetails(id)`
-- [ ] Update `ReviewForm.tsx`:
+- [x] Update `ReviewForm.tsx` (CreateReviewPage):
   - Add "Search Book" feature
   - User types book title → call books.api.searchBooks
   - Show results in dropdown
   - On select → auto-fill: title, author, image, ISBN
-- [ ] Test: search book, select, create review with pre-filled data
-- [ ] **Commit & Push → PR → Review → Merge**
+- [x] Test: search book, select, create review with pre-filled data
+- [x] **Commit & Push → PR → Review → Merge**
+
+### Phase 10: Club Features (Week 4-5)
+**Branch:** `feature/clubs`
+
+*Backend (Yaron)*
+- [x] Create `Clubs` model (name, description, members, admin)
+- [x] Create `Clubs` controller (CRUD, join, leave)
+- [x] Create `Clubs` routes
+- [x] Mount routes in `app.ts`
+
+*Frontend (Alon)*
+- [x] Create `clubs.api.ts` service
+- [x] Update `ClubsPage.tsx` to fetch real data
+- [x] Implement "Read" and "Join" functionality
+- [ ] Implement "Create Club" form modal logic
+- [ ] Implement "Wishlist" feature (UI exists, need backend?)
 
 ### Phase 8: UI Polish & Responsive Design (Week 5)
 **Branch:** `alon/ui-polish`

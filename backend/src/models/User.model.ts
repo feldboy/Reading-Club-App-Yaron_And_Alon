@@ -13,6 +13,13 @@ export interface IUser extends Document {
     profileImage: string;
     bio?: string;
     favoriteGenres?: string[];
+    wishlist: {
+        bookId: string;
+        title: string;
+        authors: string[];
+        cover: string;
+        addedAt: Date;
+    }[];
     refreshToken?: string;
     createdAt: Date;
     updatedAt: Date;
@@ -67,6 +74,15 @@ const UserSchema: Schema = new Schema(
             type: [String],
             default: [],
         },
+        wishlist: [
+            {
+                bookId: { type: String, required: true },
+                title: String,
+                authors: [String],
+                cover: String,
+                addedAt: { type: Date, default: Date.now },
+            },
+        ],
         refreshToken: {
             type: String,
             select: false,
@@ -110,7 +126,7 @@ UserSchema.methods.comparePassword = async function (
 /**
  * Indexes for performance
  */
-UserSchema.index({ email: 1 });
-UserSchema.index({ googleId: 1 });
+// Indexes for performance
+// email and googleId are already indexed via unique/sparse constraints in schema definition
 
 export default mongoose.model<IUser>('User', UserSchema);

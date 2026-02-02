@@ -1,5 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDebounce } from '../hooks';
+import { searchBooks, type Book } from '../services/books.api';
+
+// Default book fallback if none selected
+const DEFAULT_BOOK: Partial<Book> = {
+    title: 'Project Hail Mary',
+    author: 'Andy Weir',
+    cover: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDaYrSzk_7tIIqD8SqfK5WkgG_Dzt9xoXE6fFXjDu08sLDRSO4RkJ3AFNtcOwTeeTJOXuUJfGYiYowasYO9zpd0oBr8Vd1PVHA6PNsewDLo0okVWVajQ20qFovRMCnNce2i6K3mm6hRZozQHOrFuyNEZt50eVCpgfrL37U_yTp_pqnpCsWGAvvU76_tmzGKeqeiyWBAtSbhb78oU1v8YBnI2kiSwgFVONTjsSgUlEn_E9obkXxAnwFcQLJstWkULkCP4tzWjfoa5jI'
+};
 
 export default function CreateReviewPage() {
     const navigate = useNavigate();
@@ -8,13 +17,75 @@ export default function CreateReviewPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const [isPublic, setIsPublic] = useState(true);
 
+    // Book search state
+    const [selectedBook, setSelectedBook] = useState<Partial<Book>>(DEFAULT_BOOK);
+    const [searchResults, setSearchResults] = useState<Book[]>([]);
+    const [isSearching, setIsSearching] = useState(false);
+    const [showResults, setShowResults] = useState(false);
+
+    const searchRef = useRef<HTMLDivElement>(null);
+    const debouncedSearch = useDebounce(searchQuery, 300);
+
+    // Filter out duplicate results by ID
+    const uniqueResults = searchResults.filter((book, index, self) =>
+        index === self.findIndex((b) => b.id === book.id)
+    );
+
+    // Handle outside click to close results
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+                setShowResults(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    // Search effect
+    useEffect(() => {
+        const performSearch = async () => {
+            if (!debouncedSearch.trim()) {
+                setSearchResults([]);
+                return;
+            }
+
+            setIsSearching(true);
+            try {
+                const results = await searchBooks(debouncedSearch);
+                setSearchResults(results);
+                setShowResults(true);
+            } catch (error) {
+                console.error('Search failed:', error);
+            } finally {
+                setIsSearching(false);
+            }
+        };
+
+        performSearch();
+    }, [debouncedSearch]);
+
+    const handleSelectBook = (book: Book) => {
+        setSelectedBook(book);
+        setSearchQuery(''); // Clear search logic? or keep it? Clearing looks cleaner.
+        setShowResults(false);
+        // Clean up results on selection
+        setSearchResults([]);
+    };
+
     const handleSubmit = () => {
         if (!reviewText.trim()) {
             alert('Please write a review before submitting.');
             return;
         }
         // Logic to submit review
-        console.log('Submitting review', { rating, reviewText, isPublic });
+        console.log('Submitting review', {
+            bookId: selectedBook.id,
+            bookTitle: selectedBook.title,
+            rating,
+            reviewText,
+            isPublic
+        });
         alert('Review submitted successfully!');
         navigate('/');
     };
@@ -25,8 +96,8 @@ export default function CreateReviewPage() {
             <div className="relative w-full h-[40vh] md:h-[30vh] overflow-hidden">
                 {/* Blurred Background Image */}
                 <div
-                    className="absolute inset-0 bg-cover bg-center scale-110 blur-2xl opacity-40"
-                    style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDaYrSzk_7tIIqD8SqfK5WkgG_Dzt9xoXE6fFXjDu08sLDRSO4RkJ3AFNtcOwTeeTJOXuUJfGYiYowasYO9zpd0oBr8Vd1PVHA6PNsewDLo0okVWVajQ20qFovRMCnNce2i6K3mm6hRZozQHOrFuyNEZt50eVCpgfrL37U_yTp_pqnpCsWGAvvU76_tmzGKeqeiyWBAtSbhb78oU1v8YBnI2kiSwgFVONTjsSgUlEn_E9obkXxAnwFcQLJstWkULkCP4tzWjfoa5jI')" }}
+                    className="absolute inset-0 bg-cover bg-center scale-110 blur-2xl opacity-40 transition-all duration-700"
+                    style={{ backgroundImage: `url('${selectedBook.cover || DEFAULT_BOOK.cover}')` }}
                 >
                 </div>
 
@@ -43,7 +114,7 @@ export default function CreateReviewPage() {
                 {/* Book Selection Area */}
                 <div className="relative z-10 flex flex-col items-center mt-4 px-6">
                     {/* Search Bar Component */}
-                    <div className="w-full max-w-md px-4 py-3">
+                    <div className="w-full max-w-md px-4 py-3 relative" ref={searchRef}>
                         <label className="flex flex-col min-w-40 h-12 w-full">
                             <div className="flex w-full flex-1 items-stretch rounded-xl h-full glass-panel overflow-hidden">
                                 <div className="text-primary flex items-center justify-center pl-4 pr-2">
@@ -51,17 +122,49 @@ export default function CreateReviewPage() {
                                 </div>
                                 <input
                                     value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    onChange={(e) => {
+                                        setSearchQuery(e.target.value);
+                                        if (e.target.value) setShowResults(true);
+                                    }}
                                     className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-white focus:outline-none focus:ring-0 border-none bg-transparent placeholder:text-white/40 px-2 text-base font-normal leading-normal"
                                     placeholder="Search for a different book"
                                 />
+                                {isSearching && (
+                                    <div className="flex items-center justify-center pr-3">
+                                        <div className="size-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin"></div>
+                                    </div>
+                                )}
                             </div>
                         </label>
+
+                        {/* Search Results Dropdown */}
+                        {showResults && uniqueResults.length > 0 && (
+                            <div className="absolute top-full left-4 right-4 mt-2 bg-background-dark/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl overflow-hidden max-h-60 overflow-y-auto z-50">
+                                {uniqueResults.map((book) => (
+                                    <div
+                                        key={book.id}
+                                        onClick={() => handleSelectBook(book)}
+                                        className="flex items-center gap-3 p-3 hover:bg-white/10 cursor-pointer transition-colors border-b border-white/5 last:border-0"
+                                    >
+                                        <img
+                                            src={book.cover}
+                                            alt={book.title}
+                                            className="w-10 h-14 object-cover rounded shadow-sm bg-white/5"
+                                        />
+                                        <div className="flex-1 min-w-0">
+                                            <h4 className="text-white text-sm font-bold truncate">{book.title}</h4>
+                                            <p className="text-white/60 text-xs truncate">{book.author}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
+
                     {/* Headline and Meta Text */}
-                    <div className="text-center mt-2">
-                        <h2 className="text-white tracking-tight text-3xl font-bold leading-tight">Project Hail Mary</h2>
-                        <p className="text-primary/80 text-sm font-medium leading-normal mt-1 tracking-widest uppercase">Andy Weir</p>
+                    <div className="text-center mt-2 animate-fade-in">
+                        <h2 className="text-white tracking-tight text-3xl font-bold leading-tight">{selectedBook.title}</h2>
+                        <p className="text-primary/80 text-sm font-medium leading-normal mt-1 tracking-widest uppercase">{selectedBook.author}</p>
                     </div>
                 </div>
             </div>
@@ -100,7 +203,7 @@ export default function CreateReviewPage() {
                                 value={reviewText}
                                 onChange={(e) => setReviewText(e.target.value)}
                                 className="w-full h-full bg-transparent border-none text-white focus:ring-0 p-0 text-base leading-relaxed placeholder:text-white/20 resize-none outline-none"
-                                placeholder="Share your cosmic journey through this book..."
+                                placeholder={`Share your cosmic journey through ${selectedBook.title}...`}
                             ></textarea>
                         </div>
                     </div>

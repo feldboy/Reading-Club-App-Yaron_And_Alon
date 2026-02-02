@@ -229,3 +229,126 @@ export const uploadProfileImage = async (req: Request, res: Response): Promise<v
         });
     }
 };
+
+/**
+ * @swagger
+ * /api/users/wishlist:
+ *   get:
+ *     summary: Get user wishlist
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Wishlist retrieved successfully
+ *       401:
+ *         description: Unauthorized
+ */
+export const getWishlist = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const userId = req.tokenPayload?.userId;
+        if (!userId) {
+            res.status(401).json({ status: 'error', message: 'Unauthorized' });
+            return;
+        }
+
+        const wishlist = await userService.getWishlist(userId);
+        res.status(200).json({ status: 'success', data: { wishlist } });
+    } catch (error: any) {
+        res.status(500).json({ status: 'error', message: 'Failed to retrieve wishlist', error: error.message });
+    }
+};
+
+/**
+ * @swagger
+ * /api/users/wishlist:
+ *   post:
+ *     summary: Add book to wishlist
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - bookId
+ *               - title
+ *               - authors
+ *             properties:
+ *               bookId:
+ *                 type: string
+ *               title:
+ *                 type: string
+ *               authors:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               cover:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Book added to wishlist
+ *       400:
+ *         description: Invalid input
+ *       401:
+ *         description: Unauthorized
+ */
+export const addToWishlist = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const userId = req.tokenPayload?.userId;
+        if (!userId) {
+            res.status(401).json({ status: 'error', message: 'Unauthorized' });
+            return;
+        }
+
+        const { bookId, title, authors, cover } = req.body;
+        if (!bookId || !title) {
+            res.status(400).json({ status: 'error', message: 'Missing required fields' });
+            return;
+        }
+
+        const wishlist = await userService.addToWishlist(userId, { bookId, title, authors, cover });
+        res.status(200).json({ status: 'success', message: 'Book added to wishlist', data: { wishlist } });
+    } catch (error: any) {
+        res.status(500).json({ status: 'error', message: 'Failed to add to wishlist', error: error.message });
+    }
+};
+
+/**
+ * @swagger
+ * /api/users/wishlist/{bookId}:
+ *   delete:
+ *     summary: Remove book from wishlist
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: bookId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Book removed from wishlist
+ *       401:
+ *         description: Unauthorized
+ */
+export const removeFromWishlist = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const userId = req.tokenPayload?.userId;
+        if (!userId) {
+            res.status(401).json({ status: 'error', message: 'Unauthorized' });
+            return;
+        }
+
+        const { bookId } = req.params;
+        const wishlist = await userService.removeFromWishlist(userId, bookId);
+        res.status(200).json({ status: 'success', message: 'Book removed from wishlist', data: { wishlist } });
+    } catch (error: any) {
+        res.status(500).json({ status: 'error', message: 'Failed to remove from wishlist', error: error.message });
+    }
+};

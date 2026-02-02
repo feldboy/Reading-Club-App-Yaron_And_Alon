@@ -11,7 +11,7 @@ University Final Project - Full-stack Reading Club Application
 ```
 reading-club-app/
 ├── backend/          # Node.js + Express + TypeScript API
-├── frontend/         # React + TypeScript SPA (coming soon)
+├── frontend/         # React + TypeScript SPA
 └── docs/            # Project documentation
 ```
 
@@ -26,7 +26,7 @@ cp .env.example .env
 npm run dev
 ```
 
-### Frontend (Coming Soon)
+### Frontend
 ```bash
 cd frontend
 npm install
@@ -87,28 +87,22 @@ feature branches (yaron/*, alon/*)
 
 ## 📅 Progress
 
-### Current Status: Week 2 - Advanced Backend ✅🚀
+### Current Status: Week 4 - Frontend & Integration 🚀
 
-- ✅ **Week 1** - Backend Setup (Yaron) - **COMPLETED**
-- ✅ **Week 1-2** - Authentication API (Yaron) - **COMPLETED**
-  - JWT-based auth with register, login, logout, refresh
-  - User model with OAuth support ready
-  - Middleware for protected routes
-  - 19 passing tests
-- ✅ **Week 2** - Advanced Features (Yaron) - **COMPLETED**
-  - ✅ Google OAuth integration (Passport.js)
-  - ✅ User Profile API (GET, PUT, upload image)
-  - ✅ Google Books API integration (search, details, genre)
-  - ✅ Jest testing setup (32 tests passing)
-  - ✅ Swagger documentation (all endpoints)
-- 🔄 **Week 2-3** - Next Steps
-  - ⬜ Frontend Setup (Alon)
-  - ⬜ Reviews API (Yaron)
-  - ⬜ AI Integration (Yaron)
-- ⬜ **Week 3** - Reviews Feature (Both)
-- ⬜ **Week 4** - Social Features (Both)
-- ⬜ **Week 5** - Testing & Polish (Both)
-- ⬜ **Week 6** - Deployment (Both)
+- ✅ **Week 1-2** - Backend Foundation (Yaron) - **COMPLETED**
+  - Auth, User, Books, Reviews APIs
+- ✅ **Week 3** - Frontend UI (Alon/Yaron) - **COMPLETED**
+  - Design implementation (Tailwind)
+  - Layouts, Components, Navigation
+- ✅ **Week 4** - Integrations (Current)
+  - ✅ Connect Frontend to Google Books API (Discover/Search)
+  - ✅ Connect Clubs to Backend API
+  - ✅ Update Review Creation with real book data
+- 🔄 **Next Steps**
+  - ⬜ Create Club Form Logic (Frontend -> Backend)
+  - ⬜ Wishlist Feature Implementation
+  - ⬜ Social Interactions (Comments/Likes)
+  - ⬜ AI Integration (Frontend)
 
 ## 📝 License
 
