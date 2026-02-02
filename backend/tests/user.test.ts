@@ -118,6 +118,41 @@ describe('User Profile API', () => {
 
             expect(res.status).toBe(401);
         });
+
+        it('should return 400 if username already taken', async () => {
+            // Create another user
+            await request(app)
+                .post('/api/auth/register')
+                .send({
+                    username: 'existinguser',
+                    email: 'existing@example.com',
+                    password: 'password123',
+                });
+
+            const res = await request(app)
+                .put('/api/users/profile')
+                .set('Authorization', `Bearer ${accessToken}`)
+                .send({
+                    username: 'existinguser',
+                });
+
+            expect(res.status).toBe(400);
+            expect(res.body.message).toMatch(/username already taken/i);
+        });
+
+        it('should return 404 if user not found', async () => {
+            // Delete the user but keep the valid token
+            await User.findByIdAndDelete(userId);
+
+            const res = await request(app)
+                .put('/api/users/profile')
+                .set('Authorization', `Bearer ${accessToken}`)
+                .send({
+                    bio: 'Updated bio',
+                });
+
+            expect(res.status).toBe(404);
+        });
     });
 
     describe('POST /api/users/profile/image', () => {

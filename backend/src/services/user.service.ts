@@ -49,3 +49,49 @@ export const updateProfileImage = async (
 
     return user;
 };
+
+/**
+ * Get user wishlist
+ */
+export const getWishlist = async (userId: string): Promise<any[]> => {
+    const user = await User.findById(userId).select('wishlist');
+    return user ? user.wishlist : [];
+};
+
+/**
+ * Add book to wishlist
+ */
+export const addToWishlist = async (
+    userId: string,
+    bookData: {
+        bookId: string;
+        title: string;
+        authors: string[];
+        cover: string;
+    }
+): Promise<any[]> => {
+    const user = await User.findById(userId);
+    if (!user) return [];
+
+    // Check if book already exists in wishlist
+    const exists = user.wishlist.some((item) => item.bookId === bookData.bookId);
+    if (exists) return user.wishlist;
+
+    user.wishlist.push({ ...bookData, addedAt: new Date() });
+    await user.save();
+
+    return user.wishlist;
+};
+
+/**
+ * Remove book from wishlist
+ */
+export const removeFromWishlist = async (userId: string, bookId: string): Promise<any[]> => {
+    const user = await User.findById(userId);
+    if (!user) return [];
+
+    user.wishlist = user.wishlist.filter((item) => item.bookId !== bookId);
+    await user.save();
+
+    return user.wishlist;
+};

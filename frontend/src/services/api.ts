@@ -37,6 +37,10 @@ api.interceptors.response.use(
     async (error: AxiosError) => {
         const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
+        if (!originalRequest) {
+            return Promise.reject(error);
+        }
+
         // Handle 401 Unauthorized - Token expired
         if (error.response?.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;

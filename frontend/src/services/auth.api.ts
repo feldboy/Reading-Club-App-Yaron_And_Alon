@@ -93,3 +93,10 @@ export const refreshToken = async (refreshToken: string): Promise<RefreshTokenRe
     return response.data;
 };
 
+/**
+ * Get current user profile
+ */
+export const getProfile = async (): Promise<any> => {
+    const response = await api.get('/users/profile');
+    return response.data;
+};

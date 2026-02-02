@@ -1,23 +1,24 @@
 import { createBrowserRouter, Outlet, Navigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
-import Navbar from './components/layout/Navbar';
-import Footer from './components/layout/Footer';
+import BottomNav from './components/layout/BottomNav';
+import { PageLoader } from './components/ui';
+import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ReviewDetailPage from './pages/ReviewDetailPage';
+import ProfilePage from './pages/ProfilePage';
 import OAuthCallbackPage from './pages/OAuthCallbackPage';
 
 /**
- * Layout component with Navbar and Footer
+ * Layout component with BottomNav
  */
 const Layout = () => {
     return (
-        <div className="app">
-            <Navbar />
-            <main className="app-main">
+        <div className="app bg-background-light dark:bg-background-dark min-h-screen text-white font-display">
+            <main className="app-main pb-24">
                 <Outlet />
             </main>
-            <Footer />
+            <BottomNav />
         </div>
     );
 };
@@ -30,11 +31,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactElement }) => {
     const { isAuthenticated, loading } = useAuth();
 
     if (loading) {
-        return (
-            <div style={{ textAlign: 'center', padding: '2rem' }}>
-                Loading...
-            </div>
-        );
+        return <PageLoader text="Authenticating..." />;
     }
 
     if (!isAuthenticated) {
@@ -47,9 +44,9 @@ const ProtectedRoute = ({ children }: { children: React.ReactElement }) => {
 /**
  * Placeholder components - will be created in later phases
  */
-const HomePage = () => <div>Home Page - Coming Soon</div>;
-const ProfilePage = () => <div>Profile Page - Coming Soon</div>;
-const CreateReviewPage = () => <div>Create Review Page - Coming Soon</div>;
+import CreateReviewPage from './pages/CreateReviewPage';
+import DiscoverPage from './pages/DiscoverPage';
+import ClubsPage from './pages/ClubsPage';
 
 /**
  * Route definitions
@@ -94,6 +91,18 @@ export const router = createBrowserRouter([
             {
                 path: 'reviews/:id',
                 element: <ReviewDetailPage />,
+            },
+            {
+                path: 'discover',
+                element: <DiscoverPage />,
+            },
+            {
+                path: 'clubs',
+                element: <ClubsPage />,
+            },
+            {
+                path: '*',
+                element: <Navigate to="/" replace />,
             },
         ],
     },

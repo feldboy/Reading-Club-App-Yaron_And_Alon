@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import * as userController from '../controllers/user.controller';
+import * as reviewController from '../controllers/review.controller';
 import { verifyToken } from '../middleware/auth.middleware';
 import { uploadProfileImage } from '../middleware/upload.middleware';
 
@@ -13,7 +14,12 @@ const router = Router();
  */
 
 /**
- * All routes require authentication
+ * Public routes
+ */
+router.get('/:userId/reviews', reviewController.getUserReviews);
+
+/**
+ * All following routes require authentication
  */
 router.use(verifyToken);
 
@@ -27,5 +33,12 @@ router.post(
     uploadProfileImage.single('image'),
     userController.uploadProfileImage
 );
+
+/**
+ * Wishlist routes
+ */
+router.get('/wishlist', userController.getWishlist);
+router.post('/wishlist', userController.addToWishlist);
+router.delete('/wishlist/:bookId', userController.removeFromWishlist);
 
 export default router;

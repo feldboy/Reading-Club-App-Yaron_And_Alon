@@ -14,13 +14,17 @@ describe('Comment API', () => {
 
     beforeAll(async () => {
         // Connect to test database
-        const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/reading-club-test';
-        await mongoose.connect(mongoUri);
+        if (mongoose.connection.readyState === 0) {
+            const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/reading-club-test';
+            await mongoose.connect(mongoUri);
+        }
     });
 
     afterAll(async () => {
         // Clean up and disconnect
-        await mongoose.connection.db.dropDatabase();
+        if (mongoose.connection.db) {
+            await mongoose.connection.db.dropDatabase();
+        }
         await mongoose.connection.close();
     });
 
