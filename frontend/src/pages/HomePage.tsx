@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import ReviewFeed from '../components/review/ReviewFeed';
 
 export default function HomePage() {
     const navigate = useNavigate();
@@ -104,48 +105,9 @@ export default function HomePage() {
                         </div>
                     </div>
                 </div>
-                {/* Trending Reviews Section */}
+                {/* Reviews Feed Section */}
                 <div className="px-4 pt-8 max-w-screen-xl mx-auto">
-                    <h2 className="text-white text-2xl font-extrabold leading-tight tracking-tight mb-6">Trending Reviews</h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-24">
-                        {/* Review Card 1 */}
-                        <Link to="/reviews/4" className="bg-white/5 border border-white/10 rounded-2xl p-4 hover:border-primary/50 transition-all group">
-                            <div className="w-full aspect-[4/3] rounded-xl mb-3 bg-center bg-cover shadow-inner" style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuAzzy_7yNEi0yFnIZmgMt_8iazMX2bZ01dOF8HWod-S2HBEd4Tr8JwKOAg_rV3gXBCY-wN4YPCqL9XyJ0UxdcJLyZEiJXMH3Wy00gkxZMrir6xkANORIZEQM9FnN4Rz5M-t85m5qTUr1JqZ0w9LnJr_C_wndtS3zdoVut2kt_jFDVXQq2CLwZQkgVPcUYxd3Lc8CfDHtV6m-mjDAmP9plUkWlUrvZf-dka66VI-eF_3OWEuae0vASrN_kNxbzDfUNzGsY3pbIfoiF8")' }}></div>
-                            <p className="text-sm font-medium text-white mb-2 leading-relaxed group-hover:text-primary transition-colors">"This book changed how I view the cosmos. Absolutely stunning prose."</p>
-                            <div className="flex items-center gap-2 pt-2 border-t border-white/5">
-                                <div className="size-6 rounded-full bg-cover bg-center" style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuDxzb13e8e44ZvpqWwmv_INL3ynLBofPysC9bVk1-MR_ae-iYdaji5Joh4Sbz3We2pb67H0eEPI8NizUnqnYW70ws29XRTCm4obQPE9cATx49iu7WQcstRDqbiuisqF4i0z4ummR8Vs6NZHtXk4OEtQS4MZaiugRQKqXAWtUEKYXf6vKcLxSC3XAaI3GMd9OwUWMqSez-lctSbutupR7pzEyMgMznCbFXVWxYon-MIbi60AcBYd8Hi74Fn8oTE8ipnoPdGGZbjID-Q")' }}></div>
-                                <span className="text-xs text-[#b09db9] font-medium">@alex_reads</span>
-                            </div>
-                        </Link>
-                        {/* Review Card 2 */}
-                        <Link to="/reviews/5" className="bg-white/5 border border-white/10 rounded-2xl p-4 hover:border-primary/50 transition-all group">
-                            <p className="text-sm font-medium text-white mb-4 leading-relaxed group-hover:text-primary transition-colors">"Couldn't put it down! The plot twist at chapter 14 was insane."</p>
-                            <div className="flex items-center gap-2">
-                                <div className="size-6 rounded-full bg-cover bg-center" style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuADZlG018tqvay7iyZdc6DaKQcmDmllSlTQjsN6ss6xo9MzVjDsCQ0TMeas3o8IBCqAOW_gXvTk9gKTO9tfS7AkZ1VUeWkAZtQuhdoDzkhuZxWEdAnn8f1vmAOodQrs88bugUFteO6w1OEk3BV6-DHqJuHzE_9-rFDpeRbHmTmgjHDb3OoJlpis1CfkLXAjqtfGN_XnJV3dVMa0UBgYgONWLPLo-ebQa8JeveMpQCfqzB0-cw-DSlRn5Fa_dCvi9ZHpbmizcB0GMw8")' }}></div>
-                                <span className="text-xs text-[#b09db9] font-medium">@sarah_bookish</span>
-                            </div>
-                        </Link>
-                        {/* Review Card 3 */}
-                        <Link to="/reviews/6" className="bg-white/5 border border-white/10 rounded-2xl p-4 hover:border-primary/50 transition-all group">
-                            <div className="w-full aspect-square rounded-xl mb-3 bg-center bg-cover" style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuBMjHXPNu7p3OX38iOTwz03ViflbP58NijCag23xc-J_sXn6PUQfvKXzdnDwoK4uPme-9wAL8MrVyFnWE9F9o8tL4YGhv3Q3aV03aigwEZCKs2j8Kc79GPti3NumxpAaAEyzJYlaqI-65d1eLD1GMGpNRHbBcjGAgaEIZz4xpneXSrxpF2ZTYO2An1Dlp7O9Vndx_MZT4kdB8XxXkHj2sZHXs_xL-F0-EehfcdO-IOofElKNlIgqE5VzUNyaTepNld79KO-yuUnmA8")' }}></div>
-                            <p className="text-sm font-medium text-white mb-2 leading-relaxed group-hover:text-primary transition-colors">"The world-building is top notch. Highly recommend for any fantasy fans."</p>
-                            <div className="flex items-center gap-2">
-                                <div className="size-6 rounded-full bg-cover bg-center" style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuCpESwjHkO0dM_-e2V58olXIGngAo2-QZbm439wB6np04_Q3zLs3iIyUKEx_Kn1R-8mzr6Yzd6hJiToAK8luXo0ODc60h0f1w6ZD1LCaxrxyP0EA2c8Q7gMaiqwxpW8Dhvqpbzoqj5ALYKFXi14d7NBGXgu_tcaCPIvKjF7yMUwojbQjR5gwyx0uaXXXTyxdbTlt9sgZG_ymA5gtW4WDDR3b9gw6qfbeYexAxb-_w1ZRY3caGqO-lEjBT_ie7sIxV88WkYOhk3cxsg")' }}></div>
-                                <span className="text-xs text-[#b09db9] font-medium">@fantasy_king</span>
-                            </div>
-                        </Link>
-                        {/* Review Card 4 */}
-                        <div className="bg-primary/10 border border-primary/30 rounded-2xl p-4 flex flex-col justify-between">
-                            <div>
-                                <p className="text-primary text-xs font-bold uppercase mb-2">Staff Pick</p>
-                                <p className="text-sm font-bold text-white mb-3 leading-relaxed">"A masterpiece of modern fiction. A must-read for everyone."</p>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <div className="size-6 rounded-full bg-primary flex items-center justify-center text-[10px] font-bold">BC</div>
-                                <span className="text-xs text-white/70 font-medium">Club Editor</span>
-                            </div>
-                        </div>
-                    </div>
+                    <ReviewFeed />
                 </div>
             </main>
         </div>

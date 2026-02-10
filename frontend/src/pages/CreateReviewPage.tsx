@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDebounce } from '../hooks';
 import { searchBooks, type Book } from '../services/books.api';
+import { createReview } from '../services/review.api';
 
 // Default book fallback if none selected
 const DEFAULT_BOOK: Partial<Book> = {
@@ -73,21 +74,41 @@ export default function CreateReviewPage() {
         setSearchResults([]);
     };
 
-    const handleSubmit = () => {
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const handleSubmit = async () => {
         if (!reviewText.trim()) {
-            alert('Please write a review before submitting.');
+            setError('Please write a review before submitting.');
             return;
         }
-        // Logic to submit review
-        console.log('Submitting review', {
-            bookId: selectedBook.id,
-            bookTitle: selectedBook.title,
-            rating,
-            reviewText,
-            isPublic
-        });
-        alert('Review submitted successfully!');
-        navigate('/');
+
+        if (!selectedBook.title || !selectedBook.author) {
+            setError('Please select a book first.');
+            return;
+        }
+
+        setIsSubmitting(true);
+        setError(null);
+
+        try {
+            await createReview({
+                bookTitle: selectedBook.title,
+                bookAuthor: selectedBook.author,
+                bookImage: selectedBook.cover || undefined,
+                bookISBN: selectedBook.id || undefined,
+                googleBookId: selectedBook.id || undefined,
+                rating,
+                reviewText: reviewText.trim(),
+            });
+
+            navigate('/');
+        } catch (err: any) {
+            console.error('Failed to create review:', err);
+            setError(err.response?.data?.message || 'Failed to create review. Please try again.');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -240,13 +261,25 @@ export default function CreateReviewPage() {
                 </div>
             </div>
 
+            {/* Error Message */}
+            {error && (
+                <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-red-500/90 text-white px-4 py-2 rounded-lg shadow-lg">
+                    {error}
+                </div>
+            )}
+
             {/* Floating Action Button */}
             <div className="fixed bottom-24 right-6 md:bottom-12 md:right-12 z-50">
                 <button
                     onClick={handleSubmit}
-                    className="flex items-center justify-center w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-tr from-primary to-[#cc49ff] text-white shadow-[0_0_25px_rgba(164,19,236,0.6)] active:scale-95 transition-all hover:brightness-110 group"
+                    disabled={isSubmitting}
+                    className="flex items-center justify-center w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-tr from-primary to-[#cc49ff] text-white shadow-[0_0_25px_rgba(164,19,236,0.6)] active:scale-95 transition-all hover:brightness-110 group disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    <span className="material-symbols-outlined text-3xl md:text-4xl group-hover:rotate-12 transition-transform">send</span>
+                    {isSubmitting ? (
+                        <div className="size-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    ) : (
+                        <span className="material-symbols-outlined text-3xl md:text-4xl group-hover:rotate-12 transition-transform">send</span>
+                    )}
                 </button>
             </div>
         </div>

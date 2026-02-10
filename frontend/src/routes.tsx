@@ -7,6 +7,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ReviewDetailPage from './pages/ReviewDetailPage';
 import ProfilePage from './pages/ProfilePage';
+import EditProfilePage from './pages/EditProfilePage';
 import OAuthCallbackPage from './pages/OAuthCallbackPage';
 
 /**
@@ -77,6 +78,14 @@ export const router = createBrowserRouter([
                 element: (
                     <ProtectedRoute>
                         <ProfilePage />
+                    </ProtectedRoute>
+                ),
+            },
+            {
+                path: 'profile/edit',
+                element: (
+                    <ProtectedRoute>
+                        <EditProfilePage />
                     </ProtectedRoute>
                 ),
             },

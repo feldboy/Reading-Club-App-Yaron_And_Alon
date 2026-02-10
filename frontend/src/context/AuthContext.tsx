@@ -23,6 +23,7 @@ interface AuthContextType {
     register: (username: string, email: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
     handleOAuthCallback: (accessToken: string, refreshToken: string, user: User) => void;
+    setUser: (user: User | null) => void;
 }
 
 /**
@@ -151,6 +152,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         register,
         logout,
         handleOAuthCallback,
+        setUser,
     };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
