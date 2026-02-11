@@ -53,14 +53,14 @@ export default function HomePage() {
                 </div>
 
                 {/* Reviews Feed Section */}
-                <div className="px-4 pt-8">
+                <div className="px-4 pt-8 md:px-6 lg:px-8">
                     <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-white text-2xl font-extrabold leading-tight tracking-tight">Recent Reviews</h2>
+                        <h2 className="text-white text-xl md:text-2xl lg:text-3xl font-extrabold leading-tight tracking-tight">Recent Reviews</h2>
                     </div>
                 </div>
                 {/* Carousel with 3D-like covers */}
-                <div className="flex overflow-x-auto no-scrollbar md:px-4">
-                    <div className="flex items-stretch p-4 gap-6 md:grid md:grid-cols-3 md:w-full md:max-w-screen-xl md:mx-auto">
+                <div className="flex overflow-x-auto no-scrollbar md:px-6 lg:px-8">
+                    <div className="flex items-stretch p-4 gap-4 md:gap-6 md:grid md:grid-cols-2 lg:grid-cols-3 md:w-full md:max-w-screen-xl md:mx-auto">
                         <Link to="/reviews/1" className="flex h-full flex-1 flex-col gap-4 min-w-[200px] group focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background-dark rounded-lg">
                             <div 
                                 className="w-full bg-center bg-no-repeat aspect-[3/4.5] bg-cover rounded-lg book-shadow transform -rotate-2 group-hover:rotate-0 transition-transform duration-300" 
@@ -123,7 +123,7 @@ export default function HomePage() {
                     </div>
                 </div>
                 {/* Reviews Feed */}
-                <div className="px-4 pt-2 max-w-screen-xl mx-auto">
+                <div className="px-4 md:px-6 lg:px-8 pt-2 max-w-screen-xl mx-auto">
                     <ReviewFeed />
                 </div>
             </main>
