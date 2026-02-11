@@ -130,12 +130,14 @@ export default function CreateReviewPage() {
         <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white min-h-screen font-display pb-24">
             {/* Header Section with Dynamic Blurred Background */}
             <div className="relative w-full h-[40vh] md:h-[30vh] overflow-hidden">
-                {/* Blurred Background Image */}
-                <div
-                    className="absolute inset-0 bg-cover bg-center scale-110 blur-2xl opacity-40 transition-all duration-700"
-                    style={{ backgroundImage: `url('${selectedBook.cover || DEFAULT_BOOK.cover}')` }}
-                >
-                </div>
+                    {/* Blurred Background Image */}
+                    <div
+                        className="absolute inset-0 bg-cover bg-center scale-110 blur-2xl opacity-40 transition-all duration-700"
+                        role="img"
+                        aria-label={`Background image: ${selectedBook.title || 'Book'} cover`}
+                        style={{ backgroundImage: `url('${selectedBook.cover || DEFAULT_BOOK.cover}')` }}
+                    >
+                    </div>
 
                 <div className="relative z-10 flex items-center p-4 pt-12 justify-between max-w-screen-xl mx-auto w-full">
                     <button onClick={() => navigate(-1)} className="size-10 flex items-center justify-center rounded-full glass-panel cursor-pointer hover:bg-white/10 transition-colors">
@@ -213,9 +215,15 @@ export default function CreateReviewPage() {
                         <span className="text-white/60 text-xs font-bold uppercase tracking-[0.2em]">Rating</span>
                         <div className="flex gap-2">
                             {[1, 2, 3, 4, 5].map((star) => (
-                                <button key={star} onClick={() => setRating(star)}>
+                                <button 
+                                    key={star} 
+                                    onClick={() => setRating(star)}
+                                    aria-label={`Rate ${star} star${star > 1 ? 's' : ''}`}
+                                    className="focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background-dark rounded-full"
+                                >
                                     <span
                                         className={`material-symbols-outlined text-4xl cursor-pointer ${star <= rating ? 'star-active' : 'text-white/20'}`}
+                                        aria-hidden="true"
                                     >
                                         star
                                     </span>
@@ -285,11 +293,12 @@ export default function CreateReviewPage() {
 
             {/* Floating Action Button */}
             <div className="fixed bottom-24 right-6 md:bottom-12 md:right-12 z-50">
-                <button
-                    onClick={handleSubmit}
-                    disabled={isSubmitting}
-                    className="flex items-center justify-center w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-tr from-primary to-[#cc49ff] text-white shadow-[0_0_25px_rgba(164,19,236,0.6)] active:scale-95 transition-all hover:brightness-110 group disabled:opacity-50 disabled:cursor-not-allowed"
-                >
+                    <button
+                        onClick={handleSubmit}
+                        disabled={isSubmitting}
+                        aria-label={isSubmitting ? 'Submitting review...' : 'Submit review'}
+                        className="flex items-center justify-center w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-tr from-primary to-[#cc49ff] text-white shadow-[0_0_25px_rgba(164,19,236,0.6)] active:scale-95 transition-all hover:brightness-110 group disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background-dark"
+                    >
                     {isSubmitting ? (
                         <div className="size-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                     ) : (

@@ -212,6 +212,8 @@ export default function ClubsPage() {
                             <div className="relative h-32 overflow-hidden">
                                 <div
                                     className="absolute inset-0 bg-center bg-cover"
+                                    role="img"
+                                    aria-label={`${club.name} club cover image`}
                                     style={{ backgroundImage: `url("${club.cover || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=2730&auto=format&fit=crop'}")` }}
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-background-dark via-background-dark/50 to-transparent" />

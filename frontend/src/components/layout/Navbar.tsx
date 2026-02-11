@@ -17,9 +17,9 @@ const Navbar = () => {
     };
 
     return (
-        <nav className="navbar">
+        <nav className="navbar" role="navigation" aria-label="Main navigation">
             <div className="navbar-container">
-                <Link to="/" className="navbar-logo">
+                <Link to="/" className="navbar-logo" aria-label="Reading Club - Home">
                     📚 Reading Club
                 </Link>
                 <ul className="navbar-menu">
@@ -44,7 +44,11 @@ const Navbar = () => {
                                 <span className="navbar-user">Hello, {user?.username}</span>
                             </li>
                             <li className="navbar-item">
-                                <button onClick={handleLogout} className="navbar-button">
+                                <button 
+                                    onClick={handleLogout} 
+                                    className="navbar-button focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background-dark"
+                                    aria-label={`Logout ${user?.username || 'user'}`}
+                                >
                                     Logout
                                 </button>
                             </li>
