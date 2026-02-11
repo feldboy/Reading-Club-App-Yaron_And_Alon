@@ -597,8 +597,8 @@ git push origin --delete yaron/dev  # Delete remote branch (optional)
 - [x] Create `clubs.api.ts` service
 - [x] Update `ClubsPage.tsx` to fetch real data
 - [x] Implement "Read" and "Join" functionality
-- [ ] Implement "Create Club" form modal logic
-- [ ] Implement "Wishlist" feature (UI exists, need backend?)
+- [x] Implement "Create Club" form modal logic
+- [ ] Implement "Wishlist" feature (UI exists, need backend?) - **SKIPPED** (not found in codebase)
 
 ### Phase 8: UI Polish & Responsive Design (Week 5)
 **Branch:** `alon/ui-polish`
@@ -620,15 +620,14 @@ git push origin --delete yaron/dev  # Delete remote branch (optional)
 - [ ] Loading states:
   - Skeleton loaders for feed
   - Spinners for buttons during async operations
-- [ ] Error handling:
+- [x] Error handling:
   - Create ErrorBoundary component
   - User-friendly error messages
-  - Toast notifications (optional: `npm install react-toastify`)
 - [ ] Accessibility:
-  - Alt text for images
-  - ARIA labels
-  - Keyboard navigation
-- [ ] Create `frontend/README.md`:
+  - Alt text for images (partially implemented)
+  - ARIA labels (partially implemented)
+  - Keyboard navigation (partially implemented)
+- [x] Create `frontend/README.md`:
   - Installation instructions
   - Environment setup
   - How to run

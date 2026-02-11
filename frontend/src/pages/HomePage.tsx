@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import ReviewFeed from '../components/review/ReviewFeed';
 import AISearchBar from '../components/ai/AISearchBar';
 import BookRecommendations from '../components/ai/BookRecommendations';
