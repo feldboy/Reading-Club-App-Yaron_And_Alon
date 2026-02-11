@@ -1,10 +1,11 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import ReviewFeed from '../components/review/ReviewFeed';
+import AISearchBar from '../components/ai/AISearchBar';
+import BookRecommendations from '../components/ai/BookRecommendations';
+import type { AIBook } from '../services/ai.api';
 
 export default function HomePage() {
     const navigate = useNavigate();
-    const [searchQuery, setSearchQuery] = useState('');
     return (
         <div className="bg-background-light dark:bg-background-dark font-display text-white min-h-screen pb-24">
             {/* Glassmorphism Header */}
@@ -28,33 +29,28 @@ export default function HomePage() {
                         </button>
                     </div>
                 </div>
-                {/* Search Bar Component */}
-                <div className="mt-2">
-                    <div className="flex flex-col min-w-40 h-12 w-full max-w-2xl mx-auto">
-                        <div className="flex w-full flex-1 items-stretch rounded-xl h-full shadow-lg overflow-hidden group">
-                            <div className="text-[#b09db9] flex border-none bg-white/10 items-center justify-center pl-4 group-focus-within:text-primary transition-colors" data-icon="search">
-                                <span className="material-symbols-outlined">search</span>
-                            </div>
-                            <input
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-r-xl text-white focus:outline-0 focus:ring-0 border-none bg-white/10 focus:border-none h-full placeholder:text-[#b09db9] px-4 pl-2 text-base font-normal leading-normal transition-all"
-                                placeholder="Search books or members..."
-                            />
-                        </div>
-                    </div>
+                {/* AI Search Bar Component */}
+                <div className="mt-2 px-4">
+                    <AISearchBar
+                        placeholder="Search for books using AI (e.g., 'sci-fi books about space')..."
+                        onBookSelect={(book: AIBook) => {
+                            // Navigate to create review with book pre-filled
+                            navigate('/create-review', { state: { selectedBook: book } });
+                        }}
+                    />
                 </div>
             </header>
             <main>
-                {/* Section Header */}
-                <div className="flex items-center justify-between px-4 pb-1 pt-6">
-                    <h2 className="text-white text-2xl font-extrabold leading-tight tracking-tight">Featured Reads</h2>
-                    <button
-                        onClick={() => navigate('/discover')}
-                        className="text-primary text-sm font-bold uppercase tracking-wider"
-                    >
-                        See all
-                    </button>
+                {/* AI Recommendations Section */}
+                <div className="px-4 pt-6">
+                    <BookRecommendations />
+                </div>
+
+                {/* Reviews Feed Section */}
+                <div className="px-4 pt-8">
+                    <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-white text-2xl font-extrabold leading-tight tracking-tight">Recent Reviews</h2>
+                    </div>
                 </div>
                 {/* Carousel with 3D-like covers */}
                 <div className="flex overflow-x-auto no-scrollbar md:px-4">
@@ -105,8 +101,8 @@ export default function HomePage() {
                         </div>
                     </div>
                 </div>
-                {/* Reviews Feed Section */}
-                <div className="px-4 pt-8 max-w-screen-xl mx-auto">
+                {/* Reviews Feed */}
+                <div className="px-4 pt-2 max-w-screen-xl mx-auto">
                     <ReviewFeed />
                 </div>
             </main>

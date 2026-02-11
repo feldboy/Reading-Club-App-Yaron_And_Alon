@@ -1,0 +1,161 @@
+.book-recommendations {
+    width: 100%;
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.book-recommendations-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, #a413ec 0%, #cc49ff 100%);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(164, 19, 236, 0.3);
+}
+
+.book-recommendations-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(164, 19, 236, 0.4);
+}
+
+.book-recommendations-button:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.book-recommendations-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.recommendations-icon {
+    font-size: 1.25rem;
+}
+
+.book-recommendations-error {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 8px;
+    color: #fca5a5;
+    font-size: 0.875rem;
+    text-align: center;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.book-recommendations-results {
+    margin-top: 2rem;
+}
+
+.book-recommendations-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.book-recommendations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.book-recommendation-card {
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    transition: all 0.2s;
+}
+
+.book-recommendation-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(164, 19, 236, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.book-recommendation-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.book-recommendation-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: white;
+    margin: 0;
+}
+
+.book-recommendation-author {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.book-recommendation-description {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.6;
+    margin: 0.75rem 0;
+}
+
+.book-recommendation-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.book-recommendation-genre {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    background: rgba(164, 19, 236, 0.2);
+    border: 1px solid rgba(164, 19, 236, 0.3);
+    border-radius: 4px;
+    color: #c084fc;
+}
+
+.book-recommendation-score {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 500;
+}
+
+.book-recommendation-match {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .book-recommendations-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .book-recommendations-title {
+        font-size: 1.25rem;
+    }
+}

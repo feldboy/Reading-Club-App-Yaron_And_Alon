@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useDebounce } from '../hooks';
 import { searchBooks, type Book } from '../services/books.api';
 import { createReview } from '../services/review.api';
+import type { AIBook } from '../services/ai.api';
 
 // Default book fallback if none selected
 const DEFAULT_BOOK: Partial<Book> = {
@@ -13,6 +14,7 @@ const DEFAULT_BOOK: Partial<Book> = {
 
 export default function CreateReviewPage() {
     const navigate = useNavigate();
+    const location = useLocation();
     const [rating, setRating] = useState(4);
     const [reviewText, setReviewText] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
@@ -26,6 +28,19 @@ export default function CreateReviewPage() {
 
     const searchRef = useRef<HTMLDivElement>(null);
     const debouncedSearch = useDebounce(searchQuery, 300);
+
+    // Handle AI book selection from navigation state
+    useEffect(() => {
+        const aiBook = (location.state as any)?.selectedBook as AIBook | undefined;
+        if (aiBook) {
+            setSelectedBook({
+                title: aiBook.title,
+                author: aiBook.author,
+                cover: '', // AI books don't have covers
+                id: undefined,
+            });
+        }
+    }, [location.state]);
 
     // Filter out duplicate results by ID
     const uniqueResults = searchResults.filter((book, index, self) =>

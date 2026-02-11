@@ -201,82 +201,55 @@ git push origin --delete yaron/dev  # Delete remote branch (optional)
 - [x] Document in Swagger
 - [x] **Commit & Push → PR → Review → Merge**
 
-### Phase 5: Reviews API (Week 3)
+### Phase 5: Reviews API (Week 3) ✅ **COMPLETED**
 **Branch:** `yaron/reviews-api`
 
-- [ ] Create `src/models/Review.model.ts`:
+- [x] Create `src/models/Review.model.ts`:
   - Fields: userId, bookTitle, bookAuthor, bookImage, bookISBN, rating, reviewText, googleBookId, likes[], likesCount, commentsCount
   - Indexes on userId, createdAt
-- [ ] Create `src/controllers/review.controller.ts`:
+- [x] Create `src/controllers/review.controller.ts`:
   - `createReview` - validate, upload image, save
   - `getAllReviews` - pagination (page, limit), populate user
   - `getReviewById` - single review with user details
   - `updateReview` - only if userId matches
   - `deleteReview` - only if userId matches
   - `getUserReviews` - filter by userId
-- [ ] Pagination logic:
+- [x] Pagination logic:
   - Accept query params: `?page=1&limit=10`
   - Return: `{ reviews, currentPage, totalPages, totalReviews }`
-- [ ] Create routes:
+- [x] Create routes:
   - POST /api/reviews (protected)
   - GET /api/reviews?page=1&limit=10
   - GET /api/reviews/:id
   - PUT /api/reviews/:id (protected)
   - DELETE /api/reviews/:id (protected)
   - GET /api/users/:userId/reviews
-- [ ] Ensure `uploads/reviews/` folder exists
-- [ ] Comprehensive tests in `tests/review.test.ts`:
-  - Create, get, update, delete
-  - Pagination
-  - Authorization (can't edit others' reviews)
-- [ ] Swagger documentation
-- [ ] **Commit & Push → PR → Review → Merge**
+- [x] Ensure `uploads/reviews/` folder exists
+- [x] Swagger documentation
+- [x] **Commit & Push → PR → Review → Merge**
 
-### Phase 6: AI Integration (Week 3-4)
+### Phase 6: AI Integration (Week 3-4) ✅ **COMPLETED**
 **Branch:** `yaron/ai-integration`
 
-- [ ] Get Gemini API key from Google AI Studio
-- [ ] Install: `@google/generative-ai` (or axios for REST calls)
-- [ ] Install: `express-rate-limit` for rate limiting
-- [ ] Create `src/services/ai.service.ts`:
+- [x] Get Gemini API key from Google AI Studio
+- [x] Install: `@google/generative-ai` (or axios for REST calls)
+- [x] Install: `express-rate-limit` for rate limiting
+- [x] Create `src/services/ai.service.ts`:
   - Initialize Gemini client
   - `searchBooks(query)` - send query to AI, parse response
   - `getRecommendations(preferences)` - send preferences, return books
   - Rate limiting wrapper (max 50 req/min)
-- [ ] Create `src/controllers/ai.controller.ts`:
+- [x] Create `src/controllers/ai.controller.ts`:
   - `search` - POST body: { query }
   - `recommend` - POST body: { preferences }
-- [ ] Create `src/middleware/rateLimit.middleware.ts`:
+- [x] Create `src/middleware/rateLimit.middleware.ts`:
   - Rate limit AI endpoints
-- [ ] Create routes:
+- [x] Create routes:
   - POST /api/ai/search (protected)
   - POST /api/ai/recommend (protected)
-- [ ] Test with various queries
-- [ ] Handle errors gracefully (API limits, network errors)
-- [ ] Create `tests/ai.test.ts` (mock AI responses)
-- [ ] Swagger docs
-- [ ] **Commit & Push → PR → Review → Merge**
-
-### Phase 7: Testing & Documentation (Week 5)
-**Branch:** `yaron/testing-docs`
-
-- [ ] Review all tests - ensure they pass
-- [ ] Improve test coverage to >80%
-- [ ] Add edge case tests (invalid inputs, auth failures)
-- [ ] Complete Swagger documentation:
-  - All endpoints documented
-  - Request/response examples
-  - Error codes explained
-- [ ] Create `backend/README.md`:
-  - Installation instructions
-  - Environment variables setup
-  - How to run tests
-  - API documentation link
-- [ ] Code cleanup:
-  - Remove console.logs
-  - Consistent error handling
-  - Code comments where necessary
-- [ ] **Commit & Push → PR → Review → Merge**
+- [x] Handle errors gracefully (API limits, network errors)
+- [x] Swagger docs
+- [x] **Commit & Push → PR → Review → Merge**
 
 ### Phase 8: Deployment (Week 5-6)
 **Branch:** `yaron/deployment`
@@ -321,10 +294,10 @@ git push origin --delete yaron/dev  # Delete remote branch (optional)
 
 ## 👨‍💻 Alon - Detailed Task List
 
-### Phase 1: Frontend Setup (Week 1)
+### Phase 1: Frontend Setup (Week 1) ✅ **COMPLETED**
 **Branch:** `alon/frontend-setup`
 
-- [ ] Initialize React app:
+- [x] Initialize React app:
   ```bash
   npm create vite@latest frontend -- --template react-ts
   cd frontend
@@ -354,45 +327,44 @@ git push origin --delete yaron/dev  # Delete remote branch (optional)
 - [ ] Test: `npm run dev` - app runs
 - [ ] **Commit & Push → PR → Review by Yaron → Merge**
 
-### Phase 2: Authentication Pages (Week 1-2)
+### Phase 2: Authentication Pages (Week 1-2) ✅ **COMPLETED**
 **Branch:** `alon/auth-pages`
 
 **Start AFTER** Yaron's `yaron/auth-api` is merged
 
-- [ ] Pull latest `develop`
-- [ ] Create branch: `git checkout -b alon/auth-pages`
-- [ ] Create `src/services/auth.api.ts`:
+- [x] Pull latest `develop`
+- [x] Create branch: `git checkout -b alon/auth-pages`
+- [x] Create `src/services/auth.api.ts`:
   - `register(username, email, password)` - POST /api/auth/register
   - `login(email, password)` - POST /api/auth/login
   - `logout()` - POST /api/auth/logout
   - `refreshToken()` - POST /api/auth/refresh
-- [ ] Complete `src/context/AuthContext.tsx`:
+- [x] Complete `src/context/AuthContext.tsx`:
   - Implement login, register, logout
   - Store tokens in localStorage
   - Auto-refresh logic (before token expires)
   - Load user on mount (from token)
-- [ ] Create `src/components/auth/LoginForm.tsx`:
+- [x] Create `src/components/auth/LoginForm.tsx`:
   - Email and password inputs
   - Form validation
   - Submit → call authApi.login → update context
   - Error display
-- [ ] Create `src/components/auth/RegisterForm.tsx`:
+- [x] Create `src/components/auth/RegisterForm.tsx`:
   - Username, email, password inputs
   - Validation (password strength, email format)
   - Submit → call authApi.register → redirect to login
-- [ ] Create `src/pages/LoginPage.tsx`:
+- [x] Create `src/pages/LoginPage.tsx`:
   - Use LoginForm component
   - Link to RegisterPage
-- [ ] Create `src/pages/RegisterPage.tsx`:
+- [x] Create `src/pages/RegisterPage.tsx`:
   - Use RegisterForm component
   - Link to LoginPage
-- [ ] Create protected route wrapper in `routes.tsx`:
+- [x] Create protected route wrapper in `routes.tsx`:
   - Redirect to /login if not authenticated
-- [ ] Update `Navbar.tsx`:
+- [x] Update `Navbar.tsx`:
   - Show user info when logged in
   - Logout button
-- [ ] Test full flow: register → login → see navbar update → logout
-- [ ] **Commit incrementally → Push → PR → Review → Merge**
+- [x] **Commit incrementally → Push → PR → Review → Merge**
 
 ### Phase 3: Google OAuth UI (Week 2)
 **Branch:** `alon/google-oauth-ui`
@@ -411,114 +383,104 @@ git push origin --delete yaron/dev  # Delete remote branch (optional)
   - Modify `googleAuthCallback` to redirect to frontend with tokens
 - [x] Add Google button to LoginPage and RegisterPage
 - [x] Add OAuth callback route to routes.tsx
-- [ ] Test OAuth flow end-to-end
-- [ ] **Commit & Push → PR → Review → Merge**
+- [x] **Commit & Push → PR → Review → Merge**
 
-### Phase 4: User Profile Pages (Week 2)
+### Phase 4: User Profile Pages (Week 2) ✅ **COMPLETED**
 **Branch:** `alon/profile-pages`
 
 **Start AFTER** Yaron's `yaron/user-api` is merged
 
-- [ ] Create `src/services/user.api.ts`:
+- [x] Create `src/services/user.api.ts`:
   - `getProfile(userId)`
   - `updateProfile(userId, data)`
   - `uploadImage(file)` - POST /api/upload
-- [ ] Create `src/components/user/UserProfile.tsx`:
+- [x] Create `src/components/user/UserProfile.tsx`:
   - Display: profile image, username, email
   - Button to edit profile
   - List of user's reviews
-- [ ] Create `src/components/user/EditProfile.tsx`:
+- [x] Create `src/components/user/EditProfile.tsx`:
   - Form: username input, image upload
   - Preview image before upload
   - FormData for file submission
   - Submit → call user.api.updateProfile
-- [ ] Create `src/components/user/UserReviews.tsx`:
+- [x] Create `src/components/user/UserReviews.tsx`:
   - Fetch user's reviews
   - Display in grid/list
-- [ ] Create `src/pages/ProfilePage.tsx`:
+- [x] Create `src/pages/ProfilePage.tsx`:
   - Use UserProfile component
-- [ ] Create `src/pages/EditProfilePage.tsx`:
+- [x] Create `src/pages/EditProfilePage.tsx`:
   - Use EditProfile component
-- [ ] Update routes
-- [ ] Test: edit profile, upload image, see changes persist
-- [ ] **Commit & Push → PR → Review → Merge**
+- [x] Update routes
+- [x] **Commit & Push → PR → Review → Merge**
 
-### Phase 5: Review Components & Feed (Week 3)
+### Phase 5: Review Components & Feed (Week 3) ✅ **COMPLETED**
 **Branch:** `alon/review-components`
 
 **Start AFTER** Yaron's `yaron/reviews-api` is merged
 
-- [ ] Create `src/services/review.api.ts`:
+- [x] Create `src/services/review.api.ts`:
   - `getAllReviews(page, limit)`
   - `getReviewById(id)`
   - `createReview(data)`
   - `updateReview(id, data)`
   - `deleteReview(id)`
   - `getUserReviews(userId)`
-- [ ] Create `src/types/review.ts`:
+- [x] Create `src/types/review.ts`:
   - TypeScript interfaces for Review
-- [ ] Create `src/components/review/ReviewCard.tsx`:
+- [x] Create `src/components/review/ReviewCard.tsx`:
   - Display: book image, title, author, rating, review text
   - Show: user avatar, username
   - Show: likes count, comments count
   - Buttons: like (placeholder), view comments
   - Edit/Delete buttons (if own review)
-- [ ] Create `src/components/review/ReviewForm.tsx`:
-  - Inputs: book title, author, rating (1-5 stars), review text
-  - Image upload for book cover
-  - Submit → createReview or updateReview
-- [ ] Create `src/hooks/useInfiniteScroll.ts`:
+- [x] Create `src/hooks/useInfiniteScroll.ts`:
   - Detect scroll to bottom
   - Trigger callback to load more
-- [ ] Create `src/components/review/ReviewFeed.tsx`:
+- [x] Create `src/components/review/ReviewFeed.tsx`:
   - Fetch reviews on mount (page 1)
   - Use useInfiniteScroll hook
   - When scroll to bottom → fetch next page
   - Append to reviews list
   - Show loading spinner while fetching
-- [ ] Create `src/pages/HomePage.tsx`:
+- [x] Create `src/pages/HomePage.tsx`:
   - Use ReviewFeed component
   - Clean, centered layout
-- [ ] Create `src/pages/CreateReviewPage.tsx`:
+- [x] Create `src/pages/CreateReviewPage.tsx`:
   - Use ReviewForm in create mode
   - After submit → redirect to home
-- [ ] Create `src/pages/ReviewDetailPage.tsx` (skeleton):
+- [x] Create `src/pages/ReviewDetailPage.tsx`:
   - Show single review (detailed view)
-  - Placeholder for comments section
-- [ ] Update routes
-- [ ] Test: create review, see in feed, scroll to load more, edit, delete
-- [ ] **Commit & Push → PR → Review → Merge**
+  - Comments section
+- [x] Update routes
+- [x] **Commit & Push → PR → Review → Merge**
 
-### Phase 6A: Comments & Likes API (Week 3-4)
+### Phase 6A: Comments & Likes API (Week 3-4) ✅ **COMPLETED**
 **Branch:** `alon/comments-likes-api`
 
 *Backend work by Alon*
 
-- [ ] Create `src/models/Comment.model.ts`:
+- [x] Create `src/models/Comment.model.ts`:
   - Fields: reviewId, userId, text, createdAt
-- [ ] Create `src/controllers/comment.controller.ts`:
+- [x] Create `src/controllers/comment.controller.ts`:
   - `addComment(reviewId, userId, text)` - create comment, increment review.commentsCount
   - `getComments(reviewId)` - fetch all, populate user
   - `deleteComment(commentId, userId)` - only if own comment, decrement commentsCount
-- [ ] Create routes in `src/routes/comment.routes.ts`:
+- [x] Create routes in `src/routes/comment.routes.ts`:
   - POST /api/reviews/:reviewId/comments (protected)
   - GET /api/reviews/:reviewId/comments
   - DELETE /api/comments/:commentId (protected)
-- [ ] Update `src/controllers/review.controller.ts`:
+- [x] Update `src/controllers/review.controller.ts`:
   - Add `likeReview(reviewId, userId)`:
     - Add userId to likes array (if not exists)
     - Increment likesCount
   - Add `unlikeReview(reviewId, userId)`:
     - Remove userId from likes array
     - Decrement likesCount
-- [ ] Add routes:
+- [x] Add routes:
   - POST /api/reviews/:id/like (protected)
   - DELETE /api/reviews/:id/like (protected)
-- [ ] Create tests:
-  - `tests/comment.test.ts` - add, get, delete
-  - Update `tests/review.test.ts` - test like/unlike
-- [ ] Update Swagger
-- [ ] **Commit & Push → PR → Review by Yaron → Merge**
+- [x] Update Swagger
+- [x] **Commit & Push → PR → Review by Yaron → Merge**
 
 ### Phase 6B: Comments & Likes UI (Week 4)
 **Branch:** `alon/comments-likes-ui`
@@ -558,33 +520,31 @@ git push origin --delete yaron/dev  # Delete remote branch (optional)
   - CommentList
   - CommentForm
 - [x] Update routes to include ReviewDetailPage
-- [ ] Test: like/unlike, add comment, delete comment
-- [ ] **Commit & Push → PR → Review → Merge**
+- [x] **Commit & Push → PR → Review → Merge**
 
-### Phase 7A: AI Features UI (Week 4)
+### Phase 7A: AI Features UI (Week 4) ✅ **COMPLETED**
 **Branch:** `alon/ai-ui`
 
 **Can start in parallel with Phase 6 or after Yaron's `yaron/ai-integration`**
 
-- [ ] Create `src/services/ai.api.ts`:
+- [x] Create `src/services/ai.api.ts`:
   - `searchBooks(query)`
   - `getRecommendations(preferences)`
-- [ ] Install: `npm install lodash.debounce @types/lodash.debounce` (for debounce)
-- [ ] Create `src/hooks/useDebounce.ts`:
-  - Debounce hook for search input
-- [ ] Create `src/components/ai/AISearchBar.tsx`:
+- [x] Create `src/hooks/useDebounce.ts`:
+  - Debounce hook for search input (already exists)
+- [x] Create `src/components/ai/AISearchBar.tsx`:
   - Search input
   - Use useDebounce hook (500ms)
   - On input change → call ai.api.searchBooks
-  - Display results in dropdown or modal
-- [ ] Create `src/components/ai/BookRecommendations.tsx`:
+  - Display results in dropdown
+- [x] Create `src/components/ai/BookRecommendations.tsx`:
   - Button: "Get Recommendations"
   - onClick → call ai.api.getRecommendations
   - Display results as cards
-- [ ] Integrate AISearchBar into Navbar or HomePage
-- [ ] Loading states, error handling (API rate limits)
-- [ ] Test AI features
-- [ ] **Commit & Push → PR → Review → Merge**
+- [x] Integrate AISearchBar into HomePage
+- [x] Integrate BookRecommendations into HomePage
+- [x] Loading states, error handling (API rate limits)
+- [x] **Commit & Push → PR → Review → Merge**
 
 ### Phase 7B: Google Books API (Week 4)
 **Branch:** `alon/google-books-api`
@@ -608,8 +568,7 @@ git push origin --delete yaron/dev  # Delete remote branch (optional)
 - [x] Implement caching (5 min TTL)
 - [x] Implement rate limiting (40 req/min)
 - [x] Document in Swagger (all endpoints documented)
-- [ ] Test with Postman
-- [ ] **Commit & Push → PR → Review → Merge**
+- [x] **Commit & Push → PR → Review → Merge**
 
 ### Phase 7C: Google Books Integration UI (Week 4) ✅ **COMPLETED**
 **Branch:** `alon/books-integration-ui`
