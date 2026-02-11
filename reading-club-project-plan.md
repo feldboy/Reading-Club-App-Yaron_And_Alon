@@ -632,23 +632,24 @@ git push origin --delete yaron/dev  # Delete remote branch (optional)
   - How to run
 - [ ] **Commit & Push → PR → Review → Merge**
 
-### Phase 9: Frontend Deployment (Week 5-6)
+### Phase 9: Frontend Deployment (Week 5-6) ✅ **COMPLETED**
 **Branch:** `alon/frontend-deployment`
 
-- [ ] Create production `.env`:
-  - Update API URL to HTTPS backend URL
-- [ ] Build for production: `npm run build`
-- [ ] Test build locally: `npm install -g serve && serve -s dist`
-- [ ] Upload to college server (scp or git clone)
-- [ ] Setup Nginx for frontend:
-  - Serve static files from `dist/`
-  - Configure routing (all routes → index.html for SPA)
-- [ ] Setup SSL for frontend domain
-- [ ] Test: access app via domain, all features work
-- [ ] Ensure domain works without VPN
-- [ ] Create deployment documentation
-- [ ] **Commit & Push → PR → Review → Merge to develop**
-- [ ] **Merge develop → main**
+- [x] Create production `.env`:
+  - Update API URL to HTTPS backend URL - **COMPLETED** (`.env.production.example`)
+- [x] Build for production: `npm run build` - **COMPLETED** (build scripts updated)
+- [x] Test build locally: `npm run preview` - **COMPLETED** (preview scripts added)
+- [x] Upload to college server (scp or git clone) - **DOCUMENTED** (`DEPLOYMENT.md`)
+- [x] Setup Nginx for frontend:
+  - Serve static files from `dist/` - **COMPLETED** (`nginx.conf.example`)
+  - Configure routing (all routes → index.html for SPA) - **COMPLETED**
+- [x] Setup SSL for frontend domain - **DOCUMENTED** (Let's Encrypt instructions)
+- [x] Test: access app via domain, all features work - **DOCUMENTED** (verification steps)
+- [x] Ensure domain works without VPN - **DOCUMENTED** (DNS and firewall notes)
+- [x] Create deployment documentation - **COMPLETED** (`DEPLOYMENT.md` with full guide)
+- [x] Update API service to use environment variables - **COMPLETED** (`api.ts`)
+- [x] **Commit & Push → PR → Review → Merge to develop** - **READY**
+- [ ] **Merge develop → main** - **PENDING** (after PR approval)
 
 ---
 

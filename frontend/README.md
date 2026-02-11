@@ -198,11 +198,36 @@ See `package.json` for complete list.
 # Build for production
 npm run build
 
-# Preview production build
+# Build with production mode explicitly
+npm run build:prod
+
+# Preview production build locally
 npm run preview
+
+# Preview production build with production mode
+npm run preview:prod
 ```
 
 Build output is in `dist/` directory.
+
+### Environment Variables
+
+For production builds, create a `.env.production` file:
+
+```env
+VITE_API_URL=https://your-backend-domain.com/api
+VITE_ENV=production
+```
+
+See `.env.production.example` for template.
+
+### Deployment
+
+See `DEPLOYMENT.md` for detailed deployment instructions including:
+- Server setup
+- Nginx configuration
+- SSL certificate setup
+- Continuous deployment
 
 ## 📝 Notes
 
