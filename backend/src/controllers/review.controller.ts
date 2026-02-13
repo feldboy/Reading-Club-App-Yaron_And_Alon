@@ -354,6 +354,44 @@ export const getUserReviews = async (req: Request, res: Response): Promise<void>
 
 /**
  * @swagger
+ * /api/reviews/book/{googleBookId}:
+ *   get:
+ *     summary: Get all reviews for a specific book
+ *     tags: [Reviews]
+ *     parameters:
+ *       - in: path
+ *         name: googleBookId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Google Books API book ID
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *     responses:
+ *       200:
+ *         description: Book reviews retrieved successfully
+ */
+export const getBookReviews = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { googleBookId } = req.params;
+        const { page, limit } = req.query;
+        const result = await reviewService.getBookReviews(googleBookId, page as string, limit as string);
+        res.status(200).json({ success: true, status: 'success', data: result });
+    } catch (error: any) {
+        res.status(400).json({ success: false, status: 'error', message: 'Failed to retrieve book reviews', error: error.message });
+    }
+};
+
+/**
+ * @swagger
  * /api/reviews/{id}/like:
  *   post:
  *     summary: Like a review

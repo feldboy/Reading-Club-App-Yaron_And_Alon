@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, Button, Badge, AvatarGroup, Chip, EmptyState, ClubCardSkeleton } from '../components/ui';
 import { useToggle } from '../hooks';
-import { getClubs, joinClub, type Club } from '../services/clubs.api';
+import { getClubs, joinClub, leaveClub, createClub, type Club } from '../services/clubs.api';
 import { useAuth } from '../context/AuthContext';
 
 const CATEGORIES = ['All', 'My Clubs', 'Sci-Fi', 'Fantasy', 'Mystery', 'Romance', 'Non-Fiction'];
@@ -15,32 +15,37 @@ export default function ClubsPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [showCreateModal, toggleCreateModal] = useToggle(false);
 
-    // Fetch clubs
-    useEffect(() => {
-        const fetchClubs = async () => {
-            setIsLoading(true);
-            try {
-                const data = await getClubs();
-                // Map backend data to UI expected format
-                const processedClubs = data.map(club => ({
-                    ...club,
-                    id: club._id, // Map _id to id
-                    memberCount: club.members.length,
-                    // Check membership - handle populate vs raw ID
-                    isJoined: user ? club.members.some((m: any) => (m._id === user.id || m === user.id)) : false,
-                    members: club.members.map((m: any) => ({
-                        alt: m.username || 'Member',
-                        src: m.profilePicture
-                    }))
-                }));
-                setClubs(processedClubs);
-            } catch (error) {
-                console.error('Failed to load clubs:', error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
+    // Create Club form state
+    const [newClubName, setNewClubName] = useState('');
+    const [newClubCategory, setNewClubCategory] = useState('');
+    const [newClubDescription, setNewClubDescription] = useState('');
+    const [createLoading, setCreateLoading] = useState(false);
+    const [createError, setCreateError] = useState('');
 
+    // Fetch clubs
+    const fetchClubs = async () => {
+        setIsLoading(true);
+        try {
+            const data = await getClubs();
+            const processedClubs = data.map(club => ({
+                ...club,
+                id: club._id,
+                memberCount: club.members.length,
+                isJoined: user ? club.members.some((m: any) => (m._id === user.id || m === user.id)) : false,
+                members: club.members.map((m: any) => ({
+                    alt: m.username || 'Member',
+                    src: m.profilePicture
+                }))
+            }));
+            setClubs(processedClubs);
+        } catch (error) {
+            console.error('Failed to load clubs:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
         fetchClubs();
     }, [user]);
 
@@ -51,77 +56,127 @@ export default function ClubsPage() {
         return club.category === selectedCategory;
     });
 
-    // Handle join/leave club
+    // Handle join/leave club toggle
     const handleToggleJoin = async (clubId: string) => {
         if (!user) {
             navigate('/login');
             return;
         }
 
+        const club = clubs.find(c => c._id === clubId);
+        const isCurrentlyJoined = (club as any)?.isJoined;
+
         try {
             // Optimistic update
-            setClubs(prev => prev.map(club => {
-                if (club._id === clubId) {
-                    const isJoined = !(club as any).isJoined;
+            setClubs(prev => prev.map(c => {
+                if (c._id === clubId) {
+                    const isJoined = !isCurrentlyJoined;
                     return {
-                        ...club,
+                        ...c,
                         isJoined,
-                        memberCount: isJoined ? club.memberCount + 1 : club.memberCount - 1
+                        memberCount: isJoined ? c.memberCount + 1 : c.memberCount - 1
                     } as Club;
                 }
-                return club;
+                return c;
             }));
 
-            await joinClub(clubId);
-            // Ideally re-fetch or use returned data
+            if (isCurrentlyJoined) {
+                await leaveClub(clubId);
+            } else {
+                await joinClub(clubId);
+            }
         } catch (error) {
-            console.error('Failed to join club:', error);
-            // Revert on error could be implemented here
+            console.error('Failed to toggle club membership:', error);
+            // Revert optimistic update on error
+            fetchClubs();
+        }
+    };
+
+    // Handle create club
+    const handleCreateClub = async () => {
+        setCreateError('');
+
+        // Validation
+        if (!newClubName.trim()) {
+            setCreateError('Club name is required');
+            return;
+        }
+        if (!newClubCategory) {
+            setCreateError('Please select a category');
+            return;
+        }
+
+        setCreateLoading(true);
+        try {
+            await createClub({
+                name: newClubName.trim(),
+                category: newClubCategory,
+                description: newClubDescription.trim(),
+            });
+
+            // Reset form & close modal
+            setNewClubName('');
+            setNewClubCategory('');
+            setNewClubDescription('');
+            toggleCreateModal();
+
+            // Refresh clubs list
+            await fetchClubs();
+        } catch (error: any) {
+            setCreateError(error?.response?.data?.message || 'Failed to create club');
+        } finally {
+            setCreateLoading(false);
         }
     };
 
     const joinedClubsCount = clubs.filter(c => (c as any).isJoined).length;
 
     return (
-        <div className="bg-background-light dark:bg-background-dark font-display text-white min-h-screen pb-24">
+        <div className="bg-gradient-to-br from-[#1a0f2e] via-[#2d1b4e] to-[#1a0f2e] font-[Libre_Baskerville] text-white min-h-screen pb-24">
             {/* Header */}
-            <header className="sticky top-0 z-40 glass-header px-4 pt-12 pb-4">
-                <div className="flex items-center justify-between mb-4">
-                    <div>
-                        <h1 className="text-2xl font-bold">Reading Clubs</h1>
-                        <p className="text-white/60 text-sm">
-                            {joinedClubsCount > 0
-                                ? `You're in ${joinedClubsCount} club${joinedClubsCount > 1 ? 's' : ''}`
-                                : 'Join a club to start reading together'}
-                        </p>
+            <header className="sticky top-0 z-40 backdrop-blur-xl bg-[#1a0f2e]/80 border-b border-white/5 px-4 sm:px-6 pt-6 pb-5 shadow-lg shadow-black/10">
+                <div className="max-w-7xl mx-auto">
+                    <div className="flex items-start justify-between mb-6">
+                        <div className="flex-1">
+                            <h1 className="font-[Cormorant_Garamond] text-4xl sm:text-5xl font-bold bg-gradient-to-r from-white via-purple-200 to-white bg-clip-text text-transparent mb-2 tracking-tight">
+                                Reading Clubs
+                            </h1>
+                            <p className="text-purple-300/70 text-sm sm:text-base font-light">
+                                {joinedClubsCount > 0
+                                    ? `You're in ${joinedClubsCount} club${joinedClubsCount > 1 ? 's' : ''}`
+                                    : 'Join a club to start reading together'}
+                            </p>
+                        </div>
+                        <button
+                            onClick={toggleCreateModal}
+                            className="group relative flex-shrink-0 size-12 sm:size-14 rounded-2xl flex items-center justify-center bg-gradient-to-br from-[#7C3AED] to-[#A78BFA] hover:from-[#6D28D9] hover:to-[#9270F0] transition-all duration-300 shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 hover:scale-105 active:scale-95 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a0f2e]"
+                            aria-label="Create new club"
+                        >
+                            <span className="material-symbols-outlined text-2xl sm:text-3xl group-hover:rotate-90 transition-transform duration-300">add</span>
+                        </button>
                     </div>
-                    <button
-                        onClick={toggleCreateModal}
-                        className="size-10 rounded-full flex items-center justify-center bg-primary/20 text-primary hover:bg-primary/30 transition-colors"
-                        aria-label="Create new club"
-                    >
-                        <span className="material-symbols-outlined">add</span>
-                    </button>
                 </div>
             </header>
 
             {/* Category Pills */}
-            <div className="px-4 py-4">
-                <div className="flex gap-3 overflow-x-auto no-scrollbar" role="listbox" aria-label="Filter by category">
-                    {CATEGORIES.map((category) => (
-                        <Chip
-                            key={category}
-                            selected={selectedCategory === category}
-                            onClick={() => setSelectedCategory(category)}
-                        >
-                            {category === 'My Clubs' && joinedClubsCount > 0 ? `My Clubs (${joinedClubsCount})` : category}
-                        </Chip>
-                    ))}
+            <div className="px-4 sm:px-6 py-6">
+                <div className="max-w-7xl mx-auto">
+                    <div className="flex gap-2.5 sm:gap-3 overflow-x-auto no-scrollbar pb-1 scroll-smooth" role="listbox" aria-label="Filter by category">
+                        {CATEGORIES.map((category) => (
+                            <Chip
+                                key={category}
+                                selected={selectedCategory === category}
+                                onClick={() => setSelectedCategory(category)}
+                            >
+                                {category === 'My Clubs' && joinedClubsCount > 0 ? `My Clubs (${joinedClubsCount})` : category}
+                            </Chip>
+                        ))}
+                    </div>
                 </div>
             </div>
 
             {/* Clubs List */}
-            <main className="px-4 pb-8 space-y-4">
+            <main className="px-4 sm:px-6 pb-8 space-y-4 max-w-7xl mx-auto">
                 {isLoading ? (
                     [...Array(4)].map((_, i) => (
                         <ClubCardSkeleton key={i} />
@@ -227,7 +282,7 @@ export default function ClubsPage() {
                 <span className="material-symbols-outlined text-2xl">add</span>
             </button>
 
-            {/* Create Club Modal (Simple placeholder) */}
+            {/* Create Club Modal */}
             {showCreateModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
                     <Card variant="glass" className="w-full max-w-md p-6 animate-scale-in">
@@ -244,17 +299,32 @@ export default function ClubsPage() {
                         <p className="text-white/60 mb-6">
                             Start your own reading club and invite others to join your literary journey.
                         </p>
+
+                        {createError && (
+                            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm">
+                                {createError}
+                            </div>
+                        )}
+
                         <div className="space-y-4">
                             <div>
-                                <label className="text-primary text-xs font-bold uppercase tracking-widest block mb-2">Club Name</label>
+                                <label className="text-primary text-xs font-bold uppercase tracking-widest block mb-2">Club Name *</label>
                                 <input
                                     className="w-full h-12 px-4 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:border-primary/50 focus:ring-1 focus:ring-primary/30 outline-none transition-all"
                                     placeholder="Enter club name..."
+                                    value={newClubName}
+                                    onChange={(e) => setNewClubName(e.target.value)}
+                                    disabled={createLoading}
                                 />
                             </div>
                             <div>
-                                <label className="text-primary text-xs font-bold uppercase tracking-widest block mb-2">Category</label>
-                                <select className="w-full h-12 px-4 rounded-xl bg-white/5 border border-white/10 text-white focus:border-primary/50 outline-none transition-all">
+                                <label className="text-primary text-xs font-bold uppercase tracking-widest block mb-2">Category *</label>
+                                <select
+                                    className="w-full h-12 px-4 rounded-xl bg-white/5 border border-white/10 text-white focus:border-primary/50 outline-none transition-all"
+                                    value={newClubCategory}
+                                    onChange={(e) => setNewClubCategory(e.target.value)}
+                                    disabled={createLoading}
+                                >
                                     <option value="">Select category</option>
                                     <option value="Sci-Fi">Sci-Fi</option>
                                     <option value="Fantasy">Fantasy</option>
@@ -268,15 +338,18 @@ export default function ClubsPage() {
                                 <textarea
                                     className="w-full min-h-24 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:border-primary/50 focus:ring-1 focus:ring-primary/30 outline-none transition-all resize-none"
                                     placeholder="Tell people what your club is about..."
+                                    value={newClubDescription}
+                                    onChange={(e) => setNewClubDescription(e.target.value)}
+                                    disabled={createLoading}
                                 />
                             </div>
                         </div>
                         <div className="flex gap-3 mt-6">
-                            <Button variant="secondary" onClick={toggleCreateModal} fullWidth>
+                            <Button variant="secondary" onClick={toggleCreateModal} fullWidth disabled={createLoading}>
                                 Cancel
                             </Button>
-                            <Button variant="primary" onClick={toggleCreateModal} fullWidth>
-                                Create Club
+                            <Button variant="primary" onClick={handleCreateClub} fullWidth disabled={createLoading}>
+                                {createLoading ? 'Creating...' : 'Create Club'}
                             </Button>
                         </div>
                     </Card>

@@ -94,15 +94,15 @@ feature branches (yaron/*, alon/*)
 - ✅ **Week 3** - Frontend UI (Alon/Yaron) - **COMPLETED**
   - Design implementation (Tailwind)
   - Layouts, Components, Navigation
-- ✅ **Week 4** - Integrations (Current)
+- ✅ **Week 4** - Integrations (Current) - **COMPLETED**
   - ✅ Connect Frontend to Google Books API (Discover/Search)
-  - ✅ Connect Clubs to Backend API
+  - ✅ Connect Clubs to Backend API (Join/Leave/Create)
   - ✅ Update Review Creation with real book data
+  - ✅ Wishlist Feature Implementation
 - 🔄 **Next Steps**
-  - ⬜ Create Club Form Logic (Frontend -> Backend)
-  - ⬜ Wishlist Feature Implementation
-  - ⬜ Social Interactions (Comments/Likes)
-  - ⬜ AI Integration (Frontend)
+  - ⬜ Social Interactions Polish (Comments/Likes)
+  - ⬜ Advanced AI Integration (Chat/Recommendations)
+  - ⬜ E2E Testing & Deployment
 
 ## 📝 License
 

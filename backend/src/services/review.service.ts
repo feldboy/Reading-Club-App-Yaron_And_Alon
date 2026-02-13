@@ -80,12 +80,17 @@ export const getAllReviews = async (
  * Get a single review by ID
  */
 export const getReviewById = async (reviewId: string): Promise<IReview | null> => {
-    if (!mongoose.Types.ObjectId.isValid(reviewId)) {
-        throw new Error('Invalid review ID');
+    let query;
+
+    if (mongoose.Types.ObjectId.isValid(reviewId)) {
+        query = Review.findById(reviewId);
+    } else {
+        // Fallback: Try to find by googleBookId 
+        // This handles cases where frontend might incorrectly link via Google ID
+        query = Review.findOne({ googleBookId: reviewId });
     }
 
-    const review = await Review.findById(reviewId)
-        .populate('userId', 'username email profileImage');
+    const review = await query.populate('userId', 'username email profileImage');
 
     return review;
 };
@@ -187,6 +192,39 @@ export const getUserReviews = async (
 
     // Get total count for this user
     const total = await Review.countDocuments({ userId });
+
+    return {
+        reviews: reviews as unknown as IReview[],
+        currentPage: page,
+        totalPages: Math.ceil(total / limit),
+        totalReviews: total,
+        hasNextPage: page * limit < total,
+        hasPrevPage: page > 1,
+    };
+};
+
+/**
+ * Get all reviews for a specific book (by googleBookId) with pagination
+ */
+export const getBookReviews = async (
+    googleBookId: string,
+    pageStr: string = '1',
+    limitStr: string = '10'
+): Promise<PaginatedReviews> => {
+    const page = parseInt(pageStr) || 1;
+    const limit = Math.min(parseInt(limitStr) || 10, 50);
+    const skip = (page - 1) * limit;
+
+    // Get reviews for this book with pagination
+    const reviews = await Review.find({ googleBookId })
+        .populate('userId', 'username email profileImage')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean();
+
+    // Get total count for this book
+    const total = await Review.countDocuments({ googleBookId });
 
     return {
         reviews: reviews as unknown as IReview[],

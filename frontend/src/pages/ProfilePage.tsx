@@ -1,10 +1,5 @@
-import UserProfile from '../components/user/UserProfile';
+import UserProfileEnhanced from '../components/user/UserProfileEnhanced';
 
 export default function ProfilePage() {
-
-    return (
-        <div className="bg-background-light dark:bg-background-dark min-h-screen pb-24">
-            <UserProfile />
-        </div>
-    );
+    return <UserProfileEnhanced />;
 }

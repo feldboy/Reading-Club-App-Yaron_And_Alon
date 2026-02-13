@@ -1,0 +1,27 @@
+{
+    "name": "reading-club-video",
+    "version": "1.0.0",
+    "scripts": {
+        "start": "remotion preview src/index.ts",
+        "render": "remotion render src/index.ts Main"
+    },
+    "dependencies": {
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1",
+        "remotion": "latest",
+        "@remotion/shapes": "latest",
+        "@remotion/media": "latest",
+        "@remotion/transitions": "latest",
+        "@remotion/google-fonts": "latest",
+        "zod": "^3.22.4"
+    },
+    "devDependencies": {
+        "@types/react": "^18.2.0",
+        "@types/web": "^0.0.133",
+        "typescript": "^5.3.0",
+        "@remotion/cli": "latest",
+        "@remotion/eslint-config": "latest",
+        "eslint": "^8.56.0",
+        "prettier": "^3.2.0"
+    }
+}

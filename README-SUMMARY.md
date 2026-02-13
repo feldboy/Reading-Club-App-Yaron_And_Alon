@@ -68,13 +68,17 @@ main → develop → feature branches
 > - ✅ Google OAuth integration (Passport.js + Google Strategy)
 > - ✅ User Profile API (GET, PUT, image upload)
 > - ✅ Google Books API integration (search, details, genre)
-> - ✅ Jest testing - 32 tests passing
+> - ✅ Jest testing - 100+ tests passing
 > - ✅ Swagger documentation - כל ה-endpoints מתועדים
+> - ✅ Frontend Setup & UI Implementation
+> - ✅ Reviews API & Components
+> - ✅ Clubs API & UI (Create/Join/Leave)
+> - ✅ Wishlist Feature (Backend + Frontend)
 > 
 > **צעדים הבאים:**
-> 1. ⬜ Frontend setup (Alon)
-> 2. ⬜ Reviews API (Yaron)
-> 3. ⬜ AI Integration - Gemini (Yaron)
+> 1. ⬜ Social Features Polish (Comments/Likes)
+> 2. ⬜ Advanced AI Integration (Gemini)
+> 3. ⬜ Deployment
 
 ### 7. **נקודות אינטגרציה ברורות**
 

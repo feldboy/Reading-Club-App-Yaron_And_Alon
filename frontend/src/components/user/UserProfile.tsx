@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { getProfile, type UserProfile } from '../../services/user.api';
+import { getProfile, type UserProfile as UserProfileData } from '../../services/user.api';
 import { getUserReviews } from '../../services/review.api';
 import type { Review } from '../../services/review.api';
 import './UserProfile.css';
@@ -20,7 +20,7 @@ interface UserProfileProps {
 const UserProfile = ({ userId, onEditClick }: UserProfileProps) => {
     const { user: currentUser, isAuthenticated } = useAuth();
     const navigate = useNavigate();
-    const [profile, setProfile] = useState<UserProfile | null>(null);
+    const [profile, setProfile] = useState<UserProfileData | null>(null);
     const [reviews, setReviews] = useState<Review[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);

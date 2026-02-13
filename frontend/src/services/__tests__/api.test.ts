@@ -54,7 +54,7 @@ describe('API Interceptors', () => {
 
     it('Request Interceptor: adds bearer token', () => {
         localStorage.setItem('accessToken', 'my-token');
-        const config = { headers: {} };
+        const config = { headers: {} as any };
         requestInterceptor(config);
         expect(config.headers['Authorization']).toBe('Bearer my-token');
     });
@@ -67,7 +67,7 @@ describe('API Interceptors', () => {
     it('Response Interceptor: refreshes token on 401', async () => {
         const originalRequest = {
             _retry: false,
-            headers: {}
+            headers: {} as any
         };
         const error = {
             config: originalRequest,
