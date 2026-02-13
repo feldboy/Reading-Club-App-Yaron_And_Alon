@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "./styles/design-system.css";
+@import "./styles/responsive.css";
 
 @theme {
   --color-primary: #a413ec;

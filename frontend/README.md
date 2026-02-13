@@ -1,73 +1,249 @@
-# React + TypeScript + Vite
+# Reading Club Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend application for Reading Club App - University Final Project
 
-Currently, two official plugins are available:
+## 🚀 Quick Start
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Prerequisites
 
-## React Compiler
+- Node.js (v18+)
+- npm or yarn
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Installation
 
-## Expanding the ESLint configuration
+```bash
+# Install dependencies
+npm install
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Run development server
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+The app will be available at `http://localhost:5173` (or the port shown in terminal)
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Environment Variables
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Create a `.env` file in the `frontend` directory (optional for development):
+
+```env
+VITE_API_URL=http://localhost:3000/api
 ```
+
+**Note:** The default API URL is `http://localhost:3000/api` and is configured in `src/services/api.ts`.
+
+### Available Scripts
+
+- `npm run dev` - Start development server with hot reload
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build locally
+- `npm run lint` - Run ESLint
+
+## 📁 Project Structure
+
+```
+frontend/
+├── src/
+│   ├── components/      # React components
+│   │   ├── ai/          # AI features (search, recommendations)
+│   │   ├── auth/        # Authentication components
+│   │   ├── comment/     # Comment components
+│   │   ├── layout/      # Layout components (Navbar, Footer, BottomNav)
+│   │   ├── review/      # Review components
+│   │   ├── user/        # User profile components
+│   │   └── ui/          # Reusable UI components
+│   ├── context/          # React Context providers
+│   │   └── AuthContext.tsx
+│   ├── hooks/            # Custom React hooks
+│   │   ├── useDebounce.ts
+│   │   ├── useInfiniteScroll.ts
+│   │   └── useToggle.ts
+│   ├── pages/            # Page components
+│   │   ├── HomePage.tsx
+│   │   ├── LoginPage.tsx
+│   │   ├── RegisterPage.tsx
+│   │   ├── ProfilePage.tsx
+│   │   ├── CreateReviewPage.tsx
+│   │   ├── ReviewDetailPage.tsx
+│   │   └── ClubsPage.tsx
+│   ├── services/         # API service functions
+│   │   ├── api.ts        # Axios instance with interceptors
+│   │   ├── auth.api.ts
+│   │   ├── user.api.ts
+│   │   ├── review.api.ts
+│   │   ├── comment.api.ts
+│   │   ├── books.api.ts
+│   │   ├── ai.api.ts
+│   │   └── clubs.api.ts
+│   ├── types/            # TypeScript type definitions
+│   │   └── review.ts
+│   ├── routes.tsx         # React Router configuration
+│   ├── App.tsx            # Main App component
+│   └── main.tsx           # Entry point
+├── public/                # Static assets
+├── package.json
+└── vite.config.ts         # Vite configuration
+```
+
+## 🔌 API Integration
+
+The frontend communicates with the backend API at `http://localhost:3000/api` (configurable via environment variables).
+
+### Authentication
+
+- Tokens are stored in `localStorage`
+- Access token is automatically added to requests via Axios interceptor
+- Token refresh is handled automatically
+
+### API Services
+
+All API calls are organized in service files:
+- `auth.api.ts` - Authentication (login, register, logout, OAuth)
+- `user.api.ts` - User profile management
+- `review.api.ts` - Review CRUD operations
+- `comment.api.ts` - Comment operations
+- `books.api.ts` - Google Books API integration
+- `ai.api.ts` - AI-powered book search and recommendations
+- `clubs.api.ts` - Reading club management
+
+## 🎨 Features
+
+### Implemented Features
+
+- ✅ User authentication (email/password + Google OAuth)
+- ✅ User profile management (edit profile, upload image)
+- ✅ Review creation, editing, and deletion
+- ✅ Review feed with infinite scroll
+- ✅ Like/unlike reviews
+- ✅ Comments on reviews
+- ✅ AI-powered book search
+- ✅ Personalized book recommendations
+- ✅ Reading clubs (view, join, create)
+- ✅ Responsive design
+
+### Key Components
+
+- **AISearchBar** - AI-powered book search with debounced input
+- **BookRecommendations** - Personalized recommendations based on user preferences
+- **ReviewFeed** - Infinite scroll review feed
+- **ReviewCard** - Display individual reviews
+- **CommentList** - Display and manage comments
+- **LikeButton** - Like/unlike functionality
+- **UserProfile** - User profile display
+- **EditProfile** - Profile editing form
+
+## 🛠️ Development
+
+### Adding a New Feature
+
+1. Create service function in appropriate `*.api.ts` file
+2. Create component(s) in `src/components/`
+3. Create page if needed in `src/pages/`
+4. Add route in `src/routes.tsx`
+5. Update types in `src/types/` if needed
+
+### Styling
+
+The app uses Tailwind CSS with custom classes. Key design patterns:
+- Glassmorphism effects (`glass`, `glass-header`, `glass-panel`)
+- Primary color: `#a413ec` (purple)
+- Dark theme by default
+
+## 📱 Responsive Design
+
+The app is fully responsive:
+- **Mobile**: Stacked layout, bottom navigation
+- **Tablet**: Adjusted grid layouts
+- **Desktop**: Full layout with sidebars
+
+## 🔒 Security
+
+- JWT tokens stored in `localStorage`
+- Automatic token refresh before expiration
+- Protected routes require authentication
+- CORS configured on backend
+
+## 🐛 Troubleshooting
+
+### API Connection Issues
+
+- Ensure backend server is running on `http://localhost:3000`
+- Check CORS configuration in backend
+- Verify API URL in `src/services/api.ts`
+
+### Authentication Issues
+
+- Clear `localStorage` and try logging in again
+- Check token expiration
+- Verify backend authentication endpoints
+
+### Build Issues
+
+- Delete `node_modules` and `package-lock.json`
+- Run `npm install` again
+- Check Node.js version (v18+)
+
+## 📚 Dependencies
+
+Key dependencies:
+- `react` - UI library
+- `react-router-dom` - Routing
+- `axios` - HTTP client
+- `vite` - Build tool
+
+See `package.json` for complete list.
+
+## 🚀 Production Build
+
+```bash
+# Build for production
+npm run build
+
+# Build with production mode explicitly
+npm run build:prod
+
+# Preview production build locally
+npm run preview
+
+# Preview production build with production mode
+npm run preview:prod
+```
+
+Build output is in `dist/` directory.
+
+### Environment Variables
+
+For production builds, create a `.env.production` file:
+
+```env
+VITE_API_URL=https://your-backend-domain.com/api
+VITE_ENV=production
+```
+
+See `.env.production.example` for template.
+
+### Deployment
+
+See `DEPLOYMENT.md` for detailed deployment instructions including:
+- Server setup
+- Nginx configuration
+- SSL certificate setup
+- Continuous deployment
+
+## 📝 Notes
+
+- The app uses React Router for client-side routing
+- All API calls are centralized in service files
+- Error handling is done via Axios interceptors
+- Loading states are managed per component
+- The app follows a component-based architecture
+
+## 🤝 Contributing
+
+1. Create a feature branch
+2. Make your changes
+3. Test thoroughly
+4. Create a pull request
+
+## 📄 License
+
+University Final Project

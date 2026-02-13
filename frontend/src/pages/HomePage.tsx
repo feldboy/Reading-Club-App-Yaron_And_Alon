@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import ReviewFeed from '../components/review/ReviewFeed';
 import AISearchBar from '../components/ai/AISearchBar';
 import BookRecommendations from '../components/ai/BookRecommendations';
@@ -13,7 +13,12 @@ export default function HomePage() {
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
                         <div className="size-10 rounded-full bg-gradient-to-tr from-primary to-purple-400 p-[2px]">
-                            <div className="w-full h-full rounded-full bg-center bg-cover border-2 border-background-dark" data-alt="User profile picture with colorful border" style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuAmbnuFqdRi99jKPkeniqvH8Pb26oxui-hjUL3guoCQ-6TM3037TFOLjRopmIFCSPhvwMxDItc3zM5sePWnS-UVXTJqQxZogYU1k6XUW_3lYjVJMPB114uRIW7F_Vc0tb95Wt1fZ9gz-Vn2K1oWGsVh2aRWAKFSi8VGfkuuJ7wl17geG_jJw0DGHcUU9dIGsZl8rMWaQ-oSm5Th94vha2KsrcGJ28oQTlLUHePnOrTBcgc_PLh6n21r9WsjOHuHdgVk849Tmjsebeg")' }}></div>
+                            <div 
+                                className="w-full h-full rounded-full bg-center bg-cover border-2 border-background-dark" 
+                                role="img"
+                                aria-label="User profile picture with colorful border" 
+                                style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuAmbnuFqdRi99jKPkeniqvH8Pb26oxui-hjUL3guoCQ-6TM3037TFOLjRopmIFCSPhvwMxDItc3zM5sePWnS-UVXTJqQxZogYU1k6XUW_3lYjVJMPB114uRIW7F_Vc0tb95Wt1fZ9gz-Vn2K1oWGsVh2aRWAKFSi8VGfkuuJ7wl17geG_jJw0DGHcUU9dIGsZl8rMWaQ-oSm5Th94vha2KsrcGJ28oQTlLUHePnOrTBcgc_PLh6n21r9WsjOHuHdgVk849Tmjsebeg")' }}
+                            ></div>
                         </div>
                         <div>
                             <h1 className="text-xs text-gray-400 font-medium uppercase tracking-widest">Welcome back</h1>
@@ -23,9 +28,10 @@ export default function HomePage() {
                     <div className="flex gap-2">
                         <button
                             onClick={() => alert('No new notifications')}
-                            className="size-10 rounded-full flex items-center justify-center bg-white/5 hover:bg-white/10 transition-colors"
+                            className="size-10 rounded-full flex items-center justify-center bg-white/5 hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background-dark"
+                            aria-label="View notifications"
                         >
-                            <span className="material-symbols-outlined text-white">notifications</span>
+                            <span className="material-symbols-outlined text-white" aria-hidden="true">notifications</span>
                         </button>
                     </div>
                 </div>
@@ -47,32 +53,47 @@ export default function HomePage() {
                 </div>
 
                 {/* Reviews Feed Section */}
-                <div className="px-4 pt-8">
+                <div className="px-4 pt-8 md:px-6 lg:px-8">
                     <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-white text-2xl font-extrabold leading-tight tracking-tight">Recent Reviews</h2>
+                        <h2 className="text-white text-xl md:text-2xl lg:text-3xl font-extrabold leading-tight tracking-tight">Recent Reviews</h2>
                     </div>
                 </div>
                 {/* Carousel with 3D-like covers */}
-                <div className="flex overflow-x-auto no-scrollbar md:px-4">
-                    <div className="flex items-stretch p-4 gap-6 md:grid md:grid-cols-3 md:w-full md:max-w-screen-xl md:mx-auto">
-                        <Link to="/reviews/1" className="flex h-full flex-1 flex-col gap-4 min-w-[200px] group">
-                            <div className="w-full bg-center bg-no-repeat aspect-[3/4.5] bg-cover rounded-lg book-shadow transform -rotate-2 group-hover:rotate-0 transition-transform duration-300" style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuCO6W5qlz7tLks66icc5fkcF7rz9v73VeU-GybzbrEPRb5aeFrcrziXUboEwiZYu6GLcDwEjiB5PN1ZnPxYqI237ZON7953gVIDfbWbUO1UqNXoEluZBu-2vQSxmNwM9BXd41iC7m7CrEJX2T5WTQWm0VmjScicG2SmD2Z3jgbE7qPYtLy2LaBRac-0FZvVHjfKsa8rHWcmkp-b4gEJf9d1sWrtGU9rilR2kXQRh5HtbZc5Ew3x8E6DKxUX0gerNEvRFt1-vOGRVNA")' }}>
+                <div className="flex overflow-x-auto no-scrollbar md:px-6 lg:px-8">
+                    <div className="flex items-stretch p-4 gap-4 md:gap-6 md:grid md:grid-cols-2 lg:grid-cols-3 md:w-full md:max-w-screen-xl md:mx-auto">
+                        <Link to="/reviews/1" className="flex h-full flex-1 flex-col gap-4 min-w-[200px] group focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background-dark rounded-lg">
+                            <div 
+                                className="w-full bg-center bg-no-repeat aspect-[3/4.5] bg-cover rounded-lg book-shadow transform -rotate-2 group-hover:rotate-0 transition-transform duration-300" 
+                                role="img"
+                                aria-label="Book cover: Beyond the Stars by Elena Vance"
+                                style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuCO6W5qlz7tLks66icc5fkcF7rz9v73VeU-GybzbrEPRb5aeFrcrziXUboEwiZYu6GLcDwEjiB5PN1ZnPxYqI237ZON7953gVIDfbWbUO1UqNXoEluZBu-2vQSxmNwM9BXd41iC7m7CrEJX2T5WTQWm0VmjScicG2SmD2Z3jgbE7qPYtLy2LaBRac-0FZvVHjfKsa8rHWcmkp-b4gEJf9d1sWrtGU9rilR2kXQRh5HtbZc5Ew3x8E6DKxUX0gerNEvRFt1-vOGRVNA")' }}
+                            >
                             </div>
                             <div className="mt-2">
                                 <p className="text-white text-lg font-bold leading-tight group-hover:text-primary transition-colors">Beyond the Stars</p>
                                 <p className="text-[#b09db9] text-sm font-medium">Elena Vance</p>
                             </div>
                         </Link>
-                        <Link to="/reviews/2" className="flex h-full flex-1 flex-col gap-4 min-w-[200px] group">
-                            <div className="w-full bg-center bg-no-repeat aspect-[3/4.5] bg-cover rounded-lg book-shadow transform rotate-2 group-hover:rotate-0 transition-transform duration-300" style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuDdTe2FGoMvuUVSK-gy0NOjrX3ZbbTcXrEMSYOWd9rBSrcC1xD40wkHHbPE1gxsVEPWgOW0KbvGKutg4DTQDMXZeTmHob3mzL47XEhiLqckyjeAy6KVfTRCtKk9WJism7do23TTYuQZNVWP73upZlpA_Ne8xLgxq1AktIgQJNMaewAyolwjr1O-mgKa_CJ6dLLPKoKd4-NoZrkETgGxaGeSWxvxLIolCr24i7Ik0KOzDMoAmv9TyATxckq-kX9NZA4s_JUpbEnQzfE")' }}>
+                        <Link to="/reviews/2" className="flex h-full flex-1 flex-col gap-4 min-w-[200px] group focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background-dark rounded-lg">
+                            <div 
+                                className="w-full bg-center bg-no-repeat aspect-[3/4.5] bg-cover rounded-lg book-shadow transform rotate-2 group-hover:rotate-0 transition-transform duration-300" 
+                                role="img"
+                                aria-label="Book cover: Dark Matter by Blake Crouch"
+                                style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuDdTe2FGoMvuUVSK-gy0NOjrX3ZbbTcXrEMSYOWd9rBSrcC1xD40wkHHbPE1gxsVEPWgOW0KbvGKutg4DTQDMXZeTmHob3mzL47XEhiLqckyjeAy6KVfTRCtKk9WJism7do23TTYuQZNVWP73upZlpA_Ne8xLgxq1AktIgQJNMaewAyolwjr1O-mgKa_CJ6dLLPKoKd4-NoZrkETgGxaGeSWxvxLIolCr24i7Ik0KOzDMoAmv9TyATxckq-kX9NZA4s_JUpbEnQzfE")' }}
+                            >
                             </div>
                             <div className="mt-2">
                                 <p className="text-white text-lg font-bold leading-tight group-hover:text-primary transition-colors">Dark Matter</p>
                                 <p className="text-[#b09db9] text-sm font-medium">Blake Crouch</p>
                             </div>
                         </Link>
-                        <Link to="/reviews/3" className="flex h-full flex-1 flex-col gap-4 min-w-[200px] group">
-                            <div className="w-full bg-center bg-no-repeat aspect-[3/4.5] bg-cover rounded-lg book-shadow transform -rotate-1 group-hover:rotate-0 transition-transform duration-300" style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuDrMI4gvpM06Dn7NUyNGBdK9QeyU8CBa_BG7mOm3ej_yKQfUvNRw6GKniJ7zzrhMLx3Aew95FBbkv1nvmxFeZBBuQ4a35BW28K6ThF8Fp7hTiwEhjx5fk-3zHwcj_CJeKCCHGhV_ARD2GLR0VKtAh5QUt_wnpJkxPIh7cBlPHVNsJzAWUBt0ytkIRUFvUMxgda4YpABYp1fAXK7Vmc1RHpTrDdoljJRzG8Qr1JvjV6fjLUNXZBGdqjPwHDB6FQghS-pjB6cd72a6Yc")' }}>
+                        <Link to="/reviews/3" className="flex h-full flex-1 flex-col gap-4 min-w-[200px] group focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background-dark rounded-lg">
+                            <div 
+                                className="w-full bg-center bg-no-repeat aspect-[3/4.5] bg-cover rounded-lg book-shadow transform -rotate-1 group-hover:rotate-0 transition-transform duration-300" 
+                                role="img"
+                                aria-label="Book cover: The Fourth Wing by Rebecca Yarros"
+                                style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuDrMI4gvpM06Dn7NUyNGBdK9QeyU8CBa_BG7mOm3ej_yKQfUvNRw6GKniJ7zzrhMLx3Aew95FBbkv1nvmxFeZBBuQ4a35BW28K6ThF8Fp7hTiwEhjx5fk-3zHwcj_CJeKCCHGhV_ARD2GLR0VKtAh5QUt_wnpJkxPIh7cBlPHVNsJzAWUBt0ytkIRUFvUMxgda4YpABYp1fAXK7Vmc1RHpTrDdoljJRzG8Qr1JvjV6fjLUNXZBGdqjPwHDB6FQghS-pjB6cd72a6Yc")' }}
+                            >
                             </div>
                             <div className="mt-2">
                                 <p className="text-white text-lg font-bold leading-tight group-hover:text-primary transition-colors">The Fourth Wing</p>
@@ -102,7 +123,7 @@ export default function HomePage() {
                     </div>
                 </div>
                 {/* Reviews Feed */}
-                <div className="px-4 pt-2 max-w-screen-xl mx-auto">
+                <div className="px-4 md:px-6 lg:px-8 pt-2 max-w-screen-xl mx-auto">
                     <ReviewFeed />
                 </div>
             </main>

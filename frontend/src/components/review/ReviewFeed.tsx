@@ -3,6 +3,8 @@ import { useAuth } from '../../context/AuthContext';
 import { getAllReviews, type Review } from '../../services/review.api';
 import ReviewCard from './ReviewCard';
 import { useInfiniteScrollSimple } from '../../hooks/useInfiniteScroll';
+import { ReviewCardSkeleton, LoadingSpinner } from '../ui';
+import { ErrorState } from '../ui';
 import './ReviewFeed.css';
 
 /**
@@ -98,21 +100,20 @@ const ReviewFeed = () => {
 
     if (loading) {
         return (
-            <div className="review-feed-loading">
-                <div className="spinner"></div>
-                <p>Loading reviews...</p>
+            <div className="review-feed-loading space-y-4">
+                {[...Array(3)].map((_, i) => (
+                    <ReviewCardSkeleton key={i} />
+                ))}
             </div>
         );
     }
 
     if (error) {
         return (
-            <div className="review-feed-error">
-                <p>{error}</p>
-                <button onClick={() => loadReviews(1, false)} className="btn-primary">
-                    Retry
-                </button>
-            </div>
+            <ErrorState
+                message={error}
+                onRetry={() => loadReviews(1, false)}
+            />
         );
     }
 
@@ -142,9 +143,8 @@ const ReviewFeed = () => {
             </div>
 
             {loadingMore && (
-                <div className="review-feed-loading-more">
-                    <div className="spinner-small"></div>
-                    <p>Loading more reviews...</p>
+                <div className="review-feed-loading-more flex flex-col items-center justify-center py-8">
+                    <LoadingSpinner size="md" text="Loading more reviews..." />
                 </div>
             )}
 

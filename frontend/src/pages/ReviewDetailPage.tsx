@@ -261,10 +261,10 @@ export default function ReviewDetailPage() {
                                 navigator.clipboard.writeText(window.location.href);
                                 alert('Link copied to clipboard!');
                             }}
-                            className="p-3 glass rounded-xl text-white hover:bg-white/10 active:scale-95 transition-all"
-                            title="Share review"
+                            className="p-3 glass rounded-xl text-white hover:bg-white/10 active:scale-95 transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background-dark"
+                            aria-label="Share review"
                         >
-                            <span className="material-symbols-outlined">ios_share</span>
+                            <span className="material-symbols-outlined" aria-hidden="true">ios_share</span>
                         </button>
                     </div>
                 </div>

@@ -2,10 +2,23 @@ import axios, { AxiosError } from 'axios';
 import type { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 
 /**
+ * Get API base URL from environment variable or use default
+ */
+const getApiBaseURL = (): string => {
+    // Vite uses import.meta.env for environment variables
+    const apiUrl = import.meta.env.VITE_API_URL;
+    if (apiUrl) {
+        return apiUrl;
+    }
+    // Default to localhost for development
+    return import.meta.env.DEV ? 'http://localhost:3000/api' : '/api';
+};
+
+/**
  * Axios instance with base configuration
  */
 const api: AxiosInstance = axios.create({
-    baseURL: 'http://localhost:3000/api',
+    baseURL: getApiBaseURL(),
     headers: {
         'Content-Type': 'application/json',
     },
@@ -49,7 +62,8 @@ api.interceptors.response.use(
                 const refreshToken = localStorage.getItem('refreshToken');
                 if (refreshToken) {
                     // Try to refresh the token
-                    const response = await axios.post('http://localhost:3000/api/auth/refresh', {
+                    const refreshUrl = `${getApiBaseURL()}/auth/refresh`;
+                    const response = await axios.post(refreshUrl, {
                         refreshToken,
                     });
 

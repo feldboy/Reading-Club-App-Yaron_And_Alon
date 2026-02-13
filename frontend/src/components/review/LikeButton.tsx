@@ -67,12 +67,13 @@ const LikeButton = ({
 
     return (
         <button
-            className={`like-button ${liked ? 'liked' : ''} ${isLoading ? 'loading' : ''}`}
+            className={`like-button ${liked ? 'liked' : ''} ${isLoading ? 'loading' : ''} focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background-dark`}
             onClick={handleToggle}
             disabled={isLoading || !isAuthenticated}
-            title={isAuthenticated ? (liked ? 'Unlike' : 'Like') : 'Login to like'}
+            aria-label={isAuthenticated ? (liked ? `Unlike this review (${likesCount} likes)` : `Like this review (${likesCount} likes)`) : 'Login to like reviews'}
+            aria-pressed={liked}
         >
-            <span className="like-icon">{liked ? '❤️' : '🤍'}</span>
+            <span className="like-icon" aria-hidden="true">{liked ? '❤️' : '🤍'}</span>
             <span className="like-count">{likesCount}</span>
         </button>
     );
