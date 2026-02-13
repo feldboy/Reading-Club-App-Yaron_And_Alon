@@ -78,6 +78,19 @@ export interface Book {
 }
 
 /**
+ * Transform Google Books image URL to high resolution
+ */
+const getHighResImage = (url?: string): string | undefined => {
+    if (!url) return undefined;
+    let highResUrl = url.replace('http:', 'https:');
+    highResUrl = highResUrl.replace('&zoom=1', '');
+    if (!highResUrl.includes('&fife=')) {
+        highResUrl += '&fife=w800';
+    }
+    return highResUrl;
+};
+
+/**
  * Search for books
  */
 export const searchBooks = async (
@@ -126,7 +139,11 @@ export const searchBooks = async (
                 description: item.volumeInfo?.description,
                 pageCount: item.volumeInfo?.pageCount,
                 categories: item.volumeInfo?.categories,
-                imageLinks: item.volumeInfo?.imageLinks,
+                imageLinks: item.volumeInfo?.imageLinks ? {
+                    ...item.volumeInfo.imageLinks,
+                    thumbnail: getHighResImage(item.volumeInfo.imageLinks.thumbnail),
+                    smallThumbnail: getHighResImage(item.volumeInfo.imageLinks.smallThumbnail)
+                } : undefined,
                 language: item.volumeInfo?.language,
                 averageRating: item.volumeInfo?.averageRating,
                 ratingsCount: item.volumeInfo?.ratingsCount,
@@ -182,7 +199,11 @@ export const getBookDetails = async (bookId: string): Promise<Book> => {
             description: item.volumeInfo?.description,
             pageCount: item.volumeInfo?.pageCount,
             categories: item.volumeInfo?.categories,
-            imageLinks: item.volumeInfo?.imageLinks,
+            imageLinks: item.volumeInfo?.imageLinks ? {
+                ...item.volumeInfo.imageLinks,
+                thumbnail: getHighResImage(item.volumeInfo.imageLinks.thumbnail),
+                smallThumbnail: getHighResImage(item.volumeInfo.imageLinks.smallThumbnail)
+            } : undefined,
             language: item.volumeInfo?.language,
             averageRating: item.volumeInfo?.averageRating,
             ratingsCount: item.volumeInfo?.ratingsCount,

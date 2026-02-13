@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Badge } from '../ui';
+import { getHighResBookCover } from '../../utils/imageUtils';
 import WishlistButton from '../ui/WishlistButton';
 
 interface BookCardProps {
@@ -39,7 +40,7 @@ export default function BookCard({
                         <div className="w-48 h-72 sm:w-64 sm:h-96 rounded-2xl overflow-hidden shadow-2xl group-hover:scale-105 transition-transform duration-500">
                             {book.cover ? (
                                 <img
-                                    src={book.cover}
+                                    src={getHighResBookCover(book.cover)}
                                     alt={`${book.title} cover`}
                                     className="w-full h-full object-cover"
                                 />
@@ -55,7 +56,7 @@ export default function BookCard({
                                     bookId={book.id}
                                     title={book.title}
                                     authors={[book.author]}
-                                    cover={book.cover || ''}
+                                    cover={getHighResBookCover(book.cover || '')}
                                     isInWishlist={isInWishlist}
                                     onToggle={(state) => onWishlistToggle(book.id, state)}
                                     className="bg-white/20 backdrop-blur-md hover:bg-white/30"
@@ -96,10 +97,10 @@ export default function BookCard({
                             )}
                         </div>
                         <Link
-                            to={`/reviews/${book.id}`}
+                            to={`/books/${book.id}`}
                             className="self-start px-8 py-4 bg-white text-[#7C3AED] hover:bg-white/90 rounded-2xl font-bold text-lg transition-all duration-300 cursor-pointer hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/50"
                         >
-                            Read Reviews
+                            View Details
                         </Link>
                     </div>
                 </div>
@@ -117,14 +118,14 @@ export default function BookCard({
     if (variant === 'list') {
         return (
             <Link
-                to={`/reviews/${book.id}`}
+                to={`/books/${book.id}`}
                 className="group flex gap-4 p-4 bg-white dark:bg-white/5 rounded-2xl border-2 border-transparent hover:border-[#7C3AED]/30 dark:hover:border-white/20 shadow-md hover:shadow-xl transition-all duration-300 animate-fade-in cursor-pointer"
             >
                 {/* Book Cover */}
                 <div className="relative flex-shrink-0 w-24 h-36 rounded-xl overflow-hidden shadow-md">
                     {book.cover ? (
                         <img
-                            src={book.cover}
+                            src={getHighResBookCover(book.cover)}
                             alt={`${book.title} cover`}
                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                         />
@@ -141,7 +142,7 @@ export default function BookCard({
                                 bookId={book.id}
                                 title={book.title}
                                 authors={[book.author]}
-                                cover={book.cover || ''}
+                                cover={getHighResBookCover(book.cover || '')}
                                 isInWishlist={isInWishlist}
                                 onToggle={(state) => onWishlistToggle(book.id, state)}
                                 className="bg-black/40 backdrop-blur-sm shadow-sm scale-75"
@@ -194,7 +195,7 @@ export default function BookCard({
     return (
         <div className="group relative animate-fade-in">
             <Link
-                to={`/reviews/${book.id}`}
+                to={`/books/${book.id}`}
                 className="block h-full"
             >
                 <div className="h-full flex flex-col bg-white dark:bg-white/5 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl border-2 border-transparent hover:border-[#7C3AED]/20 dark:hover:border-white/10 transition-all duration-300 cursor-pointer">
@@ -203,7 +204,7 @@ export default function BookCard({
                         <div className="aspect-[3/4.5] overflow-hidden">
                             {book.cover ? (
                                 <img
-                                    src={book.cover}
+                                    src={getHighResBookCover(book.cover)}
                                     alt={`${book.title} cover`}
                                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                                 />
@@ -262,7 +263,7 @@ export default function BookCard({
                         bookId={book.id}
                         title={book.title}
                         authors={[book.author]}
-                        cover={book.cover || ''}
+                        cover={getHighResBookCover(book.cover || '')}
                         isInWishlist={isInWishlist}
                         onToggle={(state) => onWishlistToggle(book.id, state)}
                         className="bg-black/40 backdrop-blur-sm shadow-sm"

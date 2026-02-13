@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { getBookById, type Book } from '../services/books.api';
 import { getBookReviews } from '../services/review.api';
 import type { Review } from '../services/review.api';

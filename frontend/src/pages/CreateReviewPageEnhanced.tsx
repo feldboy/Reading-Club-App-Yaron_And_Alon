@@ -4,13 +4,6 @@ import { useDebounce } from '../hooks';
 import { searchBooks, type Book } from '../services/books.api';
 import { createReview } from '../services/review.api';
 import type { AIBook } from '../services/ai.api';
-import { Badge } from '../components/ui';
-
-const DEFAULT_BOOK: Partial<Book> = {
-    title: 'Project Hail Mary',
-    author: 'Andy Weir',
-    cover: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDaYrSzk_7tIIqD8SqfK5WkgG_Dzt9xoXE6fFXjDu08sLDRSO4RkJ3AFNtcOwTeeTJOXuUJfGYiYowasYO9zpd0oBr8Vd1PVHA6PNsewDLo0okVWVajQ20qFovRMCnNce2i6K3mm6hRZozQHOrFuyNEZt50eVCpgfrL37U_yTp_pqnpCsWGAvvU76_tmzGKeqeiyWBAtSbhb78oU1v8YBnI2kiSwgFVONTjsSgUlEn_E9obkXxAnwFcQLJstWkULkCP4tzWjfoa5jI'
-};
 
 const REVIEW_TAGS = ['Must Read', 'Page Turner', 'Thought Provoking', 'Character Driven', 'Plot Twist', 'Emotional', 'Funny', 'Dark', 'Inspiring', 'Nostalgic'];
 
@@ -22,7 +15,7 @@ export default function CreateReviewPageEnhanced() {
     const location = useLocation();
 
     // Multi-step flow
-    const [currentStep, setCurrentStep] = useState<'book' | 'rating' | 'review' | 'details'>(step' | 'rating' | 'review' | 'details'>('book');
+    const [currentStep, setCurrentStep] = useState<'book' | 'rating' | 'review' | 'details'>('book');
 
     // Form state
     const [rating, setRating] = useState(0);
@@ -218,18 +211,16 @@ export default function CreateReviewPageEnhanced() {
                         {steps.map((step, index) => (
                             <div
                                 key={step.id}
-                                className={`flex flex-col items-center gap-2 transition-all duration-300 ${
-                                    index <= currentStepIndex ? 'opacity-100' : 'opacity-40'
-                                }`}
+                                className={`flex flex-col items-center gap-2 transition-all duration-300 ${index <= currentStepIndex ? 'opacity-100' : 'opacity-40'
+                                    }`}
                             >
                                 <div
-                                    className={`size-10 rounded-full flex items-center justify-center transition-all duration-300 ${
-                                        index < currentStepIndex
-                                            ? 'bg-[#22C55E] text-white'
-                                            : index === currentStepIndex
+                                    className={`size-10 rounded-full flex items-center justify-center transition-all duration-300 ${index < currentStepIndex
+                                        ? 'bg-[#22C55E] text-white'
+                                        : index === currentStepIndex
                                             ? 'bg-[#7C3AED] text-white scale-110'
                                             : 'bg-[#7C3AED]/10 dark:bg-white/10 text-[#7C3AED] dark:text-white/60'
-                                    }`}
+                                        }`}
                                 >
                                     <span className="material-symbols-outlined text-lg">
                                         {index < currentStepIndex ? 'check' : step.icon}
@@ -371,11 +362,10 @@ export default function CreateReviewPageEnhanced() {
                                         className="group transition-transform hover:scale-125 active:scale-110 cursor-pointer focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#7C3AED]/30 rounded-full"
                                     >
                                         <span
-                                            className={`material-symbols-outlined transition-all duration-300 ${
-                                                star <= rating
-                                                    ? 'text-[#7C3AED] scale-125'
-                                                    : 'text-[#7C3AED]/20 dark:text-white/20'
-                                            }`}
+                                            className={`material-symbols-outlined transition-all duration-300 ${star <= rating
+                                                ? 'text-[#7C3AED] scale-125'
+                                                : 'text-[#7C3AED]/20 dark:text-white/20'
+                                                }`}
                                             style={{
                                                 fontSize: '4rem',
                                                 fontVariationSettings: star <= rating ? "'FILL' 1" : "'FILL' 0",
@@ -431,11 +421,10 @@ export default function CreateReviewPageEnhanced() {
                             />
                             <div className="absolute bottom-4 right-4 flex items-center gap-3">
                                 <span
-                                    className={`text-sm font-medium ${
-                                        reviewText.length < MIN_REVIEW_LENGTH
-                                            ? 'text-[#7C3AED]/60 dark:text-white/60'
-                                            : 'text-[#22C55E]'
-                                    }`}
+                                    className={`text-sm font-medium ${reviewText.length < MIN_REVIEW_LENGTH
+                                        ? 'text-[#7C3AED]/60 dark:text-white/60'
+                                        : 'text-[#22C55E]'
+                                        }`}
                                 >
                                     {reviewText.length} / {MAX_REVIEW_LENGTH}
                                 </span>
@@ -477,11 +466,10 @@ export default function CreateReviewPageEnhanced() {
                                     <button
                                         key={tag}
                                         onClick={() => handleTagToggle(tag)}
-                                        className={`px-4 py-2 rounded-xl font-medium text-sm transition-all duration-300 cursor-pointer ${
-                                            selectedTags.includes(tag)
-                                                ? 'bg-[#7C3AED] text-white shadow-lg scale-105'
-                                                : 'bg-[#7C3AED]/10 dark:bg-white/5 text-[#7C3AED] dark:text-white hover:bg-[#7C3AED]/20 dark:hover:bg-white/10'
-                                        }`}
+                                        className={`px-4 py-2 rounded-xl font-medium text-sm transition-all duration-300 cursor-pointer ${selectedTags.includes(tag)
+                                            ? 'bg-[#7C3AED] text-white shadow-lg scale-105'
+                                            : 'bg-[#7C3AED]/10 dark:bg-white/5 text-[#7C3AED] dark:text-white hover:bg-[#7C3AED]/20 dark:hover:bg-white/10'
+                                            }`}
                                     >
                                         {tag}
                                     </button>
@@ -497,11 +485,10 @@ export default function CreateReviewPageEnhanced() {
                             >
                                 <div className="flex items-center gap-4">
                                     <div
-                                        className={`size-12 rounded-xl flex items-center justify-center transition-colors ${
-                                            isPublic
-                                                ? 'bg-[#7C3AED]/20 text-[#7C3AED]'
-                                                : 'bg-[#7C3AED]/10 dark:bg-white/10 text-[#7C3AED] dark:text-white/60'
-                                        }`}
+                                        className={`size-12 rounded-xl flex items-center justify-center transition-colors ${isPublic
+                                            ? 'bg-[#7C3AED]/20 text-[#7C3AED]'
+                                            : 'bg-[#7C3AED]/10 dark:bg-white/10 text-[#7C3AED] dark:text-white/60'
+                                            }`}
                                     >
                                         <span className="material-symbols-outlined text-2xl">
                                             {isPublic ? 'public' : 'lock'}
@@ -517,14 +504,12 @@ export default function CreateReviewPageEnhanced() {
                                     </div>
                                 </div>
                                 <div
-                                    className={`w-14 h-8 rounded-full relative transition-colors ${
-                                        isPublic ? 'bg-[#7C3AED]' : 'bg-[#7C3AED]/20 dark:bg-white/20'
-                                    }`}
+                                    className={`w-14 h-8 rounded-full relative transition-colors ${isPublic ? 'bg-[#7C3AED]' : 'bg-[#7C3AED]/20 dark:bg-white/20'
+                                        }`}
                                 >
                                     <div
-                                        className={`size-6 bg-white rounded-full absolute top-1 shadow-md transition-all ${
-                                            isPublic ? 'right-1' : 'left-1'
-                                        }`}
+                                        className={`size-6 bg-white rounded-full absolute top-1 shadow-md transition-all ${isPublic ? 'right-1' : 'left-1'
+                                            }`}
                                     />
                                 </div>
                             </button>
@@ -563,11 +548,10 @@ export default function CreateReviewPageEnhanced() {
                     <button
                         onClick={goToNextStep}
                         disabled={!canProceed() || isSubmitting}
-                        className={`flex-1 px-6 py-4 rounded-2xl font-bold text-lg transition-all duration-300 cursor-pointer hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] flex items-center justify-center gap-2 ${
-                            currentStepIndex === steps.length - 1
-                                ? 'bg-[#22C55E] hover:bg-[#22C55E]/90 text-white shadow-lg shadow-[#22C55E]/30'
-                                : 'bg-[#7C3AED] hover:bg-[#6D31D4] text-white shadow-lg shadow-[#7C3AED]/30'
-                        }`}
+                        className={`flex-1 px-6 py-4 rounded-2xl font-bold text-lg transition-all duration-300 cursor-pointer hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] flex items-center justify-center gap-2 ${currentStepIndex === steps.length - 1
+                            ? 'bg-[#22C55E] hover:bg-[#22C55E]/90 text-white shadow-lg shadow-[#22C55E]/30'
+                            : 'bg-[#7C3AED] hover:bg-[#6D31D4] text-white shadow-lg shadow-[#7C3AED]/30'
+                            }`}
                     >
                         {isSubmitting ? (
                             <>
