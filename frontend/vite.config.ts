@@ -24,4 +24,25 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    outDir: 'dist',
+    sourcemap: false,
+    minify: 'esbuild',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'axios-vendor': ['axios'],
+        },
+      },
+    },
+  },
+  server: {
+    port: 5173,
+    host: true,
+  },
+  preview: {
+    port: 4173,
+    host: true,
+  },
 })

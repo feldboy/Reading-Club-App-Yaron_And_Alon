@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "./styles/design-system.css";
+@import "./styles/responsive.css";
 
 @theme {
   /* ===== Reading Club App Design System ===== */

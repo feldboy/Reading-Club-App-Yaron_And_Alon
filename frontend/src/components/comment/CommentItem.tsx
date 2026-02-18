@@ -73,7 +73,11 @@ const CommentItem = ({ comment, onDelete }: CommentItemProps) => {
                 </div>
                 <p className="comment-text">{comment.text}</p>
                 {isOwnComment && (
-                    <button className="comment-delete-btn" onClick={handleDelete}>
+                    <button 
+                        className="comment-delete-btn focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-background-dark rounded" 
+                        onClick={handleDelete}
+                        aria-label={`Delete comment by ${comment.user.username}`}
+                    >
                         Delete
                     </button>
                 )}

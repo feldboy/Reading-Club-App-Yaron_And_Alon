@@ -138,13 +138,15 @@ export default function CreateReviewPage() {
     return (
         <div className="bg-gradient-to-br from-[#1a0f2e] via-[#2d1b4e] to-[#1a0f2e] text-white min-h-screen pb-24">
             {/* Header Section with Dynamic Blurred Background */}
-            <div className="relative w-full min-h-[45vh] md:min-h-[35vh] overflow-visible flex flex-col">
-                {/* Blurred Background Image */}
-                <div
-                    className="absolute inset-0 bg-cover bg-center scale-110 blur-3xl opacity-30 transition-all duration-700"
-                    style={{ backgroundImage: selectedBook?.cover ? `url('${selectedBook.cover}')` : 'none' }}
-                >
-                </div>
+            <div className="relative w-full h-[40vh] md:h-[30vh] overflow-hidden">
+                    {/* Blurred Background Image */}
+                    <div
+                        className="absolute inset-0 bg-cover bg-center scale-110 blur-2xl opacity-40 transition-all duration-700"
+                        role="img"
+                        aria-label={`Background image: ${selectedBook.title || 'Book'} cover`}
+                        style={{ backgroundImage: `url('${selectedBook.cover || DEFAULT_BOOK.cover}')` }}
+                    >
+                    </div>
 
                 {/* Top Navigation - Centered */}
                 <div className="relative z-10 w-full px-4 md:px-6 pt-12">
@@ -297,14 +299,15 @@ export default function CreateReviewPage() {
                         <label className="font-ui text-white/70 text-xs font-semibold uppercase tracking-[0.15em]">Rating</label>
                         <div className="flex gap-3" role="group" aria-label="Rating selection">
                             {[1, 2, 3, 4, 5].map((star) => (
-                                <button
-                                    key={star}
+                                <button 
+                                    key={star} 
                                     onClick={() => setRating(star)}
-                                    aria-label={`Rate ${star} stars`}
-                                    className="transition-transform duration-200 hover:scale-110 active:scale-95"
+                                    aria-label={`Rate ${star} star${star > 1 ? 's' : ''}`}
+                                    className="focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background-dark rounded-full"
                                 >
                                     <span
-                                        className={`material-symbols-outlined text-5xl cursor-pointer transition-all duration-200 ${star <= rating ? 'star-active' : 'text-white/20 hover:text-white/40'}`}
+                                        className={`material-symbols-outlined text-4xl cursor-pointer ${star <= rating ? 'star-active' : 'text-white/20'}`}
+                                        aria-hidden="true"
                                     >
                                         star
                                     </span>

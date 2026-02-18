@@ -1,446 +1,249 @@
-# 📚 Reading Club App - Frontend
+# Reading Club Frontend
 
-A modern, feature-rich book review and social reading platform built with React, TypeScript, and Vite.
+Frontend application for Reading Club App - University Final Project
 
-## 🚀 Features
+## 🚀 Quick Start
 
-### Core Features
-- **User Authentication**: Register/Login with email or Google OAuth
-- **Book Discovery**: Search and browse books using Google Books API
-- **AI-Powered Search**: Intelligent book search using Gemini AI
-- **Reviews & Ratings**: Create, read, and interact with book reviews
-- **Social Features**: Like, comment, and engage with other readers
-- **Reading Clubs**: Join or create book clubs with other readers
-- **Wishlist**: Save books you want to read
-- **User Profiles**: Customize your profile with bio and favorite genres
+### Prerequisites
 
-### Technical Features
-- **Responsive Design**: Optimized for mobile, tablet, and desktop
-- **Dark Theme**: Beautiful purple-themed dark UI
-- **Loading States**: Skeleton loaders for better UX
-- **Error Handling**: Comprehensive error states and user feedback
-- **Accessibility**: WCAG AA compliant with ARIA labels and keyboard navigation
-- **Protected Routes**: Authentication-based route protection
-- **Infinite Scroll**: Smooth pagination for reviews feed
-- **Image Uploads**: Profile picture and review image uploads
-- **Real-time Updates**: Optimistic UI updates
+- Node.js (v18+)
+- npm or yarn
 
-## 📦 Tech Stack
-
-- **Framework**: React 18 with TypeScript
-- **Build Tool**: Vite
-- **Styling**: Tailwind CSS v4 (with custom design system)
-- **Routing**: React Router v6
-- **HTTP Client**: Axios
-- **State Management**: React Context API
-- **Fonts**: Space Grotesk, DM Sans, Cormorant Garamond, Libre Baskerville
-- **Icons**: Material Symbols (Google Icons)
-- **Testing**: Vitest + React Testing Library
-
-## 🎨 Design System
-
-The app features a comprehensive design system with:
-
-- **Color Palette**: Vibrant literary purple theme
-  - Primary: `#7C3AED` (Purple)
-  - Secondary: `#A78BFA` (Light Purple)
-  - Accent: `#22C55E` (Success Green)
-  - Background Dark: `#1c1022` (Deep Purple-Black)
-
-- **Typography**:
-  - Display/Headings: Space Grotesk
-  - Body/UI: DM Sans
-  - Editorial: Cormorant Garamond
-  - Reading Content: Libre Baskerville
-
-- **Components**:
-  - Cards (Glass morphism)
-  - Buttons (Primary, Secondary, Ghost)
-  - Inputs with validation
-  - Skeleton loaders
-  - Badges & Chips
-  - Avatars & Avatar Groups
-  - Empty & Error states
-
-See [DESIGN-SYSTEM-IMPLEMENTATION.md](../DESIGN-SYSTEM-IMPLEMENTATION.md) for full documentation.
-
-## 📋 Prerequisites
-
-Before you begin, ensure you have the following installed:
-
-- **Node.js**: v18.0.0 or higher
-- **npm**: v9.0.0 or higher (comes with Node.js)
-- **Git**: For version control
-
-## 🛠️ Installation
-
-### 1. Clone the repository
+### Installation
 
 ```bash
-git clone <repository-url>
-cd "Reading Club App Yaron_And_Alon"
-cd frontend
-```
-
-### 2. Install dependencies
-
-```bash
+# Install dependencies
 npm install
-```
 
-### 3. Environment Setup
-
-The app requires a backend API to function. Make sure the backend is running on `http://localhost:3000`.
-
-If your backend runs on a different port, update the Vite proxy configuration in `vite.config.ts`:
-
-```typescript
-server: {
-  proxy: {
-    '/api': {
-      target: 'http://localhost:YOUR_PORT',
-      changeOrigin: true,
-      secure: false,
-    },
-  },
-},
-```
-
-### 4. Font Setup
-
-The app uses Google Fonts. Ensure you have an internet connection for fonts to load, or download and host them locally.
-
-## 🚀 Running the App
-
-### Development Mode
-
-Start the development server with hot module replacement:
-
-```bash
+# Run development server
 npm run dev
 ```
 
-The app will be available at `http://localhost:5173` (or another port if 5173 is occupied).
+The app will be available at `http://localhost:5173` (or the port shown in terminal)
 
-### Production Build
+### Environment Variables
 
-Build the app for production:
+Create a `.env` file in the `frontend` directory (optional for development):
 
-```bash
-npm run build
+```env
+VITE_API_URL=http://localhost:3000/api
 ```
 
-Preview the production build locally:
+**Note:** The default API URL is `http://localhost:3000/api` and is configured in `src/services/api.ts`.
 
-```bash
-npm run preview
-```
+### Available Scripts
 
-### Linting
-
-Run ESLint to check code quality:
-
-```bash
-npm run lint
-```
-
-### Testing
-
-Run the test suite:
-
-```bash
-npm run test
-```
-
-Run tests in watch mode:
-
-```bash
-npm run test:watch
-```
-
-Generate coverage report:
-
-```bash
-npm run test:coverage
-```
+- `npm run dev` - Start development server with hot reload
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build locally
+- `npm run lint` - Run ESLint
 
 ## 📁 Project Structure
 
 ```
 frontend/
-├── public/                 # Static assets
 ├── src/
-│   ├── components/         # React components
-│   │   ├── ai/            # AI search components
-│   │   ├── auth/          # Authentication components
-│   │   ├── cards/         # Card components (Book, Club)
-│   │   ├── comment/       # Comment components
-│   │   ├── layout/        # Layout components (Navbar, Footer)
-│   │   ├── review/        # Review components
-│   │   ├── ui/            # Reusable UI components
-│   │   └── user/          # User profile components
-│   ├── context/           # React Context providers
+│   ├── components/      # React components
+│   │   ├── ai/          # AI features (search, recommendations)
+│   │   ├── auth/        # Authentication components
+│   │   ├── comment/     # Comment components
+│   │   ├── layout/      # Layout components (Navbar, Footer, BottomNav)
+│   │   ├── review/      # Review components
+│   │   ├── user/        # User profile components
+│   │   └── ui/          # Reusable UI components
+│   ├── context/          # React Context providers
 │   │   └── AuthContext.tsx
-│   ├── hooks/             # Custom React hooks
+│   ├── hooks/            # Custom React hooks
 │   │   ├── useDebounce.ts
 │   │   ├── useInfiniteScroll.ts
 │   │   └── useToggle.ts
-│   ├── pages/             # Page components
+│   ├── pages/            # Page components
 │   │   ├── HomePage.tsx
 │   │   ├── LoginPage.tsx
 │   │   ├── RegisterPage.tsx
 │   │   ├── ProfilePage.tsx
-│   │   ├── DiscoverPage.tsx
-│   │   ├── ClubsPage.tsx
-│   │   ├── WishlistPage.tsx
 │   │   ├── CreateReviewPage.tsx
-│   │   └── ReviewDetailPage.tsx
-│   ├── services/          # API service modules
-│   │   ├── api.ts         # Axios instance configuration
-│   │   ├── auth.api.ts    # Authentication API
-│   │   ├── user.api.ts    # User API
-│   │   ├── books.api.ts   # Google Books API
-│   │   ├── review.api.ts  # Reviews API
-│   │   ├── clubs.api.ts   # Clubs API
-│   │   ├── comment.api.ts # Comments API
-│   │   └── ai.api.ts      # AI search API
-│   ├── types/             # TypeScript type definitions
-│   ├── utils/             # Utility functions
-│   ├── App.tsx            # Root component
-│   ├── main.tsx           # Entry point
-│   ├── routes.tsx         # Route definitions
-│   └── index.css          # Global styles & design system
+│   │   ├── ReviewDetailPage.tsx
+│   │   └── ClubsPage.tsx
+│   ├── services/         # API service functions
+│   │   ├── api.ts        # Axios instance with interceptors
+│   │   ├── auth.api.ts
+│   │   ├── user.api.ts
+│   │   ├── review.api.ts
+│   │   ├── comment.api.ts
+│   │   ├── books.api.ts
+│   │   ├── ai.api.ts
+│   │   └── clubs.api.ts
+│   ├── types/            # TypeScript type definitions
+│   │   └── review.ts
+│   ├── routes.tsx         # React Router configuration
+│   ├── App.tsx            # Main App component
+│   └── main.tsx           # Entry point
+├── public/                # Static assets
 ├── package.json
-├── tsconfig.json
-├── vite.config.ts
-└── README.md
+└── vite.config.ts         # Vite configuration
 ```
 
-## 🔑 Key Components
+## 🔌 API Integration
+
+The frontend communicates with the backend API at `http://localhost:3000/api` (configurable via environment variables).
 
 ### Authentication
-- **LoginPage**: Email/password and Google OAuth login
-- **RegisterPage**: New user registration
-- **AuthContext**: Global authentication state management
 
-### Discovery
-- **DiscoverPage**: Browse and search books by category
-- **AISearchBar**: AI-powered natural language book search
-- **BookRecommendations**: Personalized AI book recommendations
+- Tokens are stored in `localStorage`
+- Access token is automatically added to requests via Axios interceptor
+- Token refresh is handled automatically
 
-### Reviews
-- **HomePage**: Main feed with infinite scroll
-- **ReviewCard**: Individual review display
-- **CreateReviewPage**: Multi-step review creation form
-- **ReviewDetailPage**: Full review with comments
+### API Services
 
-### Social
-- **LikeButton**: Like/unlike reviews
-- **CommentList**: Display comments on reviews
-- **CommentForm**: Add new comments
+All API calls are organized in service files:
+- `auth.api.ts` - Authentication (login, register, logout, OAuth)
+- `user.api.ts` - User profile management
+- `review.api.ts` - Review CRUD operations
+- `comment.api.ts` - Comment operations
+- `books.api.ts` - Google Books API integration
+- `ai.api.ts` - AI-powered book search and recommendations
+- `clubs.api.ts` - Reading club management
 
-### Clubs
-- **ClubsPage**: Browse and join reading clubs
-- **Create Club Modal**: Create new clubs
+## 🎨 Features
 
-### UI Components
-All UI components are exported from `components/ui/index.ts`:
-- `Card`, `Button`, `Input`, `TextArea`
-- `Badge`, `Chip`, `Avatar`, `AvatarGroup`
-- `Skeleton`, `EmptyState`, `ErrorState`
-- `LoadingSpinner`, `PageLoader`
+### Implemented Features
 
-## 🔒 Authentication Flow
+- ✅ User authentication (email/password + Google OAuth)
+- ✅ User profile management (edit profile, upload image)
+- ✅ Review creation, editing, and deletion
+- ✅ Review feed with infinite scroll
+- ✅ Like/unlike reviews
+- ✅ Comments on reviews
+- ✅ AI-powered book search
+- ✅ Personalized book recommendations
+- ✅ Reading clubs (view, join, create)
+- ✅ Responsive design
 
-1. **Login/Register**: User signs up or logs in (email or Google OAuth)
-2. **Token Storage**: JWT tokens stored in localStorage
-3. **Auto-Refresh**: Access token auto-refreshes before expiration
-4. **Protected Routes**: Routes check authentication status
-5. **API Requests**: Axios interceptor adds JWT to all requests
+### Key Components
 
-## 🎯 User Flows
+- **AISearchBar** - AI-powered book search with debounced input
+- **BookRecommendations** - Personalized recommendations based on user preferences
+- **ReviewFeed** - Infinite scroll review feed
+- **ReviewCard** - Display individual reviews
+- **CommentList** - Display and manage comments
+- **LikeButton** - Like/unlike functionality
+- **UserProfile** - User profile display
+- **EditProfile** - Profile editing form
 
-### Creating a Review
-1. Navigate to "Create Review" from bottom navigation
-2. Search for a book (Google Books API or AI search)
-3. Select book from results
-4. Rate the book (1-5 stars)
-5. Write review text
-6. Optionally add image
-7. Submit review
+## 🛠️ Development
 
-### Joining a Club
-1. Navigate to "Clubs" page
-2. Browse clubs by category
-3. Click "Join Club" on desired club
-4. Access club details and discussions
+### Adding a New Feature
 
-### Adding to Wishlist
-1. Browse books on Discover page
-2. Click bookmark icon on book card
-3. View saved books on Wishlist page
+1. Create service function in appropriate `*.api.ts` file
+2. Create component(s) in `src/components/`
+3. Create page if needed in `src/pages/`
+4. Add route in `src/routes.tsx`
+5. Update types in `src/types/` if needed
 
-## 🧪 Testing
+### Styling
 
-The app includes comprehensive tests for key components:
+The app uses Tailwind CSS with custom classes. Key design patterns:
+- Glassmorphism effects (`glass`, `glass-header`, `glass-panel`)
+- Primary color: `#a413ec` (purple)
+- Dark theme by default
 
-```bash
-# Run all tests
-npm run test
+## 📱 Responsive Design
 
-# Run tests in watch mode
-npm run test:watch
+The app is fully responsive:
+- **Mobile**: Stacked layout, bottom navigation
+- **Tablet**: Adjusted grid layouts
+- **Desktop**: Full layout with sidebars
 
-# Generate coverage report
-npm run test:coverage
-```
+## 🔒 Security
 
-Test files are located alongside component files with `.test.tsx` extension.
-
-## 🌐 Browser Support
-
-- Chrome/Edge 90+
-- Firefox 88+
-- Safari 14+
-- Modern mobile browsers
+- JWT tokens stored in `localStorage`
+- Automatic token refresh before expiration
+- Protected routes require authentication
+- CORS configured on backend
 
 ## 🐛 Troubleshooting
 
-### Fonts not loading
-- Ensure internet connection for Google Fonts
-- Check browser console for CSP (Content Security Policy) errors
-- Clear browser cache
+### API Connection Issues
 
-### API requests failing
-- Verify backend is running on `http://localhost:3000`
-- Check proxy configuration in `vite.config.ts`
-- Verify CORS is enabled on backend
+- Ensure backend server is running on `http://localhost:3000`
+- Check CORS configuration in backend
+- Verify API URL in `src/services/api.ts`
 
-### Login not working
-- Clear localStorage: `localStorage.clear()`
-- Check backend authentication endpoints
-- Verify Google OAuth credentials (if using OAuth)
+### Authentication Issues
 
-### Images not displaying
-- Check image URLs in network tab
-- Verify backend serves static files from `uploads/` directory
-- Ensure file upload middleware is configured on backend
+- Clear `localStorage` and try logging in again
+- Check token expiration
+- Verify backend authentication endpoints
 
-### Build errors
-- Delete `node_modules` and reinstall: `rm -rf node_modules && npm install`
-- Clear Vite cache: `rm -rf .vite`
-- Update dependencies: `npm update`
+### Build Issues
 
-## 📱 Responsive Breakpoints
+- Delete `node_modules` and `package-lock.json`
+- Run `npm install` again
+- Check Node.js version (v18+)
 
-The app uses mobile-first responsive design with Tailwind breakpoints:
+## 📚 Dependencies
 
-- **xs**: 0px (default mobile)
-- **sm**: 640px (small tablets)
-- **md**: 768px (tablets)
-- **lg**: 1024px (small laptops)
-- **xl**: 1280px (desktops)
-- **2xl**: 1536px (large screens)
+Key dependencies:
+- `react` - UI library
+- `react-router-dom` - Routing
+- `axios` - HTTP client
+- `vite` - Build tool
 
-## ♿ Accessibility Features
+See `package.json` for complete list.
 
-- **WCAG AA Compliant**: Minimum 4.5:1 contrast ratio
-- **ARIA Labels**: All interactive elements labeled
-- **Keyboard Navigation**: Full keyboard support
-- **Focus States**: Clear focus indicators
-- **Touch Targets**: Minimum 44x44px for mobile
-- **Screen Reader**: Semantic HTML and ARIA attributes
-- **Reduced Motion**: Respects `prefers-reduced-motion`
+## 🚀 Production Build
 
-## 🚀 Performance Optimizations
+```bash
+# Build for production
+npm run build
 
-- **Code Splitting**: React.lazy for route-based splitting
-- **Image Optimization**: Lazy loading for images
-- **Debouncing**: Search inputs debounced (300ms)
-- **Infinite Scroll**: Paginated data loading
-- **Optimistic UI**: Instant feedback for user actions
-- **Memoization**: React.memo for expensive components
+# Build with production mode explicitly
+npm run build:prod
+
+# Preview production build locally
+npm run preview
+
+# Preview production build with production mode
+npm run preview:prod
+```
+
+Build output is in `dist/` directory.
+
+### Environment Variables
+
+For production builds, create a `.env.production` file:
+
+```env
+VITE_API_URL=https://your-backend-domain.com/api
+VITE_ENV=production
+```
+
+See `.env.production.example` for template.
+
+### Deployment
+
+See `DEPLOYMENT.md` for detailed deployment instructions including:
+- Server setup
+- Nginx configuration
+- SSL certificate setup
+- Continuous deployment
+
+## 📝 Notes
+
+- The app uses React Router for client-side routing
+- All API calls are centralized in service files
+- Error handling is done via Axios interceptors
+- Loading states are managed per component
+- The app follows a component-based architecture
 
 ## 🤝 Contributing
 
-### Development Workflow
-
-1. Create a feature branch: `git checkout -b feature/your-feature`
-2. Make changes and commit: `git commit -m "feat: add feature"`
-3. Push to remote: `git push origin feature/your-feature`
-4. Create Pull Request to `main`
-
-### Commit Convention
-
-Follow the conventional commits specification:
-- `feat:` New feature
-- `fix:` Bug fix
-- `docs:` Documentation changes
-- `style:` Code style changes (formatting)
-- `refactor:` Code refactoring
-- `test:` Adding or updating tests
-- `chore:` Maintenance tasks
-
-## 📝 Environment Variables
-
-The app uses Vite's proxy feature, so no frontend environment variables are required. All API calls go through the `/api` proxy to the backend.
-
-If deploying to production, update the backend URL in your deployment configuration.
-
-## 🚢 Deployment
-
-### Build for Production
-
-```bash
-npm run build
-```
-
-The production build will be in the `dist/` directory.
-
-### Deploy to Server
-
-1. Upload `dist/` directory to your web server
-2. Configure web server to serve `index.html` for all routes (SPA)
-3. Ensure backend API is accessible from the deployed frontend
-4. Update CORS settings on backend to allow frontend domain
-
-### Nginx Configuration Example
-
-```nginx
-server {
-    listen 80;
-    server_name your-domain.com;
-    root /path/to/frontend/dist;
-    index index.html;
-
-    # SPA routing
-    location / {
-        try_files $uri $uri/ /index.html;
-    }
-
-    # Cache static assets
-    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf)$ {
-        expires 1y;
-        add_header Cache-Control "public, immutable";
-    }
-}
-```
-
-## 📚 Additional Documentation
-
-- [Design System Guide](../DESIGN-SYSTEM-IMPLEMENTATION.md)
-- [Project Plan](../reading-club-project-plan.md)
-- [Backend README](../backend/README.md)
-
-## 👥 Team
-
-- **Yaron**: Backend Development
-- **Alon**: Frontend Development
+1. Create a feature branch
+2. Make your changes
+3. Test thoroughly
+4. Create a pull request
 
 ## 📄 License
 
-This project is created for educational purposes as part of a university project.
-
----
-
-**Built with ❤️ using React, TypeScript, and Vite**
+University Final Project
