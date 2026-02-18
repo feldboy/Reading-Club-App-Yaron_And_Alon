@@ -8,6 +8,7 @@ export interface Club {
     cover: string;
     category: string;
     members: any[];
+    memberCount: number;
     currentBook: string;
     nextMeeting: string;
     isPrivate: boolean;

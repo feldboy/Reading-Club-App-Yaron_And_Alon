@@ -19,10 +19,15 @@ const app: Application = express();
 /**
  * Middleware
  */
-// CORS - Allow frontend to access API
+// CORS - Allow frontend to access API (support both common dev ports)
+const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174'];
+if (process.env.FRONTEND_URL && !allowedOrigins.includes(process.env.FRONTEND_URL)) {
+    allowedOrigins.push(process.env.FRONTEND_URL);
+}
+
 app.use(
     cors({
-        origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+        origin: allowedOrigins,
         credentials: true,
     })
 );
@@ -37,7 +42,7 @@ app.use((_req: Request, res: Response, next: NextFunction) => {
         "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://accounts.google.com https://apis.google.com; " +
         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com; " +
         "font-src 'self' https://fonts.gstatic.com; " +
-        "img-src 'self' data: https://lh3.googleusercontent.com https://*.googleusercontent.com; " +
+        "img-src 'self' data: http://localhost:3000 https://lh3.googleusercontent.com https://*.googleusercontent.com https://books.google.com https://*.ggpht.com https://images.unsplash.com; " +
         "frame-src https://accounts.google.com; " +
         "form-action 'self' https://accounts.google.com;"
     );

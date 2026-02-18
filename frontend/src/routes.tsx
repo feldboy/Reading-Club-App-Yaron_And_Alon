@@ -1,6 +1,7 @@
 import { createBrowserRouter, Outlet, Navigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import BottomNav from './components/layout/BottomNav';
+import ScrollToTop from './components/ScrollToTop';
 import { PageLoader } from './components/ui';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
@@ -9,13 +10,15 @@ import ReviewDetailPage from './pages/ReviewDetailPage';
 import ProfilePage from './pages/ProfilePage';
 import EditProfilePage from './pages/EditProfilePage';
 import OAuthCallbackPage from './pages/OAuthCallbackPage';
+import WishlistPageEnhanced from './pages/WishlistPageEnhanced';
 
 /**
- * Layout component with BottomNav
+ * Layout component with BottomNav and ScrollToTop
  */
 const Layout = () => {
     return (
         <div className="app bg-background-light dark:bg-background-dark min-h-screen text-white font-display">
+            <ScrollToTop />
             <main className="app-main pb-24">
                 <Outlet />
             </main>
@@ -48,6 +51,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactElement }) => {
 import CreateReviewPage from './pages/CreateReviewPage';
 import DiscoverPage from './pages/DiscoverPage';
 import ClubsPage from './pages/ClubsPage';
+import BookDetailPage from './pages/BookDetailPage';
 
 /**
  * Route definitions
@@ -102,12 +106,24 @@ export const router = createBrowserRouter([
                 element: <ReviewDetailPage />,
             },
             {
+                path: 'books/:googleBookId',
+                element: <BookDetailPage />,
+            },
+            {
                 path: 'discover',
                 element: <DiscoverPage />,
             },
             {
                 path: 'clubs',
                 element: <ClubsPage />,
+            },
+            {
+                path: 'wishlist',
+                element: (
+                    <ProtectedRoute>
+                        <WishlistPageEnhanced />
+                    </ProtectedRoute>
+                ),
             },
             {
                 path: '*',

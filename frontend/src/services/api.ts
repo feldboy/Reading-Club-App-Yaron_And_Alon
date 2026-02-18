@@ -18,6 +18,7 @@ const getApiBaseURL = (): string => {
  * Axios instance with base configuration
  */
 const api: AxiosInstance = axios.create({
+    baseURL: import.meta.env.VITE_API_URL || '/api',
     baseURL: getApiBaseURL(),
     headers: {
         'Content-Type': 'application/json',
@@ -41,10 +42,46 @@ api.interceptors.request.use(
 );
 
 /**
- * Response interceptor - Handle errors globally
+ * Transform MongoDB _id to id for frontend compatibility
+ */
+const transformResponse = (data: any): any => {
+    if (Array.isArray(data)) {
+        return data.map(transformResponse);
+    }
+
+    if (data && typeof data === 'object') {
+        const transformed: any = {};
+
+        for (const key in data) {
+            if (key === '_id') {
+                transformed.id = data._id;
+            } else if (key === 'userId' && typeof data[key] === 'object' && data[key]?._id) {
+                // Transform nested user object
+                transformed[key] = transformResponse(data[key]);
+            } else if (Array.isArray(data[key])) {
+                transformed[key] = transformResponse(data[key]);
+            } else if (data[key] && typeof data[key] === 'object') {
+                transformed[key] = transformResponse(data[key]);
+            } else {
+                transformed[key] = data[key];
+            }
+        }
+
+        return transformed;
+    }
+
+    return data;
+};
+
+/**
+ * Response interceptor - Handle errors globally and transform _id to id
  */
 api.interceptors.response.use(
     (response) => {
+        // Transform _id to id in response data
+        if (response.data) {
+            response.data = transformResponse(response.data);
+        }
         return response;
     },
     async (error: AxiosError) => {
@@ -62,6 +99,7 @@ api.interceptors.response.use(
                 const refreshToken = localStorage.getItem('refreshToken');
                 if (refreshToken) {
                     // Try to refresh the token
+                    const response = await axios.post('/api/auth/refresh', {
                     const refreshUrl = `${getApiBaseURL()}/auth/refresh`;
                     const response = await axios.post(refreshUrl, {
                         refreshToken,

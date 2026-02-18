@@ -43,9 +43,9 @@ export function Skeleton({
 }
 
 // Pre-built skeleton components for common use cases
-export function BookCardSkeleton() {
+export function BookCardSkeleton({ className = '' }: { className?: string }) {
     return (
-        <div className="flex flex-col gap-3">
+        <div className={`flex flex-col gap-3 ${className}`}>
             <Skeleton variant="rounded" className="aspect-[3/4.5] w-full" />
             <Skeleton variant="text" className="w-3/4" />
             <Skeleton variant="text" className="w-1/2" height={12} />

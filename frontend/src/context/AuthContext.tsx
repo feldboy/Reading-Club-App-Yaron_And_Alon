@@ -10,6 +10,8 @@ export interface User {
     username: string;
     email: string;
     profileImage: string;
+    favoriteGenres?: string[];
+    bio?: string;
 }
 
 /**
@@ -29,7 +31,7 @@ interface AuthContextType {
 /**
  * Create Auth Context
  */
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 /**
  * Auth Provider Props

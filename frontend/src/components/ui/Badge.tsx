@@ -48,11 +48,11 @@ export function Chip({
     onClick,
     className = ''
 }: ChipProps) {
-    const baseStyles = 'flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-full px-6 transition-all cursor-pointer active:scale-95';
+    const baseStyles = 'relative flex h-10 sm:h-11 shrink-0 items-center justify-center gap-x-2 rounded-full px-5 sm:px-6 transition-all duration-300 cursor-pointer active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a0f2e]';
 
     const selectedStyles = selected
-        ? 'bg-gradient-to-r from-primary to-purple-600 shadow-lg shadow-primary/20 text-white font-bold'
-        : 'bg-white/5 border border-white/10 text-white font-medium hover:bg-white/10';
+        ? 'bg-gradient-to-r from-[#7C3AED] to-[#A78BFA] shadow-lg shadow-purple-500/30 text-white font-bold scale-105'
+        : 'bg-white/5 backdrop-blur-sm border border-white/10 text-purple-200/80 font-medium hover:bg-white/10 hover:border-white/20 hover:text-white hover:scale-105';
 
     return (
         <button
@@ -61,7 +61,7 @@ export function Chip({
             role="option"
             aria-selected={selected}
         >
-            <span className="text-sm leading-normal">{children}</span>
+            <span className="text-sm sm:text-base leading-normal whitespace-nowrap">{children}</span>
         </button>
     );
 }

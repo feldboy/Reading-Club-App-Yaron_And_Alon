@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getReviewById, deleteReview, type Review } from '../services/review.api';
+import { getWishlist } from '../services/user.api';
 import LikeButton from '../components/review/LikeButton';
+import WishlistButton from '../components/ui/WishlistButton';
 import CommentList from '../components/comment/CommentList';
 import CommentForm from '../components/comment/CommentForm';
 import './ReviewDetailPage.css';
@@ -16,11 +18,12 @@ export default function ReviewDetailPage() {
     const [error, setError] = useState<string | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
     const [commentsKey, setCommentsKey] = useState(0); // Force re-render of CommentList
+    const [isInWishlist, setIsInWishlist] = useState(false);
 
     const isOwnReview = user?.id === review?.userId;
 
     useEffect(() => {
-        const loadReview = async () => {
+        const loadReviewAndWishlist = async () => {
             if (!id) {
                 setError('Review ID is required');
                 setLoading(false);
@@ -30,8 +33,25 @@ export default function ReviewDetailPage() {
             try {
                 setLoading(true);
                 setError(null);
+
+                // Load review
                 const reviewData = await getReviewById(id);
                 setReview(reviewData);
+
+                // Check wishlist status if user is logged in
+                if (user && reviewData) {
+                    try {
+                        const wishlist = await getWishlist();
+                        // reviewData has googleBookId which corresponds to the bookId in wishlist
+                        const bookId = reviewData.googleBookId;
+                        if (bookId) {
+                            setIsInWishlist(wishlist.some(item => item.bookId === bookId));
+                        }
+                    } catch (wErr) {
+                        console.error('Failed to load wishlist status', wErr);
+                    }
+                }
+
             } catch (err: any) {
                 console.error('Failed to load review:', err);
                 setError(err.response?.data?.message || 'Failed to load review');
@@ -40,8 +60,8 @@ export default function ReviewDetailPage() {
             }
         };
 
-        loadReview();
-    }, [id]);
+        loadReviewAndWishlist();
+    }, [id, user]);
 
     /**
      * Handle delete review
@@ -121,7 +141,7 @@ export default function ReviewDetailPage() {
         : '/uploads/books/default-book.png';
 
     return (
-        <div className="bg-background-light dark:bg-background-dark font-serif text-slate-900 dark:text-slate-100 selection:bg-primary/30 min-h-screen pb-24">
+        <div className="bg-gradient-to-br from-[#1a0f2e] via-[#2d1b4e] to-[#1a0f2e] font-[Libre_Baskerville] text-white selection:bg-primary/30 min-h-screen pb-24">
             {/* Context Header */}
             <nav className="sticky top-0 z-50 glass border-x-0 border-t-0 p-4 transition-all flex items-center justify-between">
                 <button
@@ -173,11 +193,11 @@ export default function ReviewDetailPage() {
                 </button>
             </div>
 
-            <main className="max-w-screen-md mx-auto px-6 py-12 md:py-24">
+            <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-24">
                 {/* Book Meta Section */}
                 <header className="mb-16">
                     <div className="flex items-start gap-8">
-                        <div className="w-32 md:w-48 aspect-[2/3] rounded-xl shadow-2xl overflow-hidden glass group cursor-pointer">
+                        <div className="w-32 md:w-48 aspect-[2/3] rounded-xl shadow-2xl overflow-hidden glass group cursor-pointer relative">
                             <img
                                 alt={`${review.bookTitle} cover`}
                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -186,6 +206,20 @@ export default function ReviewDetailPage() {
                                     (e.target as HTMLImageElement).src = '/uploads/books/default-book.png';
                                 }}
                             />
+                            {/* WishlistButton Overlay - only show if googleBookId is present */}
+                            {review.googleBookId && (
+                                <div className="absolute top-2 right-2">
+                                    <WishlistButton
+                                        bookId={review.googleBookId}
+                                        title={review.bookTitle}
+                                        authors={[review.bookAuthor]}
+                                        cover={review.bookImage || ''}
+                                        isInWishlist={isInWishlist}
+                                        onToggle={(newState) => setIsInWishlist(newState)}
+                                        className="bg-black/40 backdrop-blur-sm shadow-md"
+                                    />
+                                </div>
+                            )}
                         </div>
                         <div className="flex-1 space-y-4 pt-2">
                             <h1 className="text-4xl md:text-5xl font-bold font-display leading-[1.1] text-white">{review.bookTitle}</h1>

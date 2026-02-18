@@ -3,24 +3,48 @@
 @import "./styles/responsive.css";
 
 @theme {
-  --color-primary: #a413ec;
-  --color-background-light: #f7f6f8;
+  /* ===== Reading Club App Design System ===== */
+
+  /* Colors - Vibrant Literary Purple */
+  --color-primary: #7C3AED;
+  --color-secondary: #A78BFA;
+  --color-accent: #22C55E;
+  --color-background-light: #FAF5FF;
   --color-background-dark: #1c1022;
-  --font-display: "Manrope", sans-serif;
-  --font-body: "Manrope", sans-serif;
+  --color-text-light: #4C1D95;
+  --color-text-dark: #F5F3FF;
 
-  /* Login Screen Customizations - merged */
-  --color-login-primary: #25e2f4;
-  --font-login: "Space Grotesk", sans-serif;
+  /* Typography - Futuristic & Modern System */
+  --font-display: "Space Grotesk", sans-serif;
+  --font-heading: "Space Grotesk", sans-serif;
+  --font-body: "DM Sans", sans-serif;
+  --font-ui: "DM Sans", sans-serif;
 
-  /* Review Detail Customizations */
-  --font-serif: "Newsreader", serif;
+  /* Legacy compatibility (will be phased out) */
+  --color-login-primary: #7C3AED;
+  --font-login: "Jost", sans-serif;
+
+  /* Font Family Utilities */
+  --font-family-heading: var(--font-heading);
+  --font-family-body: var(--font-body);
+  --font-family-ui: var(--font-ui);
 }
 
 @layer base {
   body {
-    @apply bg-background-light dark:bg-background-dark text-white font-display min-h-screen;
+    @apply bg-background-light dark:bg-background-dark text-white font-body min-h-screen;
     margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
+    letter-spacing: -0.02em;
+  }
+
+  button, input, textarea {
+    @apply font-ui;
   }
 }
 

@@ -1,4 +1,4 @@
-import { useState, FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import { addComment } from '../../services/comment.api';
 import './CommentForm.css';
 

@@ -1,7 +1,7 @@
-import { useState, useEffect, FormEvent, useRef, ChangeEvent } from 'react';
+import { useState, useEffect, useRef, type FormEvent, type ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { getProfile, updateProfile, uploadImage, type UserProfile } from '../../services/user.api';
+import { getProfile, updateProfile, uploadImage } from '../../services/user.api';
 import './EditProfile.css';
 
 /**
@@ -12,7 +12,7 @@ const EditProfile = () => {
     const navigate = useNavigate();
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const [profile, setProfile] = useState<UserProfile | null>(null);
+    // profile state removed as it was unused
     const [formData, setFormData] = useState({
         username: '',
         bio: '',
@@ -50,7 +50,7 @@ const EditProfile = () => {
             try {
                 setLoading(true);
                 const profileData = await getProfile();
-                setProfile(profileData);
+                // setProfile(profileData); // Removed
                 setFormData({
                     username: profileData.username,
                     bio: profileData.bio || '',
@@ -147,7 +147,7 @@ const EditProfile = () => {
                 favoriteGenres: formData.favoriteGenres,
             });
 
-            setProfile(updatedProfile);
+            // profile state update removed
             setSuccess(true);
 
             // Update AuthContext if it's the current user
@@ -275,9 +275,8 @@ const EditProfile = () => {
                                 key={genre}
                                 type="button"
                                 onClick={() => handleGenreToggle(genre)}
-                                className={`genre-button ${
-                                    formData.favoriteGenres.includes(genre) ? 'selected' : ''
-                                }`}
+                                className={`genre-button ${formData.favoriteGenres.includes(genre) ? 'selected' : ''
+                                    }`}
                             >
                                 {genre}
                             </button>

@@ -31,131 +31,171 @@ export default function RegisterPage() {
     };
 
     return (
-        <div className="bg-background-light dark:bg-background-dark font-display text-white selection:bg-primary/30 min-h-screen">
-            <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden nebula-bg-register">
-                {/* Top Navigation */}
-                <div className="flex items-center p-4 pb-2 justify-between z-10 pt-12">
-                    <button onClick={() => navigate(-1)} className="text-white flex size-12 shrink-0 items-center justify-center rounded-full hover:bg-white/5 transition-colors">
-                        <span className="material-symbols-outlined text-2xl">arrow_back_ios_new</span>
-                    </button>
-                    <h2 className="text-white text-lg font-bold leading-tight tracking-tight flex-1 text-center pr-12">Initialize Account</h2>
-                </div>
+        <div className="bg-gradient-to-br from-[#1a0f2e] via-[#2d1b4e] to-[#1a0f2e] text-white selection:bg-primary/30 min-h-screen">
+            <div className="relative min-h-screen w-full flex items-center justify-center overflow-hidden">
+                {/* Decorative Background Elements */}
+                <div className="absolute top-[-10%] left-[-10%] w-[45%] h-[45%] rounded-full bg-primary/8 blur-[140px] pointer-events-none animate-pulse"></div>
+                <div className="absolute bottom-[-5%] right-[-5%] w-[55%] h-[55%] rounded-full bg-primary/12 blur-[120px] pointer-events-none animate-pulse" style={{ animationDelay: '1s' }}></div>
 
-                <div className="flex-1 flex flex-col justify-center px-6 py-8">
-                    {/* Hero Header Section */}
-                    <div className="mb-10 text-center">
-                        <div className="mx-auto mb-6 w-24 h-24 rounded-full bg-gradient-to-tr from-primary to-purple-400 flex items-center justify-center shadow-[0_0_40px_rgba(164,19,236,0.5)]">
-                            <span className="material-symbols-outlined text-5xl text-white">auto_stories</span>
+                {/* Main Content Container - Centered on Desktop */}
+                <div className="relative z-10 w-full max-w-md mx-auto px-6 py-8">
+                    {/* Top App Bar Component */}
+                    <div className="flex items-center justify-between mb-8">
+                        <button
+                            onClick={() => navigate(-1)}
+                            aria-label="Go back"
+                            className="text-white flex size-11 shrink-0 items-center cursor-pointer justify-center hover:bg-white/10 rounded-full transition-colors duration-200"
+                        >
+                            <span className="material-symbols-outlined text-xl">arrow_back_ios_new</span>
+                        </button>
+                        <h1 className="font-heading text-white text-xl md:text-2xl font-semibold leading-tight tracking-tight flex-1 text-center pr-11">Join The Nebula</h1>
+                    </div>
+                    {/* Headline Section */}
+                    <div className="mb-8 text-center animate-fade-in">
+                        <div className="mx-auto mb-4 w-20 h-20 rounded-full bg-gradient-to-tr from-primary to-purple-400 flex items-center justify-center shadow-[0_0_30px_rgba(124,58,237,0.5)]">
+                            <span className="material-symbols-outlined text-4xl text-white">auto_stories</span>
                         </div>
-                        <h1 className="text-white tracking-tight text-4xl font-extrabold leading-tight mb-2">Join the Nebula</h1>
-                        <p className="text-white/60 text-base font-normal leading-normal">Your portal to infinite stories awaits.</p>
+                        <h2 className="font-heading text-white tracking-[0.12em] text-2xl md:text-3xl font-bold leading-tight drop-shadow-[0_0_12px_rgba(124,58,237,0.4)]">
+                            INITIALIZE ACCOUNT
+                        </h2>
+                        <p className="font-body text-white/60 text-sm font-normal leading-relaxed mt-3 max-w-sm mx-auto">
+                            Your portal to infinite stories awaits.
+                        </p>
                     </div>
 
                     {/* Error Message */}
                     {error && (
-                        <div className="mb-4 p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200 text-sm text-center">
-                            {error}
+                        <div className="mb-6 p-4 bg-red-500/20 backdrop-blur-sm border border-red-500/50 rounded-2xl text-red-200 text-sm text-center animate-slide-down shadow-lg">
+                            <p className="font-ui font-medium">{error}</p>
                         </div>
                     )}
 
-                    {/* Registration Form Panel */}
-                    <div className="glass-panel-register rounded-3xl p-6 mb-8 shadow-2xl">
-                        <form onSubmit={handleSubmit} className="space-y-5">
-                            {/* Full Name Field */}
-                            <div className="flex flex-col gap-2">
-                                <label className="text-white/80 text-sm font-medium px-1">Full Name</label>
-                                <div className="relative">
-                                    <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-white/40 text-xl">person</span>
+                    {/* Form Container */}
+                    <form onSubmit={handleSubmit} className="space-y-5">
+                        {/* Full Name Field */}
+                        <div className="flex flex-col w-full">
+                            <label htmlFor="name" className="flex flex-col w-full">
+                                <p className="font-ui text-primary/90 text-xs font-semibold tracking-[0.12em] uppercase pb-3 pl-1">Commander Name</p>
+                                <div className="flex w-full items-stretch rounded-2xl glass-panel group focus-within:border-primary/60 focus-within:shadow-lg focus-within:shadow-primary/20 transition-all duration-200 h-14">
                                     <input
+                                        id="name"
                                         type="text"
                                         value={name}
                                         onChange={(e) => setName(e.target.value)}
-                                        className="glow-input w-full rounded-xl bg-white/5 border border-white/10 h-14 pl-12 pr-4 text-white placeholder:text-white/30 focus:outline-none focus:ring-1 focus:ring-primary transition-all duration-300"
-                                        placeholder="Enter your full name"
+                                        className="font-ui flex w-full min-w-0 flex-1 bg-transparent border-none focus:ring-0 placeholder:text-white/30 px-5 text-base font-normal leading-normal text-white outline-none"
+                                        placeholder="Enter your name"
                                         required
+                                        autoComplete="name"
                                     />
+                                    <div className="text-primary/70 flex items-center justify-center pr-5">
+                                        <span className="material-symbols-outlined text-xl">person</span>
+                                    </div>
                                 </div>
-                            </div>
-                            {/* Email Field */}
-                            <div className="flex flex-col gap-2">
-                                <label className="text-white/80 text-sm font-medium px-1">Email Address</label>
-                                <div className="relative">
-                                    <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-white/40 text-xl">alternate_email</span>
+                            </label>
+                        </div>
+
+                        {/* Email Field */}
+                        <div className="flex flex-col w-full">
+                            <label htmlFor="email" className="flex flex-col w-full">
+                                <p className="font-ui text-primary/90 text-xs font-semibold tracking-[0.12em] uppercase pb-3 pl-1">Subspace ID</p>
+                                <div className="flex w-full items-stretch rounded-2xl glass-panel group focus-within:border-primary/60 focus-within:shadow-lg focus-within:shadow-primary/20 transition-all duration-200 h-14">
                                     <input
+                                        id="email"
                                         type="email"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
-                                        className="glow-input w-full rounded-xl bg-white/5 border border-white/10 h-14 pl-12 pr-4 text-white placeholder:text-white/30 focus:outline-none focus:ring-1 focus:ring-primary transition-all duration-300"
-                                        placeholder="name@nexus.com"
+                                        className="font-ui flex w-full min-w-0 flex-1 bg-transparent border-none focus:ring-0 placeholder:text-white/30 px-5 text-base font-normal leading-normal text-white outline-none"
+                                        placeholder="commander@fleet.com"
                                         required
+                                        autoComplete="email"
                                     />
+                                    <div className="text-primary/70 flex items-center justify-center pr-5">
+                                        <span className="material-symbols-outlined text-xl">alternate_email</span>
+                                    </div>
                                 </div>
-                            </div>
-                            {/* Password Field */}
-                            <div className="flex flex-col gap-2">
-                                <label className="text-white/80 text-sm font-medium px-1">Create Password</label>
-                                <div className="relative">
-                                    <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-white/40 text-xl">lock</span>
+                            </label>
+                        </div>
+
+                        {/* Password Field */}
+                        <div className="flex flex-col w-full">
+                            <label htmlFor="password" className="flex flex-col w-full">
+                                <p className="font-ui text-primary/90 text-xs font-semibold tracking-[0.12em] uppercase pb-3 pl-1">Security Code</p>
+                                <div className="flex w-full items-stretch rounded-2xl glass-panel group focus-within:border-primary/60 focus-within:shadow-lg focus-within:shadow-primary/20 transition-all duration-200 h-14">
                                     <input
+                                        id="password"
                                         type={showPassword ? "text" : "password"}
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-                                        className="glow-input w-full rounded-xl bg-white/5 border border-white/10 h-14 pl-12 pr-12 text-white placeholder:text-white/30 focus:outline-none focus:ring-1 focus:ring-primary transition-all duration-300"
-                                        placeholder="••••••••"
+                                        className="font-ui flex w-full min-w-0 flex-1 bg-transparent border-none focus:ring-0 placeholder:text-white/30 px-5 text-base font-normal leading-normal text-white outline-none"
+                                        placeholder="••••••••••••"
                                         required
+                                        autoComplete="new-password"
                                         minLength={6}
                                     />
-                                    <span
+                                    <button
+                                        type="button"
                                         onClick={() => setShowPassword(!showPassword)}
-                                        className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-white/40 text-xl cursor-pointer hover:text-white transition-colors"
+                                        className="text-primary/70 flex items-center justify-center pr-5 cursor-pointer hover:text-primary transition-colors"
+                                        aria-label={showPassword ? "Hide password" : "Show password"}
                                     >
-                                        {showPassword ? 'visibility_off' : 'visibility'}
-                                    </span>
+                                        <span className="material-symbols-outlined text-xl">
+                                            {showPassword ? 'visibility_off' : 'visibility'}
+                                        </span>
+                                    </button>
                                 </div>
-                            </div>
+                            </label>
+                        </div>
 
-                            <button
-                                type="submit"
-                                disabled={isLoading}
-                                className="pulsing-button w-full mt-8 bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2"
-                            >
-                                {isLoading ? 'CREATING...' : 'CREATE ACCOUNT'}
-                                <span className="material-symbols-outlined">rocket_launch</span>
-                            </button>
-                        </form>
+                        {/* Submit Button */}
+                        <button
+                            type="submit"
+                            disabled={isLoading}
+                            className="w-full h-14 bg-gradient-to-r from-primary to-[#9333ea] text-white font-ui font-bold text-base tracking-wide rounded-2xl mt-6 shadow-[0_0_20px_rgba(124,58,237,0.5)] hover:shadow-[0_0_30px_rgba(124,58,237,0.7)] hover:brightness-110 active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {isLoading ? 'CREATING ACCOUNT...' : 'CREATE ACCOUNT'}
+                            <span className="material-symbols-outlined text-xl">{isLoading ? 'progress_activity' : 'rocket_launch'}</span>
+                        </button>
+                    </form>
+
+                    {/* Divider */}
+                    <div className="relative flex items-center py-8">
+                        <div className="flex-grow border-t border-white/10"></div>
+                        <span className="font-ui flex-shrink mx-4 text-white/40 text-xs uppercase tracking-[0.15em] font-medium">Protocol Sync</span>
+                        <div className="flex-grow border-t border-white/10"></div>
                     </div>
 
-                    {/* Social Registration */}
-                    <div className="text-center">
-                        <div className="flex items-center gap-4 mb-6">
-                            <div className="h-[1px] flex-1 bg-white/10"></div>
-                            <span className="text-white/40 text-xs font-medium uppercase tracking-widest">Or Register With</span>
-                            <div className="h-[1px] flex-1 bg-white/10"></div>
-                        </div>
-                        <div className="flex justify-center gap-4 mb-10">
-                            <button
-                                onClick={() => window.location.href = 'http://localhost:3000/api/auth/google'}
-                                className="glass-panel-register w-16 h-16 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors cursor-pointer"
-                            >
-                                <img className="w-6 h-6" alt="Google" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVQKtNYxfrdDuZ6lzSmrjGgZXIQ4eqmjOUJ2CbMLYo7lb2lJaw0bS0Eg3P8sL-WaU0kVsUQ6SvfQg04XV9CJwpkGUVymESHiQ71sMJtNnzC_bxd6JBWvDTd7MOSNU3uNv7PSr6Aq8BGcGJrs2jIZ65rXGZtnIhlC4qIdYa1ADW_M5pKIhIe6HuIgCyJCyB-L0oDgASCLI4crB7WaRUwBV3FG4yu3KKA98XXmrBPRbtDVC3gJrBhtu8IXEOBwCIAFaWEpUrgiOaSK0" />
-                            </button>
-                            <button className="glass-panel-register w-16 h-16 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors">
-                                <span className="material-symbols-outlined text-3xl">ios</span>
-                            </button>
-                            <button className="glass-panel-register w-16 h-16 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors">
-                                <span className="material-symbols-outlined text-3xl">fingerprint</span>
-                            </button>
-                        </div>
-                        <p className="text-white/60 text-sm">
+                    {/* Social Logins */}
+                    <div className="flex gap-4 justify-center">
+                        <button
+                            type="button"
+                            onClick={() => window.location.href = 'http://localhost:3000/api/auth/google'}
+                            className="flex-1 h-14 glass-panel rounded-2xl flex items-center justify-center gap-3 hover:bg-white/5 hover:border-primary/30 transition-all duration-200 cursor-pointer group"
+                        >
+                            <img alt="Google logo" className="w-5 h-5 opacity-80 group-hover:opacity-100 transition-opacity" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2jx-bWZi6_7KvSgAoKzuaa8xA6t0ba85hD68ZkEeZL80CIcr_DP0YxglVp6CcatnDqhnrC0WdZvP1JhkMQhB0YJEVtqNeUPl1HulA_jhW7BjvOJjsz0fxpFgZqfINaz7KnQHsp8g_cKjwH0TnoBU7-cu8NtJVN0MQshYrjWsxhlPdrEW5gisw9VOfpFlZFXF6ckaIiBZlKmxbMX9GUpIBhG-55bpvj3eB5mhZ-db7NEMgtw7SWtBrbU6OLkk369eow0Y2QOtptig" />
+                            <span className="font-ui text-sm font-medium text-white/80 group-hover:text-white transition-colors">Google</span>
+                        </button>
+                        <button
+                            type="button"
+                            className="flex-1 h-14 glass-panel rounded-2xl flex items-center justify-center gap-3 hover:bg-white/5 hover:border-primary/30 transition-all duration-200 cursor-pointer group"
+                        >
+                            <span className="material-symbols-outlined text-white/80 group-hover:text-white transition-colors text-xl">ios</span>
+                            <span className="font-ui text-sm font-medium text-white/80 group-hover:text-white transition-colors">Apple</span>
+                        </button>
+                    </div>
+
+                    {/* Footer Toggle */}
+                    <div className="mt-8 pt-6 text-center">
+                        <p className="font-ui text-white/50 text-sm">
                             Already a member?
-                            <Link to="/login" className="text-primary font-bold hover:underline underline-offset-4 ml-1">Sign In</Link>
+                            <Link
+                                to="/login"
+                                className="text-primary font-semibold ml-2 hover:text-primary/80 hover:underline underline-offset-4 decoration-primary/40 transition-colors duration-200"
+                            >
+                                SIGN IN
+                            </Link>
                         </p>
                     </div>
                 </div>
-
-                {/* Footer Decorative Glow */}
-                <div className="fixed -bottom-24 -left-24 w-64 h-64 bg-primary/20 rounded-full blur-[100px] pointer-events-none"></div>
-                <div className="fixed -top-24 -right-24 w-64 h-64 bg-purple-600/10 rounded-full blur-[100px] pointer-events-none"></div>
             </div>
         </div>
     );

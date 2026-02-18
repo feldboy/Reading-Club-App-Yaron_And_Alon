@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import Comment from '../models/Comment.model';
 import Review from '../models/Review.model';
+import mongoose from 'mongoose';
 
 /**
  * @swagger
@@ -67,7 +68,13 @@ export const addComment = async (req: Request, res: Response): Promise<void> => 
         }
 
         // Check if review exists
-        const review = await Review.findById(reviewId);
+        // Check if review exists - handle both ObjectId and GoogleBookId
+        let review;
+        if (mongoose.Types.ObjectId.isValid(reviewId)) {
+            review = await Review.findById(reviewId);
+        } else {
+            review = await Review.findOne({ googleBookId: reviewId });
+        }
         if (!review) {
             res.status(404).json({
                 status: 'error',
@@ -78,7 +85,7 @@ export const addComment = async (req: Request, res: Response): Promise<void> => 
 
         // Create comment
         const comment = new Comment({
-            reviewId,
+            reviewId: review._id, // Use the resolved MongoDB _id
             userId,
             text: text.trim(),
         });
@@ -140,7 +147,13 @@ export const getComments = async (req: Request, res: Response): Promise<void> =>
         const { reviewId } = req.params;
 
         // Check if review exists
-        const review = await Review.findById(reviewId);
+        // Check if review exists - handle both ObjectId and GoogleBookId
+        let review;
+        if (mongoose.Types.ObjectId.isValid(reviewId)) {
+            review = await Review.findById(reviewId);
+        } else {
+            review = await Review.findOne({ googleBookId: reviewId });
+        }
         if (!review) {
             res.status(404).json({
                 status: 'error',
@@ -150,7 +163,8 @@ export const getComments = async (req: Request, res: Response): Promise<void> =>
         }
 
         // Get all comments for this review, sorted by newest first
-        const comments = await Comment.find({ reviewId })
+        // Get all comments for this review using the resolved _id
+        const comments = await Comment.find({ reviewId: review._id })
             .populate('userId', 'username profileImage')
             .sort({ createdAt: -1 });
 

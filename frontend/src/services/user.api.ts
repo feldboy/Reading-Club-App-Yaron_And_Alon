@@ -88,3 +88,29 @@ export const uploadImage = async (file: File): Promise<UploadImageResponse['data
     });
     return response.data.data;
 };
+
+/**
+ * Wishlist API
+ */
+export interface WishlistItem {
+    bookId: string;
+    title: string;
+    authors: string[];
+    cover: string;
+    addedAt: string;
+}
+
+export const getWishlist = async (): Promise<WishlistItem[]> => {
+    const response = await api.get('/users/wishlist');
+    return response.data.data.wishlist;
+};
+
+export const addToWishlist = async (book: { bookId: string; title: string; authors: string[]; cover: string }) => {
+    const response = await api.post('/users/wishlist', book);
+    return response.data.data.wishlist;
+};
+
+export const removeFromWishlist = async (bookId: string) => {
+    const response = await api.delete(`/users/wishlist/${bookId}`);
+    return response.data.data.wishlist;
+};
