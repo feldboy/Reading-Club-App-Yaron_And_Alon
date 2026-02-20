@@ -2,7 +2,8 @@ module.exports = {
     apps: [
         {
             name: 'reading-club-api',
-            script: './dist/src/server.js',
+            script: './dist/server.js',
+            cwd: './backend',
             instances: '1',
             exec_mode: 'cluster',
             autorestart: true,
