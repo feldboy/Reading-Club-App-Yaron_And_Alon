@@ -134,3 +134,4 @@ ls frontend/dist/index.html
 # Check Nginx config for correct root path
 sudo nginx -t
 ```
+
