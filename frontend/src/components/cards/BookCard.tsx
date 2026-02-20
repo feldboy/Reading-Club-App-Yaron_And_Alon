@@ -75,7 +75,7 @@ export default function BookCard({
                         <h2 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
                             {book.title}
                         </h2>
-                        <p className="font-serif text-xl sm:text-2xl italic mb-6 text-white/90">
+                        <p className="font-body text-xl sm:text-2xl italic mb-6 text-white/90">
                             by {book.author}
                         </p>
                         {book.description && (
@@ -163,7 +163,7 @@ export default function BookCard({
                             </Badge>
                         )}
                     </div>
-                    <p className="font-serif text-[#7C3AED]/70 dark:text-white/60 text-sm mb-3 italic">
+                    <p className="font-body text-[#7C3AED]/70 dark:text-white/60 text-sm mb-3 italic">
                         by {book.author}
                     </p>
                     {book.description && (
@@ -230,7 +230,7 @@ export default function BookCard({
                         <h3 className="font-heading font-bold text-[#4C1D95] dark:text-white text-base sm:text-lg leading-tight line-clamp-2 mb-2 group-hover:text-[#7C3AED] transition-colors">
                             {book.title}
                         </h3>
-                        <p className="font-serif text-[#7C3AED]/70 dark:text-white/60 text-sm italic line-clamp-1 mb-auto">
+                        <p className="font-body text-[#7C3AED]/70 dark:text-white/60 text-sm italic line-clamp-1 mb-auto">
                             by {book.author}
                         </p>
                         <div className="flex items-center gap-2 mt-3 pt-3 border-t-2 border-[#7C3AED]/10 dark:border-white/10">

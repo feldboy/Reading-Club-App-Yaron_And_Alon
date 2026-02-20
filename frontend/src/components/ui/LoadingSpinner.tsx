@@ -18,7 +18,7 @@ export function LoadingSpinner({
     };
 
     const spinner = (
-        <div className={`flex flex-col items-center gap-3 ${className}`}>
+        <div className={`flex flex-col items-center justify-center min-h-[30vh] gap-3 animate-fade-in ${className}`}>
             <div className={`${sizes[size]} relative`}>
                 <div className="absolute inset-0 rounded-full border-2 border-white/10"></div>
                 <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-primary animate-spin"></div>

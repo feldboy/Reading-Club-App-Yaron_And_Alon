@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, type FormEvent, type ChangeEvent } from 'r
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { getProfile, updateProfile, uploadImage } from '../../services/user.api';
+import { resolveInternalImageUrl } from '../../utils/imageUtils';
 import './EditProfile.css';
 
 /**
@@ -56,7 +57,7 @@ const EditProfile = () => {
                     bio: profileData.bio || '',
                     favoriteGenres: profileData.favoriteGenres || [],
                 });
-                setImagePreview(`http://localhost:3000${profileData.profileImage}`);
+                setImagePreview(resolveInternalImageUrl(profileData.profileImage));
             } catch (err: any) {
                 console.error('Failed to load profile:', err);
                 setError(err.response?.data?.message || 'Failed to load profile');
@@ -137,7 +138,7 @@ const EditProfile = () => {
             // Upload image first if selected
             if (selectedFile) {
                 const imageResult = await uploadImage(selectedFile);
-                setImagePreview(`http://localhost:3000${imageResult.imageUrl}`);
+                setImagePreview(resolveInternalImageUrl(imageResult.imageUrl));
             }
 
             // Update profile

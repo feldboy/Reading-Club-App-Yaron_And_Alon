@@ -141,7 +141,10 @@ export default function LoginPage() {
                     <div className="flex gap-4 justify-center">
                         <button
                             type="button"
-                            onClick={() => window.location.href = 'http://localhost:3000/api/auth/google'}
+                            onClick={() => {
+                                const backendUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:3000' : '');
+                                window.location.href = `${backendUrl}/api/auth/google`;
+                            }}
                             className="flex-1 h-14 glass-panel rounded-2xl flex items-center justify-center gap-3 hover:bg-white/5 hover:border-primary/30 transition-all duration-200 cursor-pointer group"
                         >
                             <img alt="Google logo" className="w-5 h-5 opacity-80 group-hover:opacity-100 transition-opacity" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2jx-bWZi6_7KvSgAoKzuaa8xA6t0ba85hD68ZkEeZL80CIcr_DP0YxglVp6CcatnDqhnrC0WdZvP1JhkMQhB0YJEVtqNeUPl1HulA_jhW7BjvOJjsz0fxpFgZqfINaz7KnQHsp8g_cKjwH0TnoBU7-cu8NtJVN0MQshYrjWsxhlPdrEW5gisw9VOfpFlZFXF6ckaIiBZlKmxbMX9GUpIBhG-55bpvj3eB5mhZ-db7NEMgtw7SWtBrbU6OLkk369eow0Y2QOtptig" />

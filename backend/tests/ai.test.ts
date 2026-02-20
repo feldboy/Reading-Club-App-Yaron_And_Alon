@@ -132,12 +132,13 @@ describe('AI Integration Tests', () => {
         });
     });
 
-    describe('POST /api/ai/recommend', () => {
-        it('should return recommendations for valid preferences', async () => {
+    describe('GET /api/ai/recommend', () => {
+        it('should return recommendations for authenticated user', async () => {
             const mockResponse = {
-                preferences: {
+                userProfile: {
                     genres: ['Science Fiction', 'Fantasy'],
-                    favoriteBooks: ['Dune', 'The Name of the Wind']
+                    favoriteBooks: ['Dune by Frank Herbert', 'The Name of the Wind by Patrick Rothfuss'],
+                    wishlistBooks: ['Foundation by Isaac Asimov']
                 },
                 recommendations: [
                     {
@@ -163,82 +164,21 @@ describe('AI Integration Tests', () => {
             (aiService.getRecommendations as jest.Mock).mockResolvedValue(mockResponse);
 
             const response = await request(app)
-                .post('/api/ai/recommend')
-                .set('Authorization', `Bearer ${authToken}`)
-                .send({
-                    genres: ['Science Fiction', 'Fantasy'],
-                    favoriteBooks: ['Dune', 'The Name of the Wind']
-                });
+                .get('/api/ai/recommend')
+                .set('Authorization', `Bearer ${authToken}`);
 
             expect(response.status).toBe(200);
             expect(response.body.success).toBe(true);
             expect(response.body.data).toEqual(mockResponse);
             expect(response.body.data.recommendations).toHaveLength(2);
             expect(response.body.data.recommendations[0].similarityScore).toBe(92);
-        });
-
-        it('should accept only genres', async () => {
-            const mockResponse = {
-                preferences: { genres: ['Mystery'] },
-                recommendations: [],
-                timestamp: new Date().toISOString()
-            };
-
-            (aiService.getRecommendations as jest.Mock).mockResolvedValue(mockResponse);
-
-            const response = await request(app)
-                .post('/api/ai/recommend')
-                .set('Authorization', `Bearer ${authToken}`)
-                .send({ genres: ['Mystery'] });
-
-            expect(response.status).toBe(200);
-            expect(response.body.success).toBe(true);
-        });
-
-        it('should accept only readingGoals', async () => {
-            const mockResponse = {
-                preferences: { readingGoals: 'Read more classics' },
-                recommendations: [],
-                timestamp: new Date().toISOString()
-            };
-
-            (aiService.getRecommendations as jest.Mock).mockResolvedValue(mockResponse);
-
-            const response = await request(app)
-                .post('/api/ai/recommend')
-                .set('Authorization', `Bearer ${authToken}`)
-                .send({ readingGoals: 'Read more classics' });
-
-            expect(response.status).toBe(200);
-            expect(response.body.success).toBe(true);
-        });
-
-        it('should reject request with no preferences', async () => {
-            const response = await request(app)
-                .post('/api/ai/recommend')
-                .set('Authorization', `Bearer ${authToken}`)
-                .send({});
-
-            expect(response.status).toBe(400);
-            expect(response.body.success).toBe(false);
-            expect(response.body.message).toContain('At least one preference');
-        });
-
-        it('should reject invalid genres format', async () => {
-            const response = await request(app)
-                .post('/api/ai/recommend')
-                .set('Authorization', `Bearer ${authToken}`)
-                .send({ genres: 'not an array' });
-
-            expect(response.status).toBe(400);
-            expect(response.body.success).toBe(false);
-            expect(response.body.message).toContain('must be an array');
+            // Verify the service was called with only the userId
+            expect(aiService.getRecommendations).toHaveBeenCalledWith(mockUserId);
         });
 
         it('should require authentication', async () => {
             const response = await request(app)
-                .post('/api/ai/recommend')
-                .send({ genres: ['Fantasy'] });
+                .get('/api/ai/recommend');
 
             expect(response.status).toBe(401);
         });
@@ -249,9 +189,8 @@ describe('AI Integration Tests', () => {
             );
 
             const response = await request(app)
-                .post('/api/ai/recommend')
-                .set('Authorization', `Bearer ${authToken}`)
-                .send({ genres: ['Fantasy'] });
+                .get('/api/ai/recommend')
+                .set('Authorization', `Bearer ${authToken}`);
 
             expect(response.status).toBe(429);
             expect(response.body.success).toBe(false);
@@ -263,9 +202,8 @@ describe('AI Integration Tests', () => {
             );
 
             const response = await request(app)
-                .post('/api/ai/recommend')
-                .set('Authorization', `Bearer ${authToken}`)
-                .send({ genres: ['Fantasy'] });
+                .get('/api/ai/recommend')
+                .set('Authorization', `Bearer ${authToken}`);
 
             expect(response.status).toBe(500);
             expect(response.body.success).toBe(false);
@@ -296,6 +234,133 @@ describe('AI Integration Tests', () => {
 
             // Service should be called only once due to caching
             expect(aiService.searchBooks).toHaveBeenCalledTimes(2);
+        });
+    });
+
+    describe('POST /api/ai/chat', () => {
+        it('should return AI chat reply for valid message', async () => {
+            const mockResponse = {
+                reply: 'הנה כמה ספרי מתח מצחיקים שאני ממליץ עליהם...',
+                history: [
+                    { role: 'user', content: 'בא לי ספר מתח אבל מצחיק' },
+                    { role: 'model', content: 'הנה כמה ספרי מתח מצחיקים שאני ממליץ עליהם...' }
+                ]
+            };
+
+            (aiService.chatWithAI as jest.Mock).mockResolvedValue(mockResponse);
+
+            const response = await request(app)
+                .post('/api/ai/chat')
+                .set('Authorization', `Bearer ${authToken}`)
+                .send({ message: 'בא לי ספר מתח אבל מצחיק' });
+
+            expect(response.status).toBe(200);
+            expect(response.body.success).toBe(true);
+            expect(response.body.data.reply).toBeDefined();
+            expect(response.body.data.history).toHaveLength(2);
+        });
+
+        it('should accept message with history', async () => {
+            const existingHistory = [
+                { role: 'user', content: 'בא לי ספר מתח' },
+                { role: 'model', content: 'הנה כמה המלצות...' }
+            ];
+
+            const mockResponse = {
+                reply: 'בטח! הנה עוד ספרים דומים...',
+                history: [
+                    ...existingHistory,
+                    { role: 'user', content: 'יש עוד?' },
+                    { role: 'model', content: 'בטח! הנה עוד ספרים דומים...' }
+                ]
+            };
+
+            (aiService.chatWithAI as jest.Mock).mockResolvedValue(mockResponse);
+
+            const response = await request(app)
+                .post('/api/ai/chat')
+                .set('Authorization', `Bearer ${authToken}`)
+                .send({ message: 'יש עוד?', history: existingHistory });
+
+            expect(response.status).toBe(200);
+            expect(response.body.success).toBe(true);
+            expect(response.body.data.history).toHaveLength(4);
+            expect(aiService.chatWithAI).toHaveBeenCalledWith(
+                'יש עוד?',
+                existingHistory,
+                mockUserId
+            );
+        });
+
+        it('should reject empty message', async () => {
+            const response = await request(app)
+                .post('/api/ai/chat')
+                .set('Authorization', `Bearer ${authToken}`)
+                .send({ message: '' });
+
+            expect(response.status).toBe(400);
+            expect(response.body.success).toBe(false);
+            expect(response.body.message).toContain('Message is required');
+        });
+
+        it('should reject message that is too long', async () => {
+            const longMessage = 'a'.repeat(1001);
+
+            const response = await request(app)
+                .post('/api/ai/chat')
+                .set('Authorization', `Bearer ${authToken}`)
+                .send({ message: longMessage });
+
+            expect(response.status).toBe(400);
+            expect(response.body.success).toBe(false);
+            expect(response.body.message).toContain('too long');
+        });
+
+        it('should reject invalid history format', async () => {
+            const response = await request(app)
+                .post('/api/ai/chat')
+                .set('Authorization', `Bearer ${authToken}`)
+                .send({ message: 'hello', history: 'not-an-array' });
+
+            expect(response.status).toBe(400);
+            expect(response.body.success).toBe(false);
+            expect(response.body.message).toContain('History must be an array');
+        });
+
+        it('should require authentication', async () => {
+            const response = await request(app)
+                .post('/api/ai/chat')
+                .send({ message: 'test' });
+
+            expect(response.status).toBe(401);
+        });
+
+        it('should handle rate limit errors', async () => {
+            (aiService.chatWithAI as jest.Mock).mockRejectedValue(
+                new Error('Rate limit exceeded. Please try again later.')
+            );
+
+            const response = await request(app)
+                .post('/api/ai/chat')
+                .set('Authorization', `Bearer ${authToken}`)
+                .send({ message: 'test' });
+
+            expect(response.status).toBe(429);
+            expect(response.body.success).toBe(false);
+        });
+
+        it('should handle AI service errors', async () => {
+            (aiService.chatWithAI as jest.Mock).mockRejectedValue(
+                new Error('AI chat error')
+            );
+
+            const response = await request(app)
+                .post('/api/ai/chat')
+                .set('Authorization', `Bearer ${authToken}`)
+                .send({ message: 'test' });
+
+            expect(response.status).toBe(500);
+            expect(response.body.success).toBe(false);
         });
     });
 });

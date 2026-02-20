@@ -18,11 +18,10 @@ const StarRating = ({ rating }: { rating: number }) => {
             {[1, 2, 3, 4, 5].map((star) => (
                 <svg
                     key={star}
-                    className={`w-4 h-4 sm:w-5 sm:h-5 transition-all duration-300 ${
-                        star <= rating
+                    className={`w-4 h-4 sm:w-5 sm:h-5 transition-all duration-300 ${star <= rating
                             ? 'text-[#7C3AED] fill-[#7C3AED] scale-110'
                             : 'text-gray-300 dark:text-white/20 fill-gray-300 dark:fill-white/20'
-                    }`}
+                        }`}
                     viewBox="0 0 20 20"
                     aria-hidden="true"
                 >
@@ -71,7 +70,7 @@ const ReviewCardEnhanced = ({ review, currentUserId, onLikeChange, variant = 'de
                         <h3 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-3 leading-tight">
                             {review.bookTitle}
                         </h3>
-                        <p className="font-serif text-base sm:text-lg text-white/90 italic mb-4">
+                        <p className="font-body text-base sm:text-lg text-white/90 italic mb-4">
                             by {review.bookAuthor}
                         </p>
                         <p className="font-body text-base sm:text-lg text-white/90 leading-relaxed line-clamp-4">
@@ -217,7 +216,7 @@ const ReviewCardEnhanced = ({ review, currentUserId, onLikeChange, variant = 'de
                         <h3 className="font-heading text-xl sm:text-2xl font-bold text-[#4C1D95] dark:text-white mb-2 leading-tight">
                             {review.bookTitle}
                         </h3>
-                        <p className="font-serif text-sm sm:text-base text-[#7C3AED] dark:text-white/70 italic mb-3">
+                        <p className="font-body text-sm sm:text-base text-[#7C3AED] dark:text-white/70 italic mb-3">
                             by {review.bookAuthor}
                         </p>
                     </div>

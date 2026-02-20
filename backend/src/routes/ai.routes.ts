@@ -11,7 +11,10 @@ const router = Router();
 // POST /api/ai/search - AI-powered book search
 router.post('/search', verifyToken, aiController.search);
 
-// POST /api/ai/recommend - Get personalized recommendations
-router.post('/recommend', verifyToken, aiController.recommend);
+// GET /api/ai/recommend - Get personalized recommendations
+router.get('/recommend', verifyToken, aiController.recommend);
+
+// POST /api/ai/chat - AI chat with conversation history
+router.post('/chat', verifyToken, aiController.chat);
 
 export default router;

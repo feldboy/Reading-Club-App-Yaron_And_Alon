@@ -1,8 +1,8 @@
-import { useState, useEffect, FormEvent } from 'react';
+import { useState, useEffect, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, Button, Badge, AvatarGroup, Chip, EmptyState, ClubCardSkeleton } from '../components/ui';
 import { useToggle } from '../hooks';
-import { getClubs, joinClub, createClub, type Club } from '../services/clubs.api';
+import { getClubs, joinClub, leaveClub, createClub, type Club } from '../services/clubs.api';
 import { useAuth } from '../context/AuthContext';
 
 const CATEGORIES = ['All', 'My Clubs', 'Sci-Fi', 'Fantasy', 'Mystery', 'Romance', 'Non-Fiction'];
@@ -16,19 +16,12 @@ export default function ClubsPage() {
     const [showCreateModal, toggleCreateModal] = useToggle(false);
     const [isCreating, setIsCreating] = useState(false);
     const [createError, setCreateError] = useState<string | null>(null);
-    
+
     // Create club form state
     const [clubName, setClubName] = useState('');
     const [clubCategory, setClubCategory] = useState('');
     const [clubDescription, setClubDescription] = useState('');
     const [clubIsPrivate, setClubIsPrivate] = useState(false);
-
-    // Create Club form state
-    const [newClubName, setNewClubName] = useState('');
-    const [newClubCategory, setNewClubCategory] = useState('');
-    const [newClubDescription, setNewClubDescription] = useState('');
-    const [createLoading, setCreateLoading] = useState(false);
-    const [createError, setCreateError] = useState('');
 
     // Fetch clubs
     const fetchClubs = async () => {
@@ -97,43 +90,6 @@ export default function ClubsPage() {
             console.error('Failed to toggle club membership:', error);
             // Revert optimistic update on error
             fetchClubs();
-        }
-    };
-
-    // Handle create club
-    const handleCreateClub = async () => {
-        setCreateError('');
-
-        // Validation
-        if (!newClubName.trim()) {
-            setCreateError('Club name is required');
-            return;
-        }
-        if (!newClubCategory) {
-            setCreateError('Please select a category');
-            return;
-        }
-
-        setCreateLoading(true);
-        try {
-            await createClub({
-                name: newClubName.trim(),
-                category: newClubCategory,
-                description: newClubDescription.trim(),
-            });
-
-            // Reset form & close modal
-            setNewClubName('');
-            setNewClubCategory('');
-            setNewClubDescription('');
-            toggleCreateModal();
-
-            // Refresh clubs list
-            await fetchClubs();
-        } catch (error: any) {
-            setCreateError(error?.response?.data?.message || 'Failed to create club');
-        } finally {
-            setCreateLoading(false);
         }
     };
 

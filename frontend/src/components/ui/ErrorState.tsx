@@ -16,7 +16,7 @@ export function ErrorState({
     const errorMessage = error instanceof Error ? error.message : error;
 
     return (
-        <div className={`flex flex-col items-center justify-center py-12 px-4 text-center ${className}`}>
+        <div className={`flex flex-col items-center justify-center py-12 px-4 text-center min-h-[50vh] animate-fade-in ${className}`}>
             <div className="size-20 rounded-full bg-red-500/10 flex items-center justify-center mb-6">
                 <span className="material-symbols-outlined text-4xl text-red-400">error</span>
             </div>

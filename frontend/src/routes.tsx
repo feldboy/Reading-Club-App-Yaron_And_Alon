@@ -2,6 +2,7 @@ import { createBrowserRouter, Outlet, Navigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import BottomNav from './components/layout/BottomNav';
 import ScrollToTop from './components/ScrollToTop';
+import AIChatBot from './components/AIChatBot';
 import { PageLoader } from './components/ui';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
@@ -17,16 +18,18 @@ import WishlistPageEnhanced from './pages/WishlistPageEnhanced';
  */
 const Layout = () => {
     return (
-        <div className="app bg-background-light dark:bg-background-dark min-h-screen text-white font-display">
-            <ScrollToTop />
-            <main className="app-main pb-24">
-                <Outlet />
-            </main>
-            <BottomNav />
+        <div className="bg-[#0f0720] dark:bg-black min-h-screen text-white font-display flex flex-col md:py-6 md:items-center">
+            <div className="app bg-background-light dark:bg-background-dark min-h-screen w-full md:max-w-[480px] md:min-h-[calc(100vh-3rem)] md:rounded-3xl md:shadow-[0_0_50px_rgba(124,58,237,0.15)] md:overflow-hidden relative flex flex-col">
+                <ScrollToTop />
+                <main className="app-main pb-24 flex-1">
+                    <Outlet />
+                </main>
+                <AIChatBot />
+                <BottomNav />
+            </div>
         </div>
     );
 };
-
 /**
  * Protected Route Wrapper
  * Redirects to login if not authenticated

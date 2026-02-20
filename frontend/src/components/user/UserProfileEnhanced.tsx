@@ -6,6 +6,7 @@ import { getUserReviews } from '../../services/review.api';
 import type { Review } from '../../services/review.api';
 import { Badge, Card } from '../ui';
 import WishlistButton from '../ui/WishlistButton';
+import { resolveInternalImageUrl } from '../../utils/imageUtils';
 
 interface UserProfileEnhancedProps {
     userId?: string;
@@ -125,7 +126,7 @@ const UserProfileEnhanced = ({ userId, onEditClick }: UserProfileEnhancedProps) 
                             <div className="relative">
                                 <div className="size-32 sm:size-40 rounded-3xl overflow-hidden border-4 border-[#7C3AED]/20 dark:border-[#7C3AED]/40 shadow-2xl bg-white dark:bg-[#1a0f2e]">
                                     <img
-                                        src={`http://localhost:3000${profile.profileImage}`}
+                                        src={resolveInternalImageUrl(profile.profileImage)}
                                         alt={profile.username}
                                         className="w-full h-full object-cover"
                                         onError={(e) => {
@@ -214,21 +215,19 @@ const UserProfileEnhanced = ({ userId, onEditClick }: UserProfileEnhancedProps) 
                 <div className="flex gap-2 border-b-2 border-[#7C3AED]/10 dark:border-white/10">
                     <button
                         onClick={() => setActiveTab('reviews')}
-                        className={`px-6 py-3 font-heading font-bold text-base sm:text-lg transition-all duration-300 cursor-pointer border-b-4 ${
-                            activeTab === 'reviews'
+                        className={`px-6 py-3 font-heading font-bold text-base sm:text-lg transition-all duration-300 cursor-pointer border-b-4 ${activeTab === 'reviews'
                                 ? 'border-[#7C3AED] text-[#7C3AED] dark:text-white'
                                 : 'border-transparent text-[#4C1D95]/60 dark:text-white/60 hover:text-[#7C3AED] dark:hover:text-white'
-                        }`}
+                            }`}
                     >
                         Reviews ({reviews.length})
                     </button>
                     <button
                         onClick={() => setActiveTab('wishlist')}
-                        className={`px-6 py-3 font-heading font-bold text-base sm:text-lg transition-all duration-300 cursor-pointer border-b-4 ${
-                            activeTab === 'wishlist'
+                        className={`px-6 py-3 font-heading font-bold text-base sm:text-lg transition-all duration-300 cursor-pointer border-b-4 ${activeTab === 'wishlist'
                                 ? 'border-[#7C3AED] text-[#7C3AED] dark:text-white'
                                 : 'border-transparent text-[#4C1D95]/60 dark:text-white/60 hover:text-[#7C3AED] dark:hover:text-white'
-                        }`}
+                            }`}
                     >
                         Wishlist ({wishlist.length})
                     </button>
@@ -290,9 +289,8 @@ const UserProfileEnhanced = ({ userId, onEditClick }: UserProfileEnhancedProps) 
                                                     {[...Array(5)].map((_, i) => (
                                                         <span
                                                             key={i}
-                                                            className={`material-symbols-outlined text-lg ${
-                                                                i < review.rating ? 'text-[#7C3AED]' : 'text-[#7C3AED]/20'
-                                                            }`}
+                                                            className={`material-symbols-outlined text-lg ${i < review.rating ? 'text-[#7C3AED]' : 'text-[#7C3AED]/20'
+                                                                }`}
                                                             style={{ fontVariationSettings: i < review.rating ? "'FILL' 1" : "'FILL' 0" }}
                                                         >
                                                             star

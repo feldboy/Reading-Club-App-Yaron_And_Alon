@@ -1,0 +1,42 @@
+# Example Nginx configuration for Reading Club App
+
+server {
+    listen 80;
+    server_name readingclub.example.com; # Replace with your actual domain or IP
+
+    # Route frontend requests to the React build folder
+    location / {
+        root /var/www/reading-club/frontend/dist; # Edit this path based on your deployment location
+        index index.html index.htm;
+        try_files $uri $uri/ /index.html;
+
+        # Basic security headers for frontend
+        add_header X-Frame-Options "SAMEORIGIN";
+        add_header X-XSS-Protection "1; mode=block";
+        add_header X-Content-Type-Options "nosniff";
+    }
+
+    # Reverse proxy backend /api requests to PM2 Node.js app
+    location /api/ {
+        proxy_pass http://127.0.0.1:3000; # Points to PM2 reading-club-api instance
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+        
+        # Pass real client IP to the backend (important for rate-limiting)
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # Configuration for file uploads (covers /uploads from backend)
+    location /uploads/ {
+        proxy_pass http://127.0.0.1:3000/uploads/;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        # Optional: set max client body size suitable for image uploads (e.g. 10MB)
+        client_max_body_size 10M;
+    }
+}

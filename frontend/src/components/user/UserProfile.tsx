@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { getProfile, type UserProfile as UserProfileData } from '../../services/user.api';
 import { getUserReviews } from '../../services/review.api';
 import type { Review } from '../../services/review.api';
+import { resolveInternalImageUrl } from '../../utils/imageUtils';
 import './UserProfile.css';
 
 /**
@@ -111,7 +112,7 @@ const UserProfile = ({ userId, onEditClick }: UserProfileProps) => {
             <div className="user-profile-header">
                 <div className="user-profile-avatar">
                     <img
-                        src={`http://localhost:3000${profile.profileImage}`}
+                        src={resolveInternalImageUrl(profile.profileImage)}
                         alt={profile.username}
                         onError={(e) => {
                             (e.target as HTMLImageElement).src = '/uploads/profiles/default-avatar.png';

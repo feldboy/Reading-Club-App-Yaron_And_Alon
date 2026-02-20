@@ -37,11 +37,11 @@ export const Root: React.FC = () => {
                 fps={30}
             />
 
-            {/* Real Footage Version */}
+            {/* Real Footage Version - ~12 min total */}
             <Composition
                 id="MainWithFootage"
                 component={MainWithFootage}
-                durationInFrames={24750}
+                durationInFrames={22100}
                 width={1920}
                 height={1080}
                 fps={30}
