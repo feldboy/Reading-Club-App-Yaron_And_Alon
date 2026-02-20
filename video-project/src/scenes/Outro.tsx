@@ -1,5 +1,11 @@
 import { AbsoluteFill, useCurrentFrame, interpolate } from 'remotion';
 
+/**
+ * Design System (ui-ux-pro-max)
+ * Primary: #18181B, CTA: #EC4899
+ * Fonts: Cormorant Garamond (headings), Libre Baskerville (body)
+ */
+
 export const Outro: React.FC = () => {
     const frame = useCurrentFrame();
 
@@ -23,26 +29,30 @@ export const Outro: React.FC = () => {
         extrapolateRight: 'clamp',
     });
 
+    const accentWidth = interpolate(frame, [50, 80], [0, 200], {
+        extrapolateRight: 'clamp',
+    });
+
     return (
         <AbsoluteFill
             style={{
-                background: 'linear-gradient(135deg, #1e3a8a 0%, #312e81 50%, #581c87 100%)',
+                background: '#18181B',
                 justifyContent: 'center',
                 alignItems: 'center',
-                fontFamily: 'Inter, system-ui, sans-serif',
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
             }}
         >
-            {/* Background decoration */}
+            {/* Gradient accents */}
             <div
                 style={{
                     position: 'absolute',
-                    width: '600px',
-                    height: '600px',
+                    width: '700px',
+                    height: '700px',
                     borderRadius: '50%',
-                    background: 'rgba(255, 255, 255, 0.05)',
+                    background: 'radial-gradient(circle, rgba(236,72,153,0.2) 0%, transparent 70%)',
                     top: '-200px',
                     left: '-100px',
-                    filter: 'blur(100px)',
+                    filter: 'blur(60px)',
                 }}
             />
             <div
@@ -51,10 +61,10 @@ export const Outro: React.FC = () => {
                     width: '500px',
                     height: '500px',
                     borderRadius: '50%',
-                    background: 'rgba(255, 255, 255, 0.08)',
+                    background: 'radial-gradient(circle, rgba(236,72,153,0.15) 0%, transparent 70%)',
                     bottom: '-150px',
                     right: '-80px',
-                    filter: 'blur(80px)',
+                    filter: 'blur(50px)',
                 }}
             />
 
@@ -65,7 +75,7 @@ export const Outro: React.FC = () => {
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    gap: '40px',
+                    gap: '30px',
                 }}
             >
                 {/* Main message */}
@@ -78,25 +88,38 @@ export const Outro: React.FC = () => {
                 >
                     <h1
                         style={{
-                            fontSize: 80,
-                            fontWeight: 900,
-                            color: 'white',
+                            fontSize: 90,
+                            fontWeight: 600,
+                            color: '#FAFAFA',
                             margin: 0,
                             textShadow: '0 4px 30px rgba(0,0,0,0.3)',
                             letterSpacing: '-1px',
                         }}
                     >
-                        Join the Reading Club
+                        Thank You
                     </h1>
+
+                    {/* Accent line */}
+                    <div
+                        style={{
+                            width: accentWidth,
+                            height: 4,
+                            background: '#EC4899',
+                            margin: '25px auto',
+                            borderRadius: 2,
+                        }}
+                    />
+
                     <p
                         style={{
-                            fontSize: 36,
-                            color: 'rgba(255, 255, 255, 0.9)',
-                            margin: '20px 0 0 0',
-                            fontWeight: 500,
+                            fontSize: 32,
+                            color: 'rgba(250,250,250,0.85)',
+                            margin: 0,
+                            fontWeight: 400,
+                            fontFamily: "'Libre Baskerville', Georgia, serif",
                         }}
                     >
-                        Share • Discover • Connect
+                        Full-Stack • AI-Powered • Production-Ready
                     </p>
                 </div>
 
@@ -109,17 +132,17 @@ export const Outro: React.FC = () => {
                 >
                     <div
                         style={{
-                            background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-                            padding: '20px 60px',
-                            borderRadius: '16px',
-                            fontSize: 32,
-                            fontWeight: 700,
+                            background: '#EC4899',
+                            padding: '18px 50px',
+                            borderRadius: '12px',
+                            fontSize: 28,
+                            fontWeight: 600,
                             color: 'white',
-                            boxShadow: '0 10px 40px rgba(245, 87, 108, 0.4)',
-                            cursor: 'pointer',
+                            boxShadow: '0 10px 40px rgba(236,72,153,0.4)',
+                            fontFamily: "'Libre Baskerville', Georgia, serif",
                         }}
                     >
-                        Get Started Today
+                        Join Reading Club
                     </div>
                 </div>
 
@@ -130,18 +153,42 @@ export const Outro: React.FC = () => {
                         display: 'flex',
                         alignItems: 'center',
                         gap: '12px',
+                        marginTop: 20,
                     }}
                 >
-                    <div style={{ fontSize: 32 }}>⭐</div>
                     <p
                         style={{
-                            fontSize: 24,
-                            color: 'rgba(255, 255, 255, 0.8)',
+                            fontSize: 22,
+                            color: 'rgba(250,250,250,0.7)',
                             margin: 0,
                             fontFamily: 'monospace',
+                            background: 'rgba(250,250,250,0.1)',
+                            padding: '12px 24px',
+                            borderRadius: 8,
+                            border: '1px solid rgba(236,72,153,0.3)',
                         }}
                     >
                         github.com/feldboy/Reading-Club-App
+                    </p>
+                </div>
+
+                {/* Team */}
+                <div
+                    style={{
+                        opacity: linkOpacity,
+                        marginTop: 30,
+                        textAlign: 'center',
+                    }}
+                >
+                    <p
+                        style={{
+                            fontSize: 20,
+                            color: 'rgba(250,250,250,0.6)',
+                            margin: 0,
+                            fontFamily: "'Libre Baskerville', Georgia, serif",
+                        }}
+                    >
+                        Created by Yaron & Alon • 2026
                     </p>
                 </div>
             </div>

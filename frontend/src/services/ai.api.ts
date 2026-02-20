@@ -30,11 +30,10 @@ export interface AISearchResponse {
 export interface AIRecommendationsResponse {
     success: boolean;
     data: {
-        preferences: {
-            genres?: string[];
-            favoriteBooks?: string[];
-            readingGoals?: string;
-            recentlyRead?: string[];
+        userProfile: {
+            genres: string[];
+            favoriteBooks: string[];
+            wishlistBooks: string[];
         };
         recommendations: AIBook[];
         timestamp: string;
@@ -49,16 +48,6 @@ export interface AISearchRequest {
 }
 
 /**
- * AI Recommendations Request
- */
-export interface AIRecommendationsRequest {
-    genres?: string[];
-    favoriteBooks?: string[];
-    readingGoals?: string;
-    recentlyRead?: string[];
-}
-
-/**
  * Search for books using AI
  */
 export const searchBooks = async (query: string): Promise<AIBook[]> => {
@@ -67,11 +56,41 @@ export const searchBooks = async (query: string): Promise<AIBook[]> => {
 };
 
 /**
- * Get personalized book recommendations
+ * Get personalized book recommendations based on database history
  */
-export const getRecommendations = async (
-    preferences: AIRecommendationsRequest
-): Promise<AIBook[]> => {
-    const response = await api.post<AIRecommendationsResponse>('/ai/recommend', preferences);
+export const getRecommendations = async (): Promise<AIBook[]> => {
+    const response = await api.get<AIRecommendationsResponse>('/ai/recommend');
     return response.data.data.recommendations;
+};
+
+
+
+/**
+ * Chat Message for multi-turn AI conversation
+ */
+export interface ChatMessage {
+    role: 'user' | 'model';
+    content: string;
+}
+
+/**
+ * AI Chat Response
+ */
+export interface AIChatResponse {
+    success: boolean;
+    data: {
+        reply: string;
+        history: ChatMessage[];
+    };
+}
+
+/**
+ * Chat with the AI Book Assistant
+ */
+export const chatWithAI = async (
+    message: string,
+    history: ChatMessage[] = []
+): Promise<{ reply: string; history: ChatMessage[] }> => {
+    const response = await api.post<AIChatResponse>('/ai/chat', { message, history });
+    return response.data.data;
 };

@@ -1,4 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import User from '../models/User.model';
+import Review from '../models/Review.model';
 
 // Initialize Gemini AI with API key from environment
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
@@ -138,40 +140,50 @@ Only return the JSON array, no additional text.`;
 }
 
 /**
- * Get personalized book recommendations based on user preferences
- * @param preferences - User preferences (genres, favorite books, reading goals)
- * @param userId - User ID for rate limiting
+ * Get personalized book recommendations based on user's actual data from the DB
+ * @param userId - User ID for fetching preferences and rate limiting
  * @returns Personalized book recommendations
  */
-export async function getRecommendations(
-    preferences: {
-        genres?: string[];
-        favoriteBooks?: string[];
-        readingGoals?: string;
-        recentlyRead?: string[];
-    },
-    userId: string
-): Promise<any> {
+export async function getRecommendations(userId: string): Promise<any> {
     // Check rate limit
     if (!checkRateLimit(userId)) {
         throw new Error('Rate limit exceeded. Please try again later.');
     }
 
-    // Create cache key from preferences
-    const cacheKey = `recommendations:${JSON.stringify(preferences)}`;
+    // Check cache
+    const cacheKey = `recommendations:${userId}`;
     const cached = getCachedResponse(cacheKey);
     if (cached) {
         return cached;
     }
 
     try {
-        const prompt = `You are a personalized book recommendation engine. Based on the user's preferences below, suggest 8 books they would enjoy.
+        // --- Fetch real user data from the database ---
+        const user = await User.findById(userId).select('favoriteGenres wishlist').lean();
+        if (!user) {
+            throw new Error('User not found');
+        }
 
-User Preferences:
-${preferences.genres ? `Favorite Genres: ${preferences.genres.join(', ')}` : ''}
-${preferences.favoriteBooks ? `Favorite Books: ${preferences.favoriteBooks.join(', ')}` : ''}
-${preferences.readingGoals ? `Reading Goals: ${preferences.readingGoals}` : ''}
-${preferences.recentlyRead ? `Recently Read: ${preferences.recentlyRead.join(', ')}` : ''}
+        // Highly-rated books (4+ stars)
+        const highlyRatedReviews = await Review.find({ userId, rating: { $gte: 4 } })
+            .select('bookTitle bookAuthor')
+            .lean();
+
+        const genres: string[] = (user.favoriteGenres as string[]) || [];
+        const favoriteBooks: string[] = highlyRatedReviews.map(
+            (r: any) => `${r.bookTitle} by ${r.bookAuthor}`
+        );
+        const wishlistBooks: string[] = ((user.wishlist as any[]) || []).map(
+            (w: any) => w.title
+        );
+
+        // Build the prompt from real data
+        const prompt = `You are a personalized book recommendation engine. Based on the user's reading profile below, suggest 8 books they would enjoy.
+
+User Reading Profile:
+${genres.length > 0 ? `Favorite Genres: ${genres.join(', ')}` : ''}
+${favoriteBooks.length > 0 ? `Books They Loved (rated 4-5 stars): ${favoriteBooks.join(', ')}` : ''}
+${wishlistBooks.length > 0 ? `Books on Their Wishlist: ${wishlistBooks.join(', ')}` : ''}
 
 For each book, provide:
 1. Title
@@ -199,7 +211,7 @@ Only return the JSON array, no additional text.`;
         }
 
         const result_data = {
-            preferences,
+            userProfile: { genres, favoriteBooks, wishlistBooks },
             recommendations,
             timestamp: new Date().toISOString()
         };
@@ -211,6 +223,72 @@ Only return the JSON array, no additional text.`;
     } catch (error: any) {
         console.error('AI getRecommendations error:', error);
         throw new Error(`AI recommendations failed: ${error.message}`);
+    }
+}
+
+/**
+ * Chat message structure for multi-turn conversations
+ */
+export interface ChatMessage {
+    role: 'user' | 'model';
+    content: string;
+}
+
+/**
+ * Chat with the AI Book Assistant (multi-turn conversation)
+ * @param message - The user's new message
+ * @param history - Array of previous messages for context
+ * @param userId - User ID for rate limiting
+ * @returns AI reply and updated history
+ */
+export async function chatWithAI(
+    message: string,
+    history: ChatMessage[],
+    userId: string
+): Promise<{ reply: string; history: ChatMessage[] }> {
+    // Check rate limit
+    if (!checkRateLimit(userId)) {
+        throw new Error('Rate limit exceeded. Please try again later.');
+    }
+
+    try {
+        // Build Gemini history format from our ChatMessage format
+        const geminiHistory = history.map((msg) => ({
+            role: msg.role,
+            parts: [{ text: msg.content }],
+        }));
+
+        // Start a chat session with history
+        const chat = model.startChat({
+            history: [
+                {
+                    role: 'user',
+                    parts: [{ text: 'You are a friendly and knowledgeable book recommendation assistant for the "Reading Club" app. You help users discover books based on their mood, preferences, and interests. You can recommend books in any language and genre. Keep your answers concise but helpful. If the user writes in Hebrew, respond in Hebrew. If they write in English, respond in English. Always suggest specific book titles and authors.' }],
+                },
+                {
+                    role: 'model',
+                    parts: [{ text: 'מעולה! אני העוזר הספרותי של Reading Club 📚. אשמח לעזור לך למצוא את הספר המושלם! ספר לי מה בא לך לקרוא, ואני אמליץ.' }],
+                },
+                ...geminiHistory,
+            ],
+        });
+
+        // Send the new message
+        const result = await chat.sendMessage(message);
+        const response = await result.response;
+        const reply = response.text();
+
+        // Build the updated history
+        const updatedHistory: ChatMessage[] = [
+            ...history,
+            { role: 'user', content: message },
+            { role: 'model', content: reply },
+        ];
+
+        return { reply, history: updatedHistory };
+    } catch (error: any) {
+        console.error('AI chatWithAI error:', error);
+        throw new Error(`AI chat failed: ${error.message}`);
     }
 }
 

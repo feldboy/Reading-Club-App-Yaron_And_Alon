@@ -13,7 +13,7 @@ export function Badge({
     size = 'md',
     className = ''
 }: BadgeProps) {
-    const baseStyles = 'inline-flex items-center justify-center font-bold rounded-full transition-all';
+    const baseStyles = 'inline-flex items-center justify-center font-bold rounded-full transition-all shrink-0 whitespace-nowrap';
 
     const variants = {
         default: 'bg-white/5 text-white/70 border border-white/10',

@@ -94,22 +94,20 @@ export default function WishlistPageEnhanced() {
                             <div className="flex bg-[#7C3AED]/10 dark:bg-white/5 rounded-xl p-1">
                                 <button
                                     onClick={() => setViewMode('grid')}
-                                    className={`px-3 py-2 rounded-lg transition-all duration-200 cursor-pointer ${
-                                        viewMode === 'grid'
+                                    className={`px-3 py-2 rounded-lg transition-all duration-200 cursor-pointer ${viewMode === 'grid'
                                             ? 'bg-[#7C3AED] text-white shadow-sm'
                                             : 'text-[#7C3AED] dark:text-white/60 hover:text-[#4C1D95] dark:hover:text-white'
-                                    }`}
+                                        }`}
                                     aria-label="Grid view"
                                 >
                                     <span className="material-symbols-outlined text-lg">grid_view</span>
                                 </button>
                                 <button
                                     onClick={() => setViewMode('list')}
-                                    className={`px-3 py-2 rounded-lg transition-all duration-200 cursor-pointer ${
-                                        viewMode === 'list'
+                                    className={`px-3 py-2 rounded-lg transition-all duration-200 cursor-pointer ${viewMode === 'list'
                                             ? 'bg-[#7C3AED] text-white shadow-sm'
                                             : 'text-[#7C3AED] dark:text-white/60 hover:text-[#4C1D95] dark:hover:text-white'
-                                    }`}
+                                        }`}
                                     aria-label="List view"
                                 >
                                     <span className="material-symbols-outlined text-lg">view_list</span>
@@ -187,7 +185,7 @@ export default function WishlistPageEnhanced() {
                                             <h3 className="font-heading font-bold text-[#4C1D95] dark:text-white text-sm leading-tight line-clamp-2 mb-2 group-hover:text-[#7C3AED] transition-colors">
                                                 {book.title}
                                             </h3>
-                                            <p className="font-serif text-[#7C3AED]/70 dark:text-white/60 text-xs italic line-clamp-1 mb-auto">
+                                            <p className="font-body text-[#7C3AED]/70 dark:text-white/60 text-xs italic line-clamp-1 mb-auto">
                                                 {book.authors?.join(', ') || 'Unknown Author'}
                                             </p>
                                             <div className="flex items-center gap-2 mt-3 pt-3 border-t-2 border-[#7C3AED]/10 dark:border-white/10">
@@ -248,7 +246,7 @@ export default function WishlistPageEnhanced() {
                                                 <h3 className="font-heading font-bold text-[#4C1D95] dark:text-white text-lg sm:text-xl leading-tight line-clamp-2 mb-2 group-hover:text-[#7C3AED] transition-colors">
                                                     {book.title}
                                                 </h3>
-                                                <p className="font-serif text-[#7C3AED]/70 dark:text-white/70 text-sm sm:text-base italic">
+                                                <p className="font-body text-[#7C3AED]/70 dark:text-white/70 text-sm sm:text-base italic">
                                                     by {book.authors?.join(', ') || 'Unknown Author'}
                                                 </p>
                                             </div>

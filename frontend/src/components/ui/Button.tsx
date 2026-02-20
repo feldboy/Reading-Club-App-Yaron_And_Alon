@@ -70,7 +70,7 @@ export function IconButton({
     'aria-label': ariaLabel,
     ...props
 }: Omit<ButtonProps, 'leftIcon' | 'rightIcon' | 'fullWidth'> & { 'aria-label': string }) {
-    const baseStyles = 'inline-flex items-center justify-center rounded-full transition-all duration-200 active:scale-90';
+    const baseStyles = 'inline-flex items-center justify-center rounded-full transition-all duration-200 active:scale-90 shrink-0 overflow-hidden';
 
     const variants = {
         primary: 'bg-primary text-white hover:brightness-110',

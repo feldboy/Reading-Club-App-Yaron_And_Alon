@@ -28,14 +28,7 @@ const BookRecommendations = () => {
         setShowRecommendations(false);
 
         try {
-            const prefs = {
-                genres: user.favoriteGenres || [],
-                favoriteBooks: [], // Could be fetched from user's reviews
-                readingGoals: user.bio || undefined,
-                recentlyRead: [], // Could be fetched from user's recent reviews
-            };
-
-            const results = await getRecommendations(prefs);
+            const results = await getRecommendations();
             setRecommendations(results);
             setShowRecommendations(true);
         } catch (err: any) {
@@ -99,7 +92,7 @@ const BookRecommendations = () => {
                                 </div>
                                 {book.matchReason && (
                                     <div className="book-recommendation-match">
-                        ✨ {book.matchReason}
+                                        ✨ {book.matchReason}
                                     </div>
                                 )}
                             </div>

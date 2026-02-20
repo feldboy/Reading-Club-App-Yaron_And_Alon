@@ -54,7 +54,7 @@ export function Avatar({
                 />
             ) : (
                 <div
-                    className={`${sizes[size]} rounded-full bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center font-bold text-white ${borderStyles}`}
+                    className={`${sizes[size]} rounded-full bg-gradient-to-br from-primary to-purple-600 flex shrink-0 items-center justify-center font-bold text-white overflow-hidden ${borderStyles}`}
                     aria-label={alt}
                 >
                     {initials}
@@ -103,7 +103,7 @@ export function AvatarGroup({ avatars, max = 4, size = 'sm' }: AvatarGroupProps)
             ))}
             {remaining > 0 && (
                 <div
-                    className={`${sizes[size]} rounded-full bg-white/10 flex items-center justify-center font-bold text-white ring-2 ring-background-dark`}
+                    className={`${sizes[size]} rounded-full bg-white/10 flex shrink-0 items-center justify-center font-bold text-white ring-2 ring-background-dark overflow-hidden`}
                 >
                     +{remaining}
                 </div>
