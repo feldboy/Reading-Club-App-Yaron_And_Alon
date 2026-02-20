@@ -18,7 +18,6 @@ const getApiBaseURL = (): string => {
  * Axios instance with base configuration
  */
 const api: AxiosInstance = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || '/api',
     baseURL: getApiBaseURL(),
     headers: {
         'Content-Type': 'application/json',
@@ -98,8 +97,6 @@ api.interceptors.response.use(
             try {
                 const refreshToken = localStorage.getItem('refreshToken');
                 if (refreshToken) {
-                    // Try to refresh the token
-                    const response = await axios.post('/api/auth/refresh', {
                     const refreshUrl = `${getApiBaseURL()}/auth/refresh`;
                     const response = await axios.post(refreshUrl, {
                         refreshToken,
