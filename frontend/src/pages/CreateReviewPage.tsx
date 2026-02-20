@@ -139,14 +139,14 @@ export default function CreateReviewPage() {
         <div className="bg-gradient-to-br from-[#1a0f2e] via-[#2d1b4e] to-[#1a0f2e] text-white min-h-screen pb-24">
             {/* Header Section with Dynamic Blurred Background */}
             <div className="relative w-full h-[40vh] md:h-[30vh] overflow-hidden">
-                    {/* Blurred Background Image */}
-                    <div
-                        className="absolute inset-0 bg-cover bg-center scale-110 blur-2xl opacity-40 transition-all duration-700"
-                        role="img"
-                        aria-label={`Background image: ${selectedBook.title || 'Book'} cover`}
-                        style={{ backgroundImage: `url('${selectedBook.cover || DEFAULT_BOOK.cover}')` }}
-                    >
-                    </div>
+                {/* Blurred Background Image */}
+                <div
+                    className="absolute inset-0 bg-cover bg-center scale-110 blur-2xl opacity-40 transition-all duration-700"
+                    role="img"
+                    aria-label={`Background image: ${selectedBook?.title || 'Book'} cover`}
+                    style={{ backgroundImage: `url('${selectedBook?.cover || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=2730&auto=format&fit=crop'}')` }}
+                >
+                </div>
 
                 {/* Top Navigation - Centered */}
                 <div className="relative z-10 w-full px-4 md:px-6 pt-12">
@@ -299,8 +299,8 @@ export default function CreateReviewPage() {
                         <label className="font-ui text-white/70 text-xs font-semibold uppercase tracking-[0.15em]">Rating</label>
                         <div className="flex gap-3" role="group" aria-label="Rating selection">
                             {[1, 2, 3, 4, 5].map((star) => (
-                                <button 
-                                    key={star} 
+                                <button
+                                    key={star}
                                     onClick={() => setRating(star)}
                                     aria-label={`Rate ${star} star${star > 1 ? 's' : ''}`}
                                     className="focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background-dark rounded-full"

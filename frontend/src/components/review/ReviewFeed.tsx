@@ -71,12 +71,12 @@ const ReviewFeed = () => {
             prev.map((review) =>
                 review.id === reviewId
                     ? {
-                          ...review,
-                          likesCount: count,
-                          likes: liked
-                              ? [...review.likes, user?.id || '']
-                              : review.likes.filter((id) => id !== user?.id),
-                      }
+                        ...review,
+                        likesCount: count,
+                        likes: liked
+                            ? [...review.likes, user?.id || '']
+                            : review.likes.filter((id) => id !== user?.id),
+                    }
                     : review
             )
         );
@@ -111,7 +111,7 @@ const ReviewFeed = () => {
     if (error) {
         return (
             <ErrorState
-                message={error}
+                error={error}
                 onRetry={() => loadReviews(1, false)}
             />
         );
