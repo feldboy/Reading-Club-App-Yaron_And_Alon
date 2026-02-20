@@ -7,7 +7,7 @@ import LikeButton from '../components/review/LikeButton';
 import WishlistButton from '../components/ui/WishlistButton';
 import CommentList from '../components/comment/CommentList';
 import CommentForm from '../components/comment/CommentForm';
-
+import { resolveInternalImageUrl } from '../utils/imageUtils';
 export default function ReviewDetailPageRedesign() {
     const navigate = useNavigate();
     const { id } = useParams<{ id: string }>();
@@ -173,9 +173,7 @@ export default function ReviewDetailPageRedesign() {
 
     const isLiked = user?.id ? review.likes.includes(user.id) : false;
     const bookImageUrl = review.bookImage
-        ? review.bookImage.startsWith('http')
-            ? review.bookImage
-            : `http://localhost:3000${review.bookImage}`
+        ? resolveInternalImageUrl(review.bookImage)
         : '/uploads/books/default-book.png';
 
     return (
@@ -286,9 +284,7 @@ export default function ReviewDetailPageRedesign() {
                                     className="w-full h-full object-cover"
                                     src={
                                         review.user?.profileImage
-                                            ? review.user.profileImage.startsWith('http')
-                                                ? review.user.profileImage
-                                                : `http://localhost:3000${review.user.profileImage}`
+                                            ? resolveInternalImageUrl(review.user.profileImage)
                                             : '/uploads/profiles/default-avatar.png'
                                     }
                                     onError={(e) => {

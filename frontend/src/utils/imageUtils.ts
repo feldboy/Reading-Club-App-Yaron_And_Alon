@@ -29,3 +29,18 @@ export const getHighResBookCover = (url?: string): string => {
 
     return highResUrl;
 };
+
+/**
+ * Resolves an internal image path (like /uploads/...) to a full URL based on the environment.
+ * In development, points to localhost:3000. In production, uses relative path (proxied by Nginx) or VITE_API_URL.
+ */
+export const resolveInternalImageUrl = (path?: string): string => {
+    if (!path) return '';
+    if (path.startsWith('http')) return path; // Already a full URL
+
+    // Ensure path starts with a slash
+    const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+
+    const backendUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:3000' : '');
+    return `${backendUrl}${normalizedPath}`;
+};

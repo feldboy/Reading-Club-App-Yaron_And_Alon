@@ -16,7 +16,7 @@ const GoogleLoginButton = ({ text = 'Continue with Google' }: GoogleLoginButtonP
      */
     const handleGoogleLogin = () => {
         // Redirect to backend Google OAuth endpoint
-        const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+        const backendUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:3000' : '');
         window.location.href = `${backendUrl}/api/auth/google`;
     };
 
