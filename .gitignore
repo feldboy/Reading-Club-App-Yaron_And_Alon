@@ -15,17 +15,19 @@ yarn.lock
 # Build outputs
 dist/
 build/
+out/
 *.tsbuildinfo
 
-# IDE
+# IDE & Editor
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 .DS_Store
+**/.DS_Store
 
-# Testing
+# Testing artifacts
 coverage/
 *.log
 
@@ -33,7 +35,7 @@ coverage/
 backend/uploads/**/*
 !backend/uploads/**/.gitkeep
 
-# Production
+# Production / Process
 *.pid
 *.seed
 *.pid.lock
@@ -41,3 +43,27 @@ backend/uploads/**/*
 # Misc
 .cache/
 .temp/
+tmp/
+
+# ----------------------------
+# AI Coding Assistants & Tools
+# ----------------------------
+.agent/
+.claude/
+.gemini/
+.cursor/
+.aider*
+.copilot/
+brain/
+.instincts/
+
+# Project planning & AI-generated docs
+docs/
+deployment/
+
+# Personal/development scripts not for submission
+backend/scripts/test-auth.sh
+frontend/scripts/
+
+# Video demo project (not part of the app)
+video-project/

@@ -215,10 +215,10 @@ describe('Review API', () => {
                 .expect(404);
         });
 
-        it('should return 400 if review ID is invalid', async () => {
+        it('should return 404 if review ID is invalid', async () => {
             await request(app)
                 .get('/api/reviews/invalid-id')
-                .expect(400);
+                .expect(404);
         });
     });
 

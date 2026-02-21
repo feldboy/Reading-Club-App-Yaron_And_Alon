@@ -66,18 +66,20 @@ export default function AIChatBot() {
             {!isOpen && (
                 <button
                     onClick={() => setIsOpen(true)}
-                    className="fixed bottom-40 right-5 z-[200] md:right-auto md:left-1/2 md:ml-[160px] size-14 rounded-full bg-gradient-to-tr from-[#7C3AED] to-[#A78BFA] text-white shadow-xl shadow-purple-500/40 flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-300 cursor-pointer"
+                    className="fixed bottom-24 right-4 z-[200] md:bottom-8 md:right-8 size-14 rounded-full bg-gradient-to-tr from-[#7C3AED] to-[#A78BFA] text-white shadow-xl shadow-purple-500/40 flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-300 cursor-pointer overflow-hidden p-0"
                     aria-label="Open AI Book Assistant chat"
                 >
-                    <span className="material-symbols-outlined text-3xl" aria-hidden="true">
-                        smart_toy
-                    </span>
+                    <img
+                        src="/ai-robot.png"
+                        alt="AI Book Assistant"
+                        className="w-full h-full object-cover"
+                    />
                 </button>
             )}
 
             {/* Chat Panel */}
             {isOpen && (
-                <div className="fixed inset-0 z-[300] md:inset-auto md:bottom-20 md:-translate-x-1/2 md:left-1/2 md:w-[460px] md:h-[600px] md:rounded-3xl md:shadow-2xl md:shadow-purple-500/20 flex flex-col bg-[#1a0f2e] border border-white/10 overflow-hidden">
+                <div className="fixed inset-0 z-[300] md:inset-auto md:bottom-28 md:right-8 md:w-[460px] md:h-[600px] md:rounded-3xl md:shadow-2xl md:shadow-purple-500/20 flex flex-col bg-[#1a0f2e] border border-purple-500/20 overflow-hidden">
                     {/* Header */}
                     <div className="flex items-center justify-between px-5 py-4 bg-gradient-to-r from-[#7C3AED]/20 to-[#A78BFA]/10 border-b border-white/10">
                         <div className="flex items-center gap-3">
