@@ -4,6 +4,7 @@ import { Card, Button, Badge, AvatarGroup, Chip, EmptyState, ClubCardSkeleton } 
 import { useToggle } from '../hooks';
 import { getClubs, joinClub, leaveClub, createClub, type Club } from '../services/clubs.api';
 import { useAuth } from '../context/AuthContext';
+import { DEFAULT_AVATAR } from '../utils/imageUtils';
 
 const CATEGORIES = ['All', 'My Clubs', 'Sci-Fi', 'Fantasy', 'Mystery', 'Romance', 'Non-Fiction'];
 
@@ -130,7 +131,7 @@ export default function ClubsPage() {
                 isJoined: true, // Creator is automatically a member
                 members: newClub.members.map((m: any) => ({
                     alt: m.username || 'Member',
-                    src: m.profilePicture || '/uploads/profiles/default-avatar.png',
+                    src: m.profilePicture || DEFAULT_AVATAR,
                 })),
             };
             setClubs([processedClub, ...clubs]);

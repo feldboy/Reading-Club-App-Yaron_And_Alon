@@ -32,9 +32,21 @@ export interface GetCommentsResponse {
 /**
  * Add a comment to a review
  */
-export const addComment = async (reviewId: string, text: string): Promise<Comment> => {
-    const response = await api.post<AddCommentResponse>(`/reviews/${reviewId}/comments`, {
-        text,
+export const addComment = async (reviewId: string, text: string, image?: File): Promise<Comment> => {
+    let payload: any;
+    let headers = {};
+
+    if (image) {
+        payload = new FormData();
+        payload.append('text', text);
+        payload.append('image', image);
+        headers = { 'Content-Type': 'multipart/form-data' };
+    } else {
+        payload = { text };
+    }
+
+    const response = await api.post<AddCommentResponse>(`/reviews/${reviewId}/comments`, payload, {
+        headers,
     });
     return response.data.data.comment;
 };

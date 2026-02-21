@@ -4,18 +4,19 @@ import App from './App';
 import * as authApi from './services/auth.api';
 
 // Suppress jsdom/undici unhandled rejection errors (known compatibility issue)
+declare var process: any;
 let originalListeners: any[];
 beforeAll(() => {
-    originalListeners = (process as any).rawListeners('unhandledRejection');
-    (process as any).removeAllListeners('unhandledRejection');
-    (process as any).on('unhandledRejection', (reason: any) => {
+    originalListeners = process.rawListeners('unhandledRejection');
+    process.removeAllListeners('unhandledRejection');
+    process.on('unhandledRejection', (reason: any) => {
         if (reason?.code === 'UND_ERR_INVALID_ARG') return;
         throw reason;
     });
 });
 afterAll(() => {
-    (process as any).removeAllListeners('unhandledRejection');
-    originalListeners.forEach((listener: any) => (process as any).on('unhandledRejection', listener));
+    process.removeAllListeners('unhandledRejection');
+    originalListeners.forEach((listener: any) => process.on('unhandledRejection', listener));
 });
 
 // Mock the auth API to prevent network calls during tests

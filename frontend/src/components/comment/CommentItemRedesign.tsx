@@ -2,6 +2,7 @@ import { useAuth } from '../../context/AuthContext';
 import type { Comment } from '../../types/review';
 import { deleteComment } from '../../services/comment.api';
 import { useState } from 'react';
+import { DEFAULT_AVATAR, handleImageError } from '../../utils/imageUtils';
 
 interface CommentItemProps {
     comment: Comment;
@@ -60,12 +61,10 @@ const CommentItemRedesign = ({ comment, onDelete }: CommentItemProps) => {
             {/* Avatar */}
             <div className="w-10 h-10 rounded-full border-2 border-rose-100 overflow-hidden flex-shrink-0">
                 <img
-                    src={comment.user.profileImage || '/uploads/profiles/default-avatar.png'}
+                    src={comment.user.profileImage || DEFAULT_AVATAR}
                     alt={comment.user.username}
                     className="w-full h-full object-cover"
-                    onError={(e) => {
-                        (e.target as HTMLImageElement).src = '/uploads/profiles/default-avatar.png';
-                    }}
+                    onError={handleImageError}
                 />
             </div>
 

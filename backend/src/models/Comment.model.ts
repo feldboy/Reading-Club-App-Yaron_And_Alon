@@ -7,6 +7,7 @@ export interface IComment extends Document {
     reviewId: mongoose.Types.ObjectId;
     userId: mongoose.Types.ObjectId;
     text: string;
+    image?: string;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -33,6 +34,9 @@ const CommentSchema: Schema = new Schema(
             required: [true, 'Comment text is required'],
             trim: true,
             maxlength: [1000, 'Comment cannot exceed 1000 characters'],
+        },
+        image: {
+            type: String,
         },
     },
     {

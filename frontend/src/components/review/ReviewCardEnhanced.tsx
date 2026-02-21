@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import type { Review } from '../../services/review.api';
 import LikeButton from './LikeButton';
+import { DEFAULT_AVATAR, handleImageError } from '../../utils/imageUtils';
 
 interface ReviewCardEnhancedProps {
     review: Review;
@@ -50,12 +51,10 @@ const ReviewCardEnhanced = ({ review, currentUserId, onLikeChange, variant = 'de
                     {/* Header */}
                     <div className="flex items-center gap-4 mb-6">
                         <img
-                            src={review.user?.profileImage || '/uploads/profiles/default-avatar.png'}
+                            src={review.user?.profileImage || DEFAULT_AVATAR}
                             alt={`${review.user?.username || 'User'}'s profile`}
                             className="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-cover border-4 border-white/30 shadow-lg group-hover:scale-110 transition-transform duration-300"
-                            onError={(e) => {
-                                (e.target as HTMLImageElement).src = '/uploads/profiles/default-avatar.png';
-                            }}
+                            onError={handleImageError}
                         />
                         <div className="flex-1">
                             <span className="font-display font-bold text-white text-lg sm:text-xl block">
@@ -126,12 +125,10 @@ const ReviewCardEnhanced = ({ review, currentUserId, onLikeChange, variant = 'de
                         <div className="flex items-start justify-between gap-2 mb-2">
                             <div className="flex items-center gap-2">
                                 <img
-                                    src={review.user?.profileImage || '/uploads/profiles/default-avatar.png'}
+                                    src={review.user?.profileImage || DEFAULT_AVATAR}
                                     alt={`${review.user?.username}'s profile`}
                                     className="w-8 h-8 rounded-full object-cover"
-                                    onError={(e) => {
-                                        (e.target as HTMLImageElement).src = '/uploads/profiles/default-avatar.png';
-                                    }}
+                                    onError={handleImageError}
                                 />
                                 <span className="font-display font-semibold text-[#4C1D95] dark:text-white text-sm">
                                     {review.user?.username || 'Unknown'}
@@ -194,12 +191,10 @@ const ReviewCardEnhanced = ({ review, currentUserId, onLikeChange, variant = 'de
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
                         <img
-                            src={review.user?.profileImage || '/uploads/profiles/default-avatar.png'}
+                            src={review.user?.profileImage || DEFAULT_AVATAR}
                             alt={`${review.user?.username}'s profile`}
                             className="w-12 h-12 rounded-full object-cover border-2 border-[#7C3AED]/20 dark:border-white/10"
-                            onError={(e) => {
-                                (e.target as HTMLImageElement).src = '/uploads/profiles/default-avatar.png';
-                            }}
+                            onError={handleImageError}
                         />
                         <div>
                             <span className="font-display font-bold text-[#4C1D95] dark:text-white text-base block">

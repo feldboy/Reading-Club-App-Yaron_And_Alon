@@ -35,6 +35,7 @@ export interface Comment {
         profileImage: string;
     };
     text: string;
+    image?: string;
     createdAt: string;
 }
 

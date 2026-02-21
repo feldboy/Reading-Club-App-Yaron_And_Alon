@@ -39,6 +39,7 @@ router.post(
  */
 router.get('/wishlist', userController.getWishlist);
 router.post('/wishlist', userController.addToWishlist);
+router.get('/likes', reviewController.getLikedReviews);
 router.delete('/wishlist/:bookId', userController.removeFromWishlist);
 
 export default router;

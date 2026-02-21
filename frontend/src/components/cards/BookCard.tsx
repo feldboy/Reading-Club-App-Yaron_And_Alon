@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Badge } from '../ui';
-import { getHighResBookCover } from '../../utils/imageUtils';
+import { getHighResBookCover, DEFAULT_BOOK_COVER } from '../../utils/imageUtils';
 import WishlistButton from '../ui/WishlistButton';
 
 interface BookCardProps {
@@ -30,6 +30,7 @@ export default function BookCard({
     variant = 'grid',
     showActions = true,
 }: BookCardProps) {
+    const displayCover = book.cover ? getHighResBookCover(book.cover) : DEFAULT_BOOK_COVER;
     // Featured variant - large hero card
     if (variant === 'featured') {
         return (
@@ -38,17 +39,11 @@ export default function BookCard({
                     {/* Book Cover */}
                     <div className="relative flex-shrink-0">
                         <div className="w-48 h-72 sm:w-64 sm:h-96 rounded-2xl overflow-hidden shadow-2xl group-hover:scale-105 transition-transform duration-500">
-                            {book.cover ? (
-                                <img
-                                    src={getHighResBookCover(book.cover)}
-                                    alt={`${book.title} cover`}
-                                    className="w-full h-full object-cover"
-                                />
-                            ) : (
-                                <div className="w-full h-full flex items-center justify-center bg-white/10 backdrop-blur-sm">
-                                    <span className="material-symbols-outlined text-6xl text-white/30">book</span>
-                                </div>
-                            )}
+                            <img
+                                src={displayCover}
+                                alt={`${book.title} cover`}
+                                className="w-full h-full object-cover"
+                            />
                         </div>
                         {showActions && onWishlistToggle && (
                             <div className="absolute top-4 right-4">
@@ -56,7 +51,7 @@ export default function BookCard({
                                     bookId={book.id}
                                     title={book.title}
                                     authors={[book.author]}
-                                    cover={getHighResBookCover(book.cover || '')}
+                                    cover={displayCover}
                                     isInWishlist={isInWishlist}
                                     onToggle={(state) => onWishlistToggle(book.id, state)}
                                     className="bg-white/20 backdrop-blur-md hover:bg-white/30"
@@ -123,26 +118,18 @@ export default function BookCard({
             >
                 {/* Book Cover */}
                 <div className="relative flex-shrink-0 w-24 h-36 rounded-xl overflow-hidden shadow-md">
-                    {book.cover ? (
-                        <img
-                            src={getHighResBookCover(book.cover)}
-                            alt={`${book.title} cover`}
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                        />
-                    ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-[#7C3AED]/10 dark:bg-white/10">
-                            <span className="material-symbols-outlined text-3xl text-[#7C3AED]/30 dark:text-white/20">
-                                book
-                            </span>
-                        </div>
-                    )}
+                    <img
+                        src={displayCover}
+                        alt={`${book.title} cover`}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
                     {showActions && onWishlistToggle && (
                         <div className="absolute top-2 right-2">
                             <WishlistButton
                                 bookId={book.id}
                                 title={book.title}
                                 authors={[book.author]}
-                                cover={getHighResBookCover(book.cover || '')}
+                                cover={displayCover}
                                 isInWishlist={isInWishlist}
                                 onToggle={(state) => onWishlistToggle(book.id, state)}
                                 className="bg-black/40 backdrop-blur-sm shadow-sm scale-75"
@@ -202,19 +189,11 @@ export default function BookCard({
                     {/* Book Cover */}
                     <div className="relative">
                         <div className="aspect-[3/4.5] overflow-hidden">
-                            {book.cover ? (
-                                <img
-                                    src={getHighResBookCover(book.cover)}
-                                    alt={`${book.title} cover`}
-                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                                />
-                            ) : (
-                                <div className="w-full h-full flex items-center justify-center bg-[#7C3AED]/10 dark:bg-white/10">
-                                    <span className="material-symbols-outlined text-5xl text-[#7C3AED]/30 dark:text-white/20">
-                                        book
-                                    </span>
-                                </div>
-                            )}
+                            <img
+                                src={displayCover}
+                                alt={`${book.title} cover`}
+                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                            />
                         </div>
                         {book.category && (
                             <div className="absolute top-2 right-2">
@@ -263,7 +242,7 @@ export default function BookCard({
                         bookId={book.id}
                         title={book.title}
                         authors={[book.author]}
-                        cover={getHighResBookCover(book.cover || '')}
+                        cover={displayCover}
                         isInWishlist={isInWishlist}
                         onToggle={(state) => onWishlistToggle(book.id, state)}
                         className="bg-black/40 backdrop-blur-sm shadow-sm"

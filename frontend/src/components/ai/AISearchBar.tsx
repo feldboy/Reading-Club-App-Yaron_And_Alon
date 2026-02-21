@@ -84,7 +84,18 @@ const AISearchBar = ({ onBookSelect, placeholder = 'Search for books using AI...
     return (
         <div className="ai-search-bar" ref={searchRef}>
             <div className="ai-search-input-wrapper">
-                <span className="ai-search-icon">🤖</span>
+                <span className="ai-search-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="url(#ai-gradient)" />
+                        <defs>
+                            <linearGradient id="ai-gradient" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+                                <stop stopColor="#8b5cf6" />
+                                <stop offset="0.5" stopColor="#c084fc" />
+                                <stop offset="1" stopColor="#22d3ee" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </span>
                 <input
                     type="text"
                     className="ai-search-input"
