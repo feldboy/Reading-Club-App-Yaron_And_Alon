@@ -76,11 +76,7 @@ export const createReview = async (req: Request, res: Response): Promise<void> =
         if ((req as any).file) {
             bookImage = `/uploads/reviews/${(req as any).file.filename}`;
         }
-
-        if (!bookImage) {
-            res.status(400).json({ success: false, status: 'error', message: 'Book image is required' });
-            return;
-        }
+        // bookImage can be empty - not required (frontend may provide Google Books URL or none)
 
         const review = await reviewService.createReview(userId, {
             bookTitle,
@@ -354,6 +350,48 @@ export const getUserReviews = async (req: Request, res: Response): Promise<void>
 
 /**
  * @swagger
+ * /api/users/likes:
+ *   get:
+ *     summary: Get all liked reviews by the authenticated user
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *     responses:
+ *       200:
+ *         description: Liked reviews retrieved successfully
+ *       401:
+ *         description: Unauthorized
+ */
+export const getLikedReviews = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const userId = req.tokenPayload?.userId;
+
+        if (!userId) {
+            res.status(401).json({ success: false, message: 'Not authenticated' });
+            return;
+        }
+
+        const { page, limit } = req.query;
+        const result = await reviewService.getLikedReviews(userId, page as string, limit as string);
+        res.status(200).json({ success: true, status: 'success', data: result });
+    } catch (error: any) {
+        res.status(400).json({ success: false, message: 'Failed to retrieve liked reviews', error: error.message });
+    }
+};
+
+/**
+ * @swagger
  * /api/reviews/book/{googleBookId}:
  *   get:
  *     summary: Get all reviews for a specific book
@@ -437,7 +475,7 @@ export const likeReview = async (req: Request, res: Response): Promise<void> => 
 
         // Check if already liked
         const userIdObj = new mongoose.Types.ObjectId(userId);
-        if (review.likes.some((likeId) => likeId.toString() === userId)) {
+        if (review.likes && review.likes.some((likeId) => likeId && likeId.toString() === userId)) {
             res.status(400).json({
                 success: false,
                 status: 'error',
@@ -445,6 +483,8 @@ export const likeReview = async (req: Request, res: Response): Promise<void> => 
             });
             return;
         }
+
+        if (!review.likes) review.likes = [];
 
         // Add like
         review.likes.push(userIdObj);
@@ -514,7 +554,7 @@ export const unlikeReview = async (req: Request, res: Response): Promise<void> =
         }
 
         // Check if liked
-        const likeIndex = review.likes.findIndex((likeId) => likeId.toString() === userId);
+        const likeIndex = review.likes ? review.likes.findIndex((likeId) => likeId && likeId.toString() === userId) : -1;
         if (likeIndex === -1) {
             res.status(400).json({
                 success: false,

@@ -1,19 +1,37 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { getProfile, getWishlist, type UserProfile as UserProfileData, type WishlistItem } from '../../services/user.api';
+import { getProfile, getWishlist, getLikedReviews, type UserProfile as UserProfileData, type WishlistItem } from '../../services/user.api';
 import { getUserReviews } from '../../services/review.api';
 import type { Review } from '../../services/review.api';
-import { Badge, Card } from '../ui';
 import WishlistButton from '../ui/WishlistButton';
-import { resolveInternalImageUrl } from '../../utils/imageUtils';
+import { resolveInternalImageUrl, handleBookImageError, DEFAULT_AVATAR, handleImageError } from '../../utils/imageUtils';
 
 interface UserProfileEnhancedProps {
     userId?: string;
     onEditClick?: () => void;
 }
 
-type TabType = 'reviews' | 'wishlist' | 'stats';
+type TabType = 'reviews' | 'wishlist' | 'likes';
+
+/** Premium star rating with glow */
+const StarRating = ({ rating }: { rating: number }) => (
+    <div className="flex items-center gap-0.5">
+        {[1, 2, 3, 4, 5].map((star) => (
+            <svg
+                key={star}
+                className={`w-4 h-4 transition-all ${
+                    star <= rating
+                        ? 'text-violet-400 fill-violet-400 drop-shadow-[0_0_4px_rgba(167,139,250,0.5)]'
+                        : 'text-white/10 fill-white/10'
+                }`}
+                viewBox="0 0 20 20"
+            >
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+            </svg>
+        ))}
+    </div>
+);
 
 const UserProfileEnhanced = ({ userId, onEditClick }: UserProfileEnhancedProps) => {
     const { user: currentUser, isAuthenticated, logout } = useAuth();
@@ -21,6 +39,7 @@ const UserProfileEnhanced = ({ userId, onEditClick }: UserProfileEnhancedProps) 
     const [profile, setProfile] = useState<UserProfileData | null>(null);
     const [reviews, setReviews] = useState<Review[]>([]);
     const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
+    const [likedReviews, setLikedReviews] = useState<Review[]>([]);
     const [activeTab, setActiveTab] = useState<TabType>('reviews');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -42,16 +61,17 @@ const UserProfileEnhanced = ({ userId, onEditClick }: UserProfileEnhancedProps) 
                 const profileData = await getProfile();
                 setProfile(profileData);
 
-                // Load user's reviews and wishlist
                 try {
-                    const [reviewsData, wishlistData] = await Promise.all([
+                    const [reviewsData, wishlistData, likedReviewsData] = await Promise.all([
                         getUserReviews(profileData.id),
-                        getWishlist()
+                        getWishlist(),
+                        getLikedReviews()
                     ]);
                     setReviews(reviewsData);
                     setWishlist(wishlistData);
+                    setLikedReviews(likedReviewsData);
                 } catch (err) {
-                    console.error('Failed to load reviews/wishlist:', err);
+                    console.error('Failed to load user data:', err);
                 }
             } catch (err: any) {
                 console.error('Failed to load profile:', err);
@@ -88,24 +108,26 @@ const UserProfileEnhanced = ({ userId, onEditClick }: UserProfileEnhancedProps) 
 
     if (loading) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-screen">
-                <div className="size-12 border-4 border-[#7C3AED]/30 border-t-[#7C3AED] rounded-full animate-spin mb-4" />
-                <p className="text-[#4C1D95] dark:text-white font-medium">Loading profile...</p>
+            <div className="flex flex-col items-center justify-center min-h-screen" style={{ background: 'linear-gradient(180deg, #030303 0%, #050507 100%)' }}>
+                <div className="size-10 border-2 border-primary/20 border-t-primary rounded-full animate-spin mb-4" />
+                <p className="text-white/40 font-ui text-sm">Loading profile...</p>
             </div>
         );
     }
 
     if (error || !profile) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-screen px-4">
-                <span className="material-symbols-outlined text-6xl text-[#7C3AED]/30 dark:text-white/30 mb-4">
-                    error
-                </span>
-                <p className="text-[#4C1D95] dark:text-white text-lg mb-6">{error || 'Profile not found'}</p>
+            <div className="flex flex-col items-center justify-center min-h-screen px-4" style={{ background: 'linear-gradient(180deg, #030303 0%, #050507 100%)' }}>
+                <span className="material-symbols-outlined text-6xl text-white/20 mb-4">error</span>
+                <p className="text-white text-lg font-heading font-bold mb-6">{error || 'Profile not found'}</p>
                 {!isAuthenticated && (
                     <button
                         onClick={() => navigate('/login')}
-                        className="px-6 py-3 bg-[#7C3AED] text-white hover:bg-[#6D31D4] rounded-xl font-medium transition-all duration-300 cursor-pointer hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED]"
+                        className="px-6 py-3 rounded-xl text-white font-ui font-semibold text-sm cursor-pointer transition-all duration-300 hover:-translate-y-0.5 active:scale-95"
+                        style={{
+                            background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+                            boxShadow: '0 8px 24px -4px rgba(139,92,246,0.4)'
+                        }}
                     >
                         Go to Login
                     </button>
@@ -115,203 +137,223 @@ const UserProfileEnhanced = ({ userId, onEditClick }: UserProfileEnhancedProps) 
     }
 
     return (
-        <div className="bg-gradient-to-br from-[#FAF5FF] via-[#F3E8FF] to-[#FAF5FF] dark:from-[#1a0f2e] dark:via-[#2d1b4e] dark:to-[#1a0f2e] min-h-screen pb-24">
-            {/* Header with Profile Info - No blank space */}
-            <div className="relative pt-8">
-                {/* Profile Content */}
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="relative">
-                        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
-                            {/* Avatar */}
-                            <div className="relative">
-                                <div className="size-32 sm:size-40 rounded-3xl overflow-hidden border-4 border-[#7C3AED]/20 dark:border-[#7C3AED]/40 shadow-2xl bg-white dark:bg-[#1a0f2e]">
-                                    <img
-                                        src={resolveInternalImageUrl(profile.profileImage)}
-                                        alt={profile.username}
-                                        className="w-full h-full object-cover"
-                                        onError={(e) => {
-                                            (e.target as HTMLImageElement).src = '/uploads/profiles/default-avatar.png';
-                                        }}
-                                    />
-                                </div>
-                                <div className="absolute -bottom-2 -right-2 size-12 bg-[#22C55E] rounded-full border-4 border-[#FAF5FF] dark:border-[#1a0f2e] flex items-center justify-center shadow-lg">
-                                    <span className="material-symbols-outlined text-white text-xl">check</span>
-                                </div>
-                            </div>
+        <div className="min-h-screen pb-24 selection:bg-primary/30" style={{ background: 'linear-gradient(180deg, #030303 0%, #050507 100%)' }}>
+            {/* Profile Header Section */}
+            <div className="relative pt-8 pb-6">
+                {/* Ambient glow */}
+                <div
+                    className="absolute top-0 left-1/2 -translate-x-1/2 w-[60%] h-[200px] rounded-full pointer-events-none"
+                    style={{
+                        background: 'radial-gradient(ellipse, rgba(139,92,246,0.12) 0%, transparent 70%)',
+                        filter: 'blur(60px)'
+                    }}
+                />
 
-                            {/* Info */}
-                            <div className="flex-1 text-center sm:text-left pb-4">
-                                <h1 className="font-heading text-3xl sm:text-4xl font-bold text-[#4C1D95] dark:text-white mb-2">
-                                    {profile.username}
-                                </h1>
-                                <p className="text-[#7C3AED] dark:text-white/70 text-base sm:text-lg mb-3">
-                                    {profile.email}
+                <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6">
+                    <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
+                        {/* Avatar with gradient ring */}
+                        <div className="relative">
+                            <div
+                                className="absolute -inset-1 rounded-3xl opacity-70"
+                                style={{ background: 'linear-gradient(135deg, #8b5cf6 0%, #22d3ee 50%, #f472b6 100%)' }}
+                            />
+                            <div className="relative size-28 sm:size-36 rounded-3xl overflow-hidden border-3 border-[#030303]">
+                                <img
+                                    src={profile.profileImage ? resolveInternalImageUrl(profile.profileImage) : DEFAULT_AVATAR}
+                                    alt={profile.username}
+                                    className="w-full h-full object-cover"
+                                    onError={handleImageError}
+                                />
+                            </div>
+                            {/* Verified badge */}
+                            <div className="absolute -bottom-1 -right-1 size-8 bg-emerald-500 rounded-full border-3 border-[#030303] flex items-center justify-center shadow-[0_0_15px_rgba(16,185,129,0.5)]">
+                                <span className="material-symbols-outlined text-white text-sm">check</span>
+                            </div>
+                        </div>
+
+                        {/* Info */}
+                        <div className="flex-1 text-center sm:text-left">
+                            <h1 className="font-heading text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                                {profile.username}
+                            </h1>
+                            <p className="text-white/40 text-sm font-ui mt-1">
+                                {profile.email}
+                            </p>
+                            {profile.bio && (
+                                <p className="text-white/60 text-sm font-body mt-3 max-w-lg leading-relaxed">
+                                    {profile.bio}
                                 </p>
-                                {profile.bio && (
-                                    <p className="text-[#4C1D95]/70 dark:text-white/70 text-sm sm:text-base max-w-2xl">
-                                        {profile.bio}
-                                    </p>
-                                )}
-                                {profile.favoriteGenres && profile.favoriteGenres.length > 0 && (
-                                    <div className="flex flex-wrap gap-2 mt-3 justify-center sm:justify-start">
-                                        {profile.favoriteGenres.map((genre, index) => (
-                                            <Badge key={index} variant="primary" size="sm">
-                                                {genre}
-                                            </Badge>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* Actions */}
-                            {isOwnProfile && (
-                                <div className="flex gap-3 pb-4">
-                                    <button
-                                        onClick={handleEditClick}
-                                        className="px-6 py-3 bg-[#7C3AED] text-white hover:bg-[#6D31D4] rounded-xl font-medium transition-all duration-300 cursor-pointer hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] flex items-center gap-2"
-                                    >
-                                        <span className="material-symbols-outlined text-lg">edit</span>
-                                        Edit Profile
-                                    </button>
-                                    <button
-                                        onClick={handleLogout}
-                                        className="px-6 py-3 bg-white dark:bg-white/5 text-[#7C3AED] dark:text-white hover:bg-[#7C3AED]/10 dark:hover:bg-white/10 rounded-xl font-medium transition-all duration-300 cursor-pointer hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] border-2 border-[#7C3AED]/20 dark:border-white/10"
-                                    >
-                                        Logout
-                                    </button>
+                            )}
+                            {profile.favoriteGenres && profile.favoriteGenres.length > 0 && (
+                                <div className="flex flex-wrap gap-2 mt-4 justify-center sm:justify-start">
+                                    {profile.favoriteGenres.map((genre, index) => (
+                                        <span
+                                            key={index}
+                                            className="px-3 py-1.5 rounded-full text-xs font-bold font-ui uppercase tracking-wide text-primary bg-primary/10 border border-primary/20"
+                                        >
+                                            {genre}
+                                        </span>
+                                    ))}
                                 </div>
                             )}
                         </div>
 
-                        {/* Stats - All Consistent */}
-                        <div className="grid grid-cols-3 gap-4 mt-8">
-                            <button
-                                onClick={() => setActiveTab('reviews')}
-                                className="p-6 text-center bg-white dark:bg-white/5 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-200 cursor-pointer hover:scale-105 active:scale-95"
-                            >
-                                <p className="text-3xl sm:text-4xl font-bold text-[#7C3AED] mb-1">{reviews.length}</p>
-                                <p className="font-ui text-[#4C1D95]/70 dark:text-white/70 text-sm sm:text-base font-medium">Reviews</p>
-                            </button>
-                            <button
-                                onClick={() => setActiveTab('wishlist')}
-                                className="p-6 text-center bg-white dark:bg-white/5 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-200 cursor-pointer hover:scale-105 active:scale-95"
-                            >
-                                <p className="text-3xl sm:text-4xl font-bold text-[#7C3AED] mb-1">{wishlist.length}</p>
-                                <p className="font-ui text-[#4C1D95]/70 dark:text-white/70 text-sm sm:text-base font-medium">Wishlist</p>
-                            </button>
-                            <div className="p-6 text-center bg-white dark:bg-white/5 rounded-2xl shadow-sm">
-                                <p className="text-3xl sm:text-4xl font-bold text-[#7C3AED] mb-1">
-                                    {reviews.reduce((sum, r) => sum + r.likesCount, 0)}
-                                </p>
-                                <p className="font-ui text-[#4C1D95]/70 dark:text-white/70 text-sm sm:text-base font-medium">Likes</p>
+                        {/* Actions */}
+                        {isOwnProfile && (
+                            <div className="flex gap-3 mt-2 sm:mt-0">
+                                <button
+                                    onClick={handleEditClick}
+                                    className="relative px-5 py-2.5 rounded-xl text-white font-ui font-semibold text-sm cursor-pointer transition-all duration-300 hover:-translate-y-0.5 active:scale-95 flex items-center gap-2 overflow-hidden group"
+                                    style={{
+                                        background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+                                        boxShadow: '0 6px 20px -4px rgba(139,92,246,0.35)'
+                                    }}
+                                >
+                                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                    <span className="material-symbols-outlined text-lg relative z-10">edit</span>
+                                    <span className="relative z-10">Edit</span>
+                                </button>
+                                <button
+                                    onClick={handleLogout}
+                                    className="px-5 py-2.5 rounded-xl font-ui font-semibold text-sm cursor-pointer transition-all duration-300 hover:-translate-y-0.5 active:scale-95 text-white/70 hover:text-white"
+                                    style={{
+                                        background: 'linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)',
+                                        border: '1px solid rgba(255,255,255,0.1)'
+                                    }}
+                                >
+                                    Logout
+                                </button>
                             </div>
-                        </div>
+                        )}
+                    </div>
+
+                    {/* Stats */}
+                    <div className="grid grid-cols-3 gap-3 sm:gap-4 mt-8">
+                        {[
+                            { label: 'Reviews', value: reviews.length, tab: 'reviews' as TabType },
+                            { label: 'Wishlist', value: wishlist.length, tab: 'wishlist' as TabType },
+                            { label: 'Likes', value: reviews.reduce((sum, r) => sum + r.likesCount, 0), tab: null }
+                        ].map((stat) => (
+                            <button
+                                key={stat.label}
+                                onClick={() => stat.tab && setActiveTab(stat.tab)}
+                                disabled={!stat.tab}
+                                className="p-4 sm:p-6 text-center rounded-2xl transition-all duration-300 cursor-pointer hover:-translate-y-1 disabled:cursor-default disabled:hover:translate-y-0"
+                                style={{
+                                    background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.02) 100%)',
+                                    border: '1px solid rgba(255,255,255,0.06)',
+                                    boxShadow: '0 10px 30px -10px rgba(0,0,0,0.3)'
+                                }}
+                            >
+                                <p className="text-2xl sm:text-3xl font-heading font-extrabold text-primary mb-1">{stat.value}</p>
+                                <p className="font-ui text-white/50 text-xs sm:text-sm font-semibold uppercase tracking-wider">{stat.label}</p>
+                            </button>
+                        ))}
                     </div>
                 </div>
             </div>
 
             {/* Tabs */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
-                <div className="flex gap-2 border-b-2 border-[#7C3AED]/10 dark:border-white/10">
-                    <button
-                        onClick={() => setActiveTab('reviews')}
-                        className={`px-6 py-3 font-heading font-bold text-base sm:text-lg transition-all duration-300 cursor-pointer border-b-4 ${activeTab === 'reviews'
-                                ? 'border-[#7C3AED] text-[#7C3AED] dark:text-white'
-                                : 'border-transparent text-[#4C1D95]/60 dark:text-white/60 hover:text-[#7C3AED] dark:hover:text-white'
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 mt-6">
+                <div className="flex gap-1 border-b border-white/[0.06]">
+                    {[
+                        { id: 'reviews' as TabType, label: 'Reviews', count: reviews.length },
+                        { id: 'wishlist' as TabType, label: 'Wishlist', count: wishlist.length },
+                        { id: 'likes' as TabType, label: 'Liked', count: likedReviews.length }
+                    ].map((tab) => (
+                        <button
+                            key={tab.id}
+                            onClick={() => setActiveTab(tab.id)}
+                            className={`px-5 py-3 font-ui font-bold text-sm transition-all duration-300 cursor-pointer border-b-2 ${
+                                activeTab === tab.id
+                                    ? 'border-primary text-white'
+                                    : 'border-transparent text-white/40 hover:text-white/70'
                             }`}
-                    >
-                        Reviews ({reviews.length})
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('wishlist')}
-                        className={`px-6 py-3 font-heading font-bold text-base sm:text-lg transition-all duration-300 cursor-pointer border-b-4 ${activeTab === 'wishlist'
-                                ? 'border-[#7C3AED] text-[#7C3AED] dark:text-white'
-                                : 'border-transparent text-[#4C1D95]/60 dark:text-white/60 hover:text-[#7C3AED] dark:hover:text-white'
-                            }`}
-                    >
-                        Wishlist ({wishlist.length})
-                    </button>
+                        >
+                            {tab.label} ({tab.count})
+                        </button>
+                    ))}
                 </div>
             </div>
 
             {/* Content */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 mt-6">
                 {/* Reviews Tab */}
                 {activeTab === 'reviews' && (
-                    <div className="animate-fade-in">
+                    <div>
                         {reviews.length === 0 ? (
-                            <div className="text-center py-16">
-                                <span className="material-symbols-outlined text-6xl text-[#7C3AED]/30 dark:text-white/30 mb-4 block">
-                                    rate_review
-                                </span>
-                                <h3 className="font-heading text-2xl font-bold text-[#4C1D95] dark:text-white mb-3">
-                                    No reviews yet
-                                </h3>
-                                <p className="text-[#4C1D95]/70 dark:text-white/70 mb-6">
-                                    Start reviewing books you've read!
-                                </p>
+                            <div
+                                className="text-center py-16 rounded-2xl"
+                                style={{
+                                    background: 'linear-gradient(135deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.01) 100%)',
+                                    border: '1px dashed rgba(255,255,255,0.06)'
+                                }}
+                            >
+                                <span className="material-symbols-outlined text-5xl text-white/20 mb-4 block">rate_review</span>
+                                <h3 className="font-heading text-xl font-bold text-white mb-2">No reviews yet</h3>
+                                <p className="text-white/40 font-body mb-6">Start reviewing books you've read!</p>
                                 <button
                                     onClick={() => navigate('/create-review')}
-                                    className="px-6 py-3 bg-[#7C3AED] text-white hover:bg-[#6D31D4] rounded-xl font-medium transition-all duration-300 cursor-pointer hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED]"
+                                    className="px-6 py-3 rounded-xl text-white font-ui font-semibold text-sm cursor-pointer transition-all duration-300 hover:-translate-y-0.5 active:scale-95"
+                                    style={{
+                                        background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+                                        boxShadow: '0 8px 24px -4px rgba(139,92,246,0.4)'
+                                    }}
                                 >
                                     Create First Review
                                 </button>
                             </div>
                         ) : (
-                            <div className="grid grid-cols-1 gap-6">
+                            <div className="space-y-4">
                                 {reviews.map((review) => (
                                     <Link
                                         key={review.id}
                                         to={`/reviews/${review.id}`}
-                                        className="block"
+                                        className="block group"
                                     >
-                                        <Card hoverable className="p-6 flex gap-6 bg-white dark:bg-white/5">
+                                        <div
+                                            className="flex gap-5 p-5 rounded-2xl transition-all duration-500 hover:-translate-y-1"
+                                            style={{
+                                                background: 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)',
+                                                border: '1px solid rgba(255,255,255,0.05)',
+                                                boxShadow: '0 10px 30px -10px rgba(0,0,0,0.3)'
+                                            }}
+                                        >
                                             {review.bookImage && (
-                                                <div className="flex-shrink-0 w-24 h-36 rounded-xl overflow-hidden shadow-md">
+                                                <div className="flex-shrink-0 w-20 h-[120px] rounded-xl overflow-hidden" style={{ boxShadow: '0 10px 25px -8px rgba(0,0,0,0.5)' }}>
                                                     <img
                                                         src={review.bookImage}
                                                         alt={review.bookTitle}
-                                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                                                        onError={(e) => {
-                                                            (e.target as HTMLImageElement).src = '/uploads/books/default-book.png';
-                                                        }}
+                                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                                        onError={handleBookImageError}
                                                     />
                                                 </div>
                                             )}
                                             <div className="flex-1 min-w-0">
-                                                <h3 className="font-heading font-bold text-[#4C1D95] dark:text-white text-xl mb-2 line-clamp-2 group-hover:text-[#7C3AED] transition-colors">
+                                                <h3 className="font-heading font-bold text-white text-lg mb-1 line-clamp-1 group-hover:text-primary transition-colors duration-300">
                                                     {review.bookTitle}
                                                 </h3>
-                                                <p className="text-[#7C3AED]/70 dark:text-white/70 text-base mb-3">
+                                                <p className="text-white/40 text-sm font-display italic mb-2">
                                                     by {review.bookAuthor}
                                                 </p>
-                                                <div className="flex items-center gap-2 mb-3">
-                                                    {[...Array(5)].map((_, i) => (
-                                                        <span
-                                                            key={i}
-                                                            className={`material-symbols-outlined text-lg ${i < review.rating ? 'text-[#7C3AED]' : 'text-[#7C3AED]/20'
-                                                                }`}
-                                                            style={{ fontVariationSettings: i < review.rating ? "'FILL' 1" : "'FILL' 0" }}
-                                                        >
-                                                            star
-                                                        </span>
-                                                    ))}
+                                                <div className="mb-2">
+                                                    <StarRating rating={review.rating} />
                                                 </div>
-                                                <p className="text-[#4C1D95]/70 dark:text-white/70 text-sm line-clamp-2 mb-4">
+                                                <p className="text-white/60 text-sm font-body line-clamp-2 mb-3">
                                                     {review.reviewText}
                                                 </p>
-                                                <div className="flex items-center gap-6 text-[#7C3AED]/60 dark:text-white/60 text-sm">
+                                                <div className="flex items-center gap-4 text-white/40 text-xs font-ui font-semibold">
                                                     <span className="flex items-center gap-1">
-                                                        <span className="material-symbols-outlined text-base">favorite</span>
+                                                        <span className="material-symbols-outlined text-sm text-red-400">favorite</span>
                                                         {review.likesCount}
                                                     </span>
                                                     <span className="flex items-center gap-1">
-                                                        <span className="material-symbols-outlined text-base">comment</span>
+                                                        <span className="material-symbols-outlined text-sm text-primary">chat_bubble</span>
                                                         {review.commentsCount}
                                                     </span>
                                                 </div>
                                             </div>
-                                        </Card>
+                                        </div>
                                     </Link>
                                 ))}
                             </div>
@@ -321,50 +363,64 @@ const UserProfileEnhanced = ({ userId, onEditClick }: UserProfileEnhancedProps) 
 
                 {/* Wishlist Tab */}
                 {activeTab === 'wishlist' && (
-                    <div className="animate-fade-in">
+                    <div>
                         {wishlist.length === 0 ? (
-                            <div className="text-center py-16">
-                                <span className="material-symbols-outlined text-6xl text-[#7C3AED]/30 dark:text-white/30 mb-4 block">
-                                    bookmark
-                                </span>
-                                <h3 className="font-heading text-2xl font-bold text-[#4C1D95] dark:text-white mb-3">
-                                    Your wishlist is empty
-                                </h3>
-                                <p className="text-[#4C1D95]/70 dark:text-white/70 mb-6">
-                                    Save books you want to read later
-                                </p>
+                            <div
+                                className="text-center py-16 rounded-2xl"
+                                style={{
+                                    background: 'linear-gradient(135deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.01) 100%)',
+                                    border: '1px dashed rgba(255,255,255,0.06)'
+                                }}
+                            >
+                                <span className="material-symbols-outlined text-5xl text-white/20 mb-4 block">bookmark</span>
+                                <h3 className="font-heading text-xl font-bold text-white mb-2">Your wishlist is empty</h3>
+                                <p className="text-white/40 font-body mb-6">Save books you want to read later</p>
                                 <button
                                     onClick={() => navigate('/discover')}
-                                    className="px-6 py-3 bg-[#7C3AED] text-white hover:bg-[#6D31D4] rounded-xl font-medium transition-all duration-300 cursor-pointer hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED]"
+                                    className="px-6 py-3 rounded-xl text-white font-ui font-semibold text-sm cursor-pointer transition-all duration-300 hover:-translate-y-0.5 active:scale-95"
+                                    style={{
+                                        background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+                                        boxShadow: '0 8px 24px -4px rgba(139,92,246,0.4)'
+                                    }}
                                 >
                                     Discover Books
                                 </button>
                             </div>
                         ) : (
-                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                                 {wishlist.map((book, index) => (
-                                    <div key={book.bookId} className="group relative animate-fade-in" style={{ animationDelay: `${index * 30}ms` }}>
-                                        <Link to={`/reviews/${book.bookId}`} className="block h-full">
-                                            <Card hoverable className="overflow-hidden p-0 h-full flex flex-col bg-white dark:bg-white/5">
-                                                <div className="relative">
-                                                    <div className="aspect-[3/4.5] overflow-hidden">
-                                                        <img
-                                                            src={book.cover?.replace('http:', 'https:') || 'https://via.placeholder.com/128x192?text=No+Cover'}
-                                                            alt={book.title}
-                                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                                                            loading="lazy"
-                                                        />
-                                                    </div>
+                                    <div
+                                        key={book.bookId}
+                                        className="group relative"
+                                        style={{ animationDelay: `${index * 30}ms` }}
+                                    >
+                                        <Link to={`/books/${book.bookId}`} className="block">
+                                            <div
+                                                className="rounded-2xl overflow-hidden transition-all duration-500 group-hover:-translate-y-2"
+                                                style={{
+                                                    background: 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)',
+                                                    border: '1px solid rgba(255,255,255,0.05)',
+                                                    boxShadow: '0 10px 30px -10px rgba(0,0,0,0.4)'
+                                                }}
+                                            >
+                                                <div className="aspect-[2/3] overflow-hidden">
+                                                    <img
+                                                        src={book.cover?.replace('http:', 'https:') || '/placeholder-book.png'}
+                                                        alt={book.title}
+                                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                                        loading="lazy"
+                                                        onError={handleBookImageError}
+                                                    />
                                                 </div>
-                                                <div className="p-3 flex-1 flex flex-col">
-                                                    <h3 className="font-heading font-bold text-[#4C1D95] dark:text-white text-sm leading-tight line-clamp-2 mb-2 group-hover:text-[#7C3AED] transition-colors">
+                                                <div className="p-3">
+                                                    <h3 className="font-heading font-bold text-white text-sm line-clamp-2 leading-tight group-hover:text-primary transition-colors">
                                                         {book.title}
                                                     </h3>
-                                                    <p className="font-serif text-[#7C3AED]/70 dark:text-white/60 text-xs italic line-clamp-1">
+                                                    <p className="font-display text-white/40 text-xs italic mt-1 line-clamp-1">
                                                         {book.authors?.join(', ') || 'Unknown Author'}
                                                     </p>
                                                 </div>
-                                            </Card>
+                                            </div>
                                         </Link>
                                         <div className="absolute top-2 right-2 z-10">
                                             <WishlistButton
@@ -374,10 +430,93 @@ const UserProfileEnhanced = ({ userId, onEditClick }: UserProfileEnhancedProps) 
                                                 cover={book.cover}
                                                 isInWishlist={true}
                                                 onToggle={() => handleWishlistRemove(book.bookId)}
-                                                className="bg-black/60 backdrop-blur-sm shadow-lg hover:bg-black/80"
+                                                className="bg-black/60 backdrop-blur-md border border-white/10"
                                             />
                                         </div>
                                     </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {/* Likes Tab */}
+                {activeTab === 'likes' && (
+                    <div>
+                        {likedReviews.length === 0 ? (
+                            <div
+                                className="text-center py-16 rounded-2xl"
+                                style={{
+                                    background: 'linear-gradient(135deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.01) 100%)',
+                                    border: '1px dashed rgba(255,255,255,0.06)'
+                                }}
+                            >
+                                <span className="material-symbols-outlined text-5xl text-white/20 mb-4 block">favorite</span>
+                                <h3 className="font-heading text-xl font-bold text-white mb-2">No liked reviews</h3>
+                                <p className="text-white/40 font-body mb-6">You haven't liked any reviews yet.</p>
+                                <button
+                                    onClick={() => navigate('/discover')}
+                                    className="px-6 py-3 rounded-xl text-white font-ui font-semibold text-sm cursor-pointer transition-all duration-300 hover:-translate-y-0.5 active:scale-95"
+                                    style={{
+                                        background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+                                        boxShadow: '0 8px 24px -4px rgba(139,92,246,0.4)'
+                                    }}
+                                >
+                                    Discover Reviews
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="space-y-4">
+                                {likedReviews.map((review) => (
+                                    <Link
+                                        key={review.id}
+                                        to={`/reviews/${review.id}`}
+                                        className="block group"
+                                    >
+                                        <div
+                                            className="flex gap-5 p-5 rounded-2xl transition-all duration-500 hover:-translate-y-1"
+                                            style={{
+                                                background: 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)',
+                                                border: '1px solid rgba(255,255,255,0.05)',
+                                                boxShadow: '0 10px 30px -10px rgba(0,0,0,0.3)'
+                                            }}
+                                        >
+                                            {review.bookImage && (
+                                                <div className="flex-shrink-0 w-20 h-[120px] rounded-xl overflow-hidden" style={{ boxShadow: '0 10px 25px -8px rgba(0,0,0,0.5)' }}>
+                                                    <img
+                                                        src={review.bookImage}
+                                                        alt={review.bookTitle}
+                                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                                        onError={handleBookImageError}
+                                                    />
+                                                </div>
+                                            )}
+                                            <div className="flex-1 min-w-0">
+                                                <h3 className="font-heading font-bold text-white text-lg mb-1 line-clamp-1 group-hover:text-primary transition-colors duration-300">
+                                                    {review.bookTitle}
+                                                </h3>
+                                                <p className="text-white/40 text-sm font-display italic mb-2">
+                                                    by {review.bookAuthor}
+                                                </p>
+                                                <div className="mb-2">
+                                                    <StarRating rating={review.rating} />
+                                                </div>
+                                                <p className="text-white/60 text-sm font-body line-clamp-2 mb-3">
+                                                    {review.reviewText}
+                                                </p>
+                                                <div className="flex items-center gap-4 text-white/40 text-xs font-ui font-semibold">
+                                                    <span className="flex items-center gap-1">
+                                                        <span className="material-symbols-outlined text-sm text-red-400">favorite</span>
+                                                        {review.likesCount}
+                                                    </span>
+                                                    <span className="flex items-center gap-1">
+                                                        <span className="material-symbols-outlined text-sm text-primary">chat_bubble</span>
+                                                        {review.commentsCount}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </Link>
                                 ))}
                             </div>
                         )}

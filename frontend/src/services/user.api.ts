@@ -1,4 +1,5 @@
 import api from './api';
+import type { Review } from './review.api';
 
 /**
  * User Profile interface
@@ -113,4 +114,15 @@ export const addToWishlist = async (book: { bookId: string; title: string; autho
 export const removeFromWishlist = async (bookId: string) => {
     const response = await api.delete(`/users/wishlist/${bookId}`);
     return response.data.data.wishlist;
+};
+
+/**
+ * Get user liked reviews
+ */
+export const getLikedReviews = async (page: number = 1, limit: number = 10): Promise<Review[]> => {
+    const response = await api.get('/users/likes', {
+        params: { page, limit }
+    });
+    // Maps over result to ensure ID
+    return response.data.data.reviews.map((r: any) => ({ ...r, id: r._id || r.id }));
 };

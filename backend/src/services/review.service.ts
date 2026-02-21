@@ -67,7 +67,7 @@ export const getAllReviews = async (
     const total = await Review.countDocuments();
 
     return {
-        reviews: reviews as unknown as IReview[],
+        reviews: reviews.map((r: any) => ({ ...r, id: r._id || r.id })) as unknown as IReview[],
         currentPage: page,
         totalPages: Math.ceil(total / limit),
         totalReviews: total,
@@ -194,7 +194,42 @@ export const getUserReviews = async (
     const total = await Review.countDocuments({ userId });
 
     return {
-        reviews: reviews as unknown as IReview[],
+        reviews: reviews.map((r: any) => ({ ...r, id: r._id || r.id })) as unknown as IReview[],
+        currentPage: page,
+        totalPages: Math.ceil(total / limit),
+        totalReviews: total,
+        hasNextPage: page * limit < total,
+        hasPrevPage: page > 1,
+    };
+};
+
+/**
+ * Get all liked reviews by a specific user with pagination
+ */
+export const getLikedReviews = async (
+    userId: string,
+    pageStr: string = '1',
+    limitStr: string = '10'
+): Promise<PaginatedReviews> => {
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+        throw new Error('Invalid user ID');
+    }
+
+    const page = parseInt(pageStr) || 1;
+    const limit = Math.min(parseInt(limitStr) || 10, 50);
+    const skip = (page - 1) * limit;
+
+    const reviews = await Review.find({ likes: userId })
+        .populate('userId', 'username email profileImage')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean();
+
+    const total = await Review.countDocuments({ likes: userId });
+
+    return {
+        reviews: reviews.map((r: any) => ({ ...r, id: r._id || r.id })) as unknown as IReview[],
         currentPage: page,
         totalPages: Math.ceil(total / limit),
         totalReviews: total,
@@ -227,7 +262,7 @@ export const getBookReviews = async (
     const total = await Review.countDocuments({ googleBookId });
 
     return {
-        reviews: reviews as unknown as IReview[],
+        reviews: reviews.map((r: any) => ({ ...r, id: r._id || r.id })) as unknown as IReview[],
         currentPage: page,
         totalPages: Math.ceil(total / limit),
         totalReviews: total,

@@ -4,7 +4,7 @@ import Review from '../models/Review.model';
 
 // Initialize Gemini AI with API key from environment
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
-const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
 // Simple in-memory cache for AI responses (5 minutes TTL)
 interface CacheEntry {
@@ -115,9 +115,9 @@ Only return the JSON array, no additional text.`;
         // Parse the JSON response
         let books;
         try {
-            // Remove markdown code blocks if present
-            const jsonText = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-            books = JSON.parse(jsonText);
+            const jsonMatch = text.match(/\[[\s\S]*\]/);
+            if (!jsonMatch) throw new Error('No JSON array found in response');
+            books = JSON.parse(jsonMatch[0]);
         } catch (parseError) {
             console.error('Failed to parse AI response:', text);
             throw new Error('Failed to parse AI response');
@@ -203,8 +203,9 @@ Only return the JSON array, no additional text.`;
         // Parse the JSON response
         let recommendations;
         try {
-            const jsonText = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-            recommendations = JSON.parse(jsonText);
+            const jsonMatch = text.match(/\[[\s\S]*\]/);
+            if (!jsonMatch) throw new Error('No JSON array found in response');
+            recommendations = JSON.parse(jsonMatch[0]);
         } catch (parseError) {
             console.error('Failed to parse AI response:', text);
             throw new Error('Failed to parse AI response');
@@ -263,11 +264,20 @@ export async function chatWithAI(
             history: [
                 {
                     role: 'user',
-                    parts: [{ text: 'You are a friendly and knowledgeable book recommendation assistant for the "Reading Club" app. You help users discover books based on their mood, preferences, and interests. You can recommend books in any language and genre. Keep your answers concise but helpful. If the user writes in Hebrew, respond in Hebrew. If they write in English, respond in English. Always suggest specific book titles and authors.' }],
+                    parts: [{ text: `You are a friendly and knowledgeable book recommendation assistant for the "Reading Club" app. You help users discover books based on their mood, preferences, and interests. You can recommend books in any language and genre. Keep your answers concise but helpful.
+
+IMPORTANT: Always respond in English. When recommending books, ALWAYS use this exact format for each book:
+"Book Title" by Author Name
+
+For example:
+"The Great Gatsby" by F. Scott Fitzgerald
+"1984" by George Orwell
+
+This format is required so users can click on book titles to view details.` }],
                 },
                 {
                     role: 'model',
-                    parts: [{ text: 'מעולה! אני העוזר הספרותי של Reading Club 📚. אשמח לעזור לך למצוא את הספר המושלם! ספר לי מה בא לך לקרוא, ואני אמליץ.' }],
+                    parts: [{ text: 'Great! I\'m the Reading Club book assistant 📚. I\'d love to help you find the perfect book! Tell me what you\'re in the mood for, and I\'ll recommend some titles.' }],
                 },
                 ...geminiHistory,
             ],

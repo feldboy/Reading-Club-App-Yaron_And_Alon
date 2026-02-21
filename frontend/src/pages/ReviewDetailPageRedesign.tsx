@@ -7,7 +7,8 @@ import LikeButton from '../components/review/LikeButton';
 import WishlistButton from '../components/ui/WishlistButton';
 import CommentList from '../components/comment/CommentList';
 import CommentForm from '../components/comment/CommentForm';
-import { resolveInternalImageUrl } from '../utils/imageUtils';
+import { resolveInternalImageUrl, DEFAULT_BOOK_COVER, handleBookImageError } from '../utils/imageUtils';
+import { DEFAULT_AVATAR, handleImageError } from '../utils/imageUtils';
 export default function ReviewDetailPageRedesign() {
     const navigate = useNavigate();
     const { id } = useParams<{ id: string }>();
@@ -174,7 +175,7 @@ export default function ReviewDetailPageRedesign() {
     const isLiked = user?.id ? review.likes.includes(user.id) : false;
     const bookImageUrl = review.bookImage
         ? resolveInternalImageUrl(review.bookImage)
-        : '/uploads/books/default-book.png';
+        : DEFAULT_BOOK_COVER;
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50 pb-24">
@@ -223,9 +224,7 @@ export default function ReviewDetailPageRedesign() {
                                     alt={`${review.bookTitle} cover`}
                                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                     src={bookImageUrl}
-                                    onError={(e) => {
-                                        (e.target as HTMLImageElement).src = '/uploads/books/default-book.png';
-                                    }}
+                                    onError={handleBookImageError}
                                 />
                                 {review.googleBookId && (
                                     <div className="absolute top-2 right-2">
@@ -285,11 +284,9 @@ export default function ReviewDetailPageRedesign() {
                                     src={
                                         review.user?.profileImage
                                             ? resolveInternalImageUrl(review.user.profileImage)
-                                            : '/uploads/profiles/default-avatar.png'
+                                            : DEFAULT_AVATAR
                                     }
-                                    onError={(e) => {
-                                        (e.target as HTMLImageElement).src = '/uploads/profiles/default-avatar.png';
-                                    }}
+                                    onError={handleImageError}
                                 />
                             </div>
                             <div>

@@ -78,7 +78,9 @@ export const getAllReviews = async (page: number = 1, limit: number = 10): Promi
     const response = await api.get<GetAllReviewsResponse>('/reviews', {
         params: { page, limit },
     });
-    return response.data.data;
+    const data = response.data.data;
+    data.reviews = data.reviews.map((r: any) => ({ ...r, id: r._id || r.id }));
+    return data;
 };
 
 /**
@@ -96,7 +98,7 @@ export interface GetReviewByIdResponse {
 export const getReviewById = async (reviewId: string): Promise<Review> => {
     const response = await api.get<GetReviewByIdResponse>(`/reviews/${reviewId}`);
     const review = response.data.data as any;
-    return { ...review, id: review._id }; // Strict override
+    return { ...review, id: review.id || review._id }; // Strict override
 };
 
 /**
@@ -110,7 +112,7 @@ export const getUserReviews = async (userId: string, page: number = 1, limit: nu
     // Manual transform to ensure id is present
     return response.data.data.reviews.map((review: any) => ({
         ...review,
-        id: review._id, // Strict override to ensure we use MongoDB ID
+        id: review.id || review._id, // Strict override to ensure we use MongoDB ID
     }));
 };
 
@@ -121,7 +123,9 @@ export const getBookReviews = async (googleBookId: string, page: number = 1, lim
     const response = await api.get<GetAllReviewsResponse>(`/reviews/book/${googleBookId}`, {
         params: { page, limit },
     });
-    return response.data.data;
+    const data = response.data.data;
+    data.reviews = data.reviews.map((r: any) => ({ ...r, id: r._id || r.id }));
+    return data;
 };
 
 /**
@@ -163,7 +167,8 @@ export const createReview = async (data: CreateReviewRequest): Promise<Review> =
     if (data.googleBookId) {
         formData.append('googleBookId', data.googleBookId);
     }
-    if (data.bookImage) {
+    // Always send bookImage (can be URL string from Google Books or local upload path)
+    if (data.bookImage !== undefined) {
         if (data.bookImage instanceof File) {
             formData.append('bookImage', data.bookImage);
         } else {

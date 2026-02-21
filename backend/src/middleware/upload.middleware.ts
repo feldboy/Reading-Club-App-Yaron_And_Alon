@@ -5,6 +5,7 @@ import fs from 'fs';
 // Ensure uploads directories exist
 const uploadsDir = 'uploads/profiles';
 const reviewsDir = 'uploads/reviews';
+const commentsDir = 'uploads/comments';
 
 if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir, { recursive: true });
@@ -12,6 +13,10 @@ if (!fs.existsSync(uploadsDir)) {
 
 if (!fs.existsSync(reviewsDir)) {
     fs.mkdirSync(reviewsDir, { recursive: true });
+}
+
+if (!fs.existsSync(commentsDir)) {
+    fs.mkdirSync(commentsDir, { recursive: true });
 }
 
 /**
@@ -86,6 +91,31 @@ const reviewStorage = multer.diskStorage({
  */
 export const uploadReviewImage = multer({
     storage: reviewStorage,
+    fileFilter: fileFilter,
+    limits: {
+        fileSize: 5 * 1024 * 1024, // 5MB max
+    },
+});
+
+/**
+ * Multer storage configuration for comment images
+ */
+const commentStorage = multer.diskStorage({
+    destination: (_req, _file, cb) => {
+        cb(null, commentsDir);
+    },
+    filename: (_req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        const ext = path.extname(file.originalname);
+        cb(null, `comment-${uniqueSuffix}${ext}`);
+    },
+});
+
+/**
+ * Multer upload configuration for comment images
+ */
+export const uploadCommentImage = multer({
+    storage: commentStorage,
     fileFilter: fileFilter,
     limits: {
         fileSize: 5 * 1024 * 1024, // 5MB max

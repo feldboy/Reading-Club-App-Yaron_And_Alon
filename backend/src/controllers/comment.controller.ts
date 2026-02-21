@@ -28,6 +28,9 @@ import mongoose from 'mongoose';
  *             properties:
  *               text:
  *                 type: string
+ *               image:
+ *                 type: string
+ *                 format: binary
  *     responses:
  *       201:
  *         description: Comment created successfully
@@ -83,11 +86,19 @@ export const addComment = async (req: Request, res: Response): Promise<void> => 
             return;
         }
 
+        let image = '';
+        if ((req as any).file) {
+            image = `/uploads/comments/${(req as any).file.filename}`;
+        } else if (req.body.image) {
+            image = req.body.image;
+        }
+
         // Create comment
         const comment = new Comment({
             reviewId: review._id, // Use the resolved MongoDB _id
             userId,
             text: text.trim(),
+            ...(image && { image })
         });
 
         await comment.save();
@@ -112,6 +123,7 @@ export const addComment = async (req: Request, res: Response): Promise<void> => 
                         profileImage: (comment.userId as any).profileImage,
                     },
                     text: comment.text,
+                    image: comment.image,
                     createdAt: comment.createdAt,
                 },
             },
@@ -180,6 +192,7 @@ export const getComments = async (req: Request, res: Response): Promise<void> =>
                         profileImage: (comment.userId as any).profileImage,
                     },
                     text: comment.text,
+                    image: comment.image,
                     createdAt: comment.createdAt,
                 })),
             },

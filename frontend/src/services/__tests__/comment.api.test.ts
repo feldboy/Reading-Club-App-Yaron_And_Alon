@@ -40,7 +40,7 @@ describe('Comment API', () => {
 
         expect(api.post).toHaveBeenCalledWith('/reviews/review1/comments', {
             text: 'Great review!'
-        });
+        }, { headers: {} });
         expect(result).toEqual(mockComment);
     });
 

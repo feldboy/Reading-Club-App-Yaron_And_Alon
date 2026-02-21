@@ -25,42 +25,64 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="bg-gradient-to-br from-[#1a0f2e] via-[#2d1b4e] to-[#1a0f2e] text-white selection:bg-primary/30 min-h-screen">
+        <div className="text-white selection:bg-primary/30 min-h-screen" style={{ background: 'linear-gradient(180deg, #030303 0%, #050507 100%)' }}>
             <div className="relative min-h-screen w-full flex items-center justify-center overflow-hidden">
-                {/* Decorative Background Elements */}
-                <div className="absolute top-[-10%] left-[-10%] w-[45%] h-[45%] rounded-full bg-primary/8 blur-[140px] pointer-events-none animate-pulse"></div>
-                <div className="absolute bottom-[-5%] right-[-5%] w-[55%] h-[55%] rounded-full bg-primary/12 blur-[120px] pointer-events-none animate-pulse" style={{ animationDelay: '1s' }}></div>
+                {/* Premium Ambient Background Effects */}
+                <div
+                    className="absolute top-[-20%] left-[-15%] w-[50%] h-[50%] rounded-full pointer-events-none"
+                    style={{
+                        background: 'radial-gradient(circle, rgba(139,92,246,0.15) 0%, transparent 70%)',
+                        filter: 'blur(80px)',
+                        animation: 'pulse 8s ease-in-out infinite'
+                    }}
+                />
+                <div
+                    className="absolute bottom-[-10%] right-[-10%] w-[45%] h-[45%] rounded-full pointer-events-none"
+                    style={{
+                        background: 'radial-gradient(circle, rgba(34,211,238,0.1) 0%, transparent 70%)',
+                        filter: 'blur(80px)',
+                        animation: 'pulse 8s ease-in-out infinite',
+                        animationDelay: '4s'
+                    }}
+                />
 
-                {/* Main Content Container - Centered on Desktop */}
+                {/* Main Content Container */}
                 <div className="relative z-10 w-full max-w-md mx-auto px-6 py-8">
-                    {/* Top App Bar Component */}
+                    {/* Top Navigation */}
                     <div className="flex items-center justify-between mb-8">
                         <button
                             onClick={() => navigate(-1)}
                             aria-label="Go back"
-                            className="text-white flex size-11 shrink-0 items-center cursor-pointer justify-center hover:bg-white/10 rounded-full transition-colors duration-200"
+                            className="size-11 flex items-center justify-center rounded-full bg-white/[0.05] border border-white/[0.08] cursor-pointer hover:bg-white/[0.1] transition-all duration-300 active:scale-95"
                         >
-                            <span className="material-symbols-outlined text-xl">arrow_back_ios_new</span>
+                            <span className="material-symbols-outlined text-white/70 text-lg">arrow_back_ios_new</span>
                         </button>
-                        <h1 className="font-heading text-white text-xl md:text-2xl font-semibold leading-tight tracking-tight flex-1 text-center pr-11">Login</h1>
+                        <h1 className="font-heading text-white text-xl md:text-2xl font-bold tracking-tight flex-1 text-center pr-11">Login</h1>
                     </div>
+
                     {/* Headline Section */}
-                    <div className="mb-8 text-center animate-fade-in">
-                        <h2 className="font-heading text-white tracking-[0.12em] text-3xl md:text-4xl font-bold leading-tight pt-4 drop-shadow-[0_0_12px_rgba(124,58,237,0.4)]">
-                            GALACTIC LIBRARY
+                    <div className="mb-8 text-center">
+                        <h2 className="font-heading text-white tracking-tight text-3xl md:text-4xl font-extrabold leading-tight">
+                            Welcome Back
                         </h2>
-                        <p className="font-ui text-primary/90 text-sm md:text-base font-semibold tracking-[0.15em] uppercase mt-3">
-                            Interstellar Knowledge Hub
+                        <p className="font-ui text-primary text-sm font-bold tracking-[0.15em] uppercase mt-3">
+                            Reading Club
                         </p>
-                        <p className="font-body text-white/60 text-base font-normal leading-relaxed mt-4 max-w-sm mx-auto">
-                            Re-establish your neural link to access the archives.
+                        <p className="font-body text-white/50 text-base font-normal leading-relaxed mt-4 max-w-sm mx-auto">
+                            Sign in to continue your reading journey
                         </p>
                     </div>
 
                     {/* Error Message */}
                     {error && (
-                        <div className="mb-6 p-4 bg-red-500/20 backdrop-blur-sm border border-red-500/50 rounded-2xl text-red-200 text-sm text-center animate-slide-down shadow-lg">
-                            <p className="font-ui font-medium">{error}</p>
+                        <div
+                            className="mb-6 p-4 rounded-2xl text-center"
+                            style={{
+                                background: 'linear-gradient(135deg, rgba(239,68,68,0.1) 0%, rgba(239,68,68,0.05) 100%)',
+                                border: '1px solid rgba(239,68,68,0.2)'
+                            }}
+                        >
+                            <p className="font-ui font-medium text-red-300 text-sm">{error}</p>
                         </div>
                     )}
 
@@ -69,20 +91,26 @@ export default function LoginPage() {
                         {/* Email Field */}
                         <div className="flex flex-col w-full">
                             <label htmlFor="email" className="flex flex-col w-full">
-                                <p className="font-ui text-primary/90 text-xs font-semibold tracking-[0.12em] uppercase pb-3 pl-1">Subspace ID</p>
-                                <div className="flex w-full items-stretch rounded-2xl glass-panel group focus-within:border-primary/60 focus-within:shadow-lg focus-within:shadow-primary/20 transition-all duration-200 h-14">
+                                <p className="font-ui text-white/50 text-xs font-bold tracking-[0.12em] uppercase pb-3 pl-1">Email Address</p>
+                                <div
+                                    className="flex w-full items-stretch rounded-2xl h-14 transition-all duration-300 focus-within:shadow-[0_0_0_3px_rgba(139,92,246,0.15),0_4px_20px_rgba(139,92,246,0.15)]"
+                                    style={{
+                                        background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.02) 100%)',
+                                        border: '1px solid rgba(255,255,255,0.08)'
+                                    }}
+                                >
                                     <input
                                         id="email"
                                         type="email"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
-                                        className="font-ui flex w-full min-w-0 flex-1 bg-transparent border-none focus:ring-0 placeholder:text-white/30 px-5 text-base font-normal leading-normal text-white outline-none"
-                                        placeholder="commander@fleet.com"
+                                        className="font-body flex w-full min-w-0 flex-1 bg-transparent border-none focus:ring-0 placeholder:text-white/25 px-5 text-base font-normal leading-normal text-white outline-none"
+                                        placeholder="your@email.com"
                                         required
                                         autoComplete="email"
                                     />
-                                    <div className="text-primary/70 flex items-center justify-center pr-5">
-                                        <span className="material-symbols-outlined text-xl">alternate_email</span>
+                                    <div className="text-white/30 flex items-center justify-center pr-5">
+                                        <span className="material-symbols-outlined text-xl">mail</span>
                                     </div>
                                 </div>
                             </label>
@@ -92,28 +120,34 @@ export default function LoginPage() {
                         <div className="flex flex-col w-full">
                             <label htmlFor="password" className="flex flex-col w-full">
                                 <div className="flex justify-between items-center pb-3 pl-1">
-                                    <p className="font-ui text-primary/90 text-xs font-semibold tracking-[0.12em] uppercase">Security Code</p>
+                                    <p className="font-ui text-white/50 text-xs font-bold tracking-[0.12em] uppercase">Password</p>
                                     <button
                                         type="button"
-                                        className="font-ui text-white/50 text-xs uppercase tracking-wider hover:text-primary transition-colors duration-200 cursor-pointer"
+                                        className="font-ui text-primary/70 text-xs font-semibold hover:text-primary transition-colors duration-200 cursor-pointer"
                                     >
-                                        Emergency Reset?
+                                        Forgot password?
                                     </button>
                                 </div>
-                                <div className="flex w-full items-stretch rounded-2xl glass-panel group focus-within:border-primary/60 focus-within:shadow-lg focus-within:shadow-primary/20 transition-all duration-200 h-14">
+                                <div
+                                    className="flex w-full items-stretch rounded-2xl h-14 transition-all duration-300 focus-within:shadow-[0_0_0_3px_rgba(139,92,246,0.15),0_4px_20px_rgba(139,92,246,0.15)]"
+                                    style={{
+                                        background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.02) 100%)',
+                                        border: '1px solid rgba(255,255,255,0.08)'
+                                    }}
+                                >
                                     <input
                                         id="password"
                                         type="password"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-                                        className="font-ui flex w-full min-w-0 flex-1 bg-transparent border-none focus:ring-0 placeholder:text-white/30 px-5 text-base font-normal leading-normal text-white outline-none"
+                                        className="font-body flex w-full min-w-0 flex-1 bg-transparent border-none focus:ring-0 placeholder:text-white/25 px-5 text-base font-normal leading-normal text-white outline-none"
                                         placeholder="••••••••••••"
                                         required
                                         autoComplete="current-password"
                                         minLength={6}
                                     />
-                                    <div className="text-primary/70 flex items-center justify-center pr-5">
-                                        <span className="material-symbols-outlined text-xl">key_visualizer</span>
+                                    <div className="text-white/30 flex items-center justify-center pr-5">
+                                        <span className="material-symbols-outlined text-xl">lock</span>
                                     </div>
                                 </div>
                             </label>
@@ -123,18 +157,24 @@ export default function LoginPage() {
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full h-14 bg-gradient-to-r from-primary to-[#9333ea] text-white font-ui font-bold text-base tracking-wide rounded-2xl mt-6 shadow-[0_0_20px_rgba(124,58,237,0.5)] hover:shadow-[0_0_30px_rgba(124,58,237,0.7)] hover:brightness-110 active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="relative w-full h-14 text-white font-ui font-bold text-sm tracking-wide rounded-2xl mt-6 transition-all duration-300 flex items-center justify-center gap-2.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden group"
+                            style={{
+                                background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+                                boxShadow: '0 8px 24px -4px rgba(139,92,246,0.4)'
+                            }}
                         >
-                            {isLoading ? 'AUTHENTICATING...' : 'INITIATE AUTHENTICATION'}
-                            <span className="material-symbols-outlined text-xl">{isLoading ? 'progress_activity' : 'rocket_launch'}</span>
+                            {/* Shimmer effect */}
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                            <span className="relative z-10">{isLoading ? 'Signing in...' : 'Sign In'}</span>
+                            <span className="material-symbols-outlined text-lg relative z-10">{isLoading ? 'progress_activity' : 'arrow_forward'}</span>
                         </button>
                     </form>
 
                     {/* Divider */}
                     <div className="relative flex items-center py-8">
-                        <div className="flex-grow border-t border-white/10"></div>
-                        <span className="font-ui flex-shrink mx-4 text-white/40 text-xs uppercase tracking-[0.15em] font-medium">Protocol Sync</span>
-                        <div className="flex-grow border-t border-white/10"></div>
+                        <div className="flex-grow border-t border-white/[0.06]"></div>
+                        <span className="font-ui flex-shrink mx-4 text-white/30 text-xs uppercase tracking-[0.15em] font-semibold">or continue with</span>
+                        <div className="flex-grow border-t border-white/[0.06]"></div>
                     </div>
 
                     {/* Social Logins */}
@@ -145,29 +185,37 @@ export default function LoginPage() {
                                 const backendUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:3000' : '');
                                 window.location.href = `${backendUrl}/api/auth/google`;
                             }}
-                            className="flex-1 h-14 glass-panel rounded-2xl flex items-center justify-center gap-3 hover:bg-white/5 hover:border-primary/30 transition-all duration-200 cursor-pointer group"
+                            className="flex-1 h-14 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300 cursor-pointer group hover:border-primary/30"
+                            style={{
+                                background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.02) 100%)',
+                                border: '1px solid rgba(255,255,255,0.08)'
+                            }}
                         >
-                            <img alt="Google logo" className="w-5 h-5 opacity-80 group-hover:opacity-100 transition-opacity" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2jx-bWZi6_7KvSgAoKzuaa8xA6t0ba85hD68ZkEeZL80CIcr_DP0YxglVp6CcatnDqhnrC0WdZvP1JhkMQhB0YJEVtqNeUPl1HulA_jhW7BjvOJjsz0fxpFgZqfINaz7KnQHsp8g_cKjwH0TnoBU7-cu8NtJVN0MQshYrjWsxhlPdrEW5gisw9VOfpFlZFXF6ckaIiBZlKmxbMX9GUpIBhG-55bpvj3eB5mhZ-db7NEMgtw7SWtBrbU6OLkk369eow0Y2QOtptig" />
-                            <span className="font-ui text-sm font-medium text-white/80 group-hover:text-white transition-colors">Google</span>
+                            <img alt="Google logo" className="w-5 h-5 opacity-70 group-hover:opacity-100 transition-opacity" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2jx-bWZi6_7KvSgAoKzuaa8xA6t0ba85hD68ZkEeZL80CIcr_DP0YxglVp6CcatnDqhnrC0WdZvP1JhkMQhB0YJEVtqNeUPl1HulA_jhW7BjvOJjsz0fxpFgZqfINaz7KnQHsp8g_cKjwH0TnoBU7-cu8NtJVN0MQshYrjWsxhlPdrEW5gisw9VOfpFlZFXF6ckaIiBZlKmxbMX9GUpIBhG-55bpvj3eB5mhZ-db7NEMgtw7SWtBrbU6OLkk369eow0Y2QOtptig" />
+                            <span className="font-ui text-sm font-semibold text-white/60 group-hover:text-white transition-colors">Google</span>
                         </button>
                         <button
                             type="button"
-                            className="flex-1 h-14 glass-panel rounded-2xl flex items-center justify-center gap-3 hover:bg-white/5 hover:border-primary/30 transition-all duration-200 cursor-pointer group"
+                            className="flex-1 h-14 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300 cursor-pointer group hover:border-primary/30"
+                            style={{
+                                background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.02) 100%)',
+                                border: '1px solid rgba(255,255,255,0.08)'
+                            }}
                         >
-                            <span className="material-symbols-outlined text-white/80 group-hover:text-white transition-colors text-xl">ios</span>
-                            <span className="font-ui text-sm font-medium text-white/80 group-hover:text-white transition-colors">Apple</span>
+                            <span className="material-symbols-outlined text-white/60 group-hover:text-white transition-colors text-xl">ios</span>
+                            <span className="font-ui text-sm font-semibold text-white/60 group-hover:text-white transition-colors">Apple</span>
                         </button>
                     </div>
 
-                    {/* Footer Toggle */}
+                    {/* Footer */}
                     <div className="mt-8 pt-6 text-center">
-                        <p className="font-ui text-white/50 text-sm">
-                            New to the fleet?
+                        <p className="font-body text-white/40 text-sm">
+                            Don't have an account?
                             <Link
                                 to="/register"
-                                className="text-primary font-semibold ml-2 hover:text-primary/80 hover:underline underline-offset-4 decoration-primary/40 transition-colors duration-200"
+                                className="text-primary font-semibold ml-2 hover:text-primary/80 transition-colors duration-200"
                             >
-                                JOIN THE CREW
+                                Sign Up
                             </Link>
                         </p>
                     </div>

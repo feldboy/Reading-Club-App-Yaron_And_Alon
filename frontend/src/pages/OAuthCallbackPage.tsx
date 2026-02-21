@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './OAuthCallbackPage.css';
+import { DEFAULT_AVATAR } from '../utils/imageUtils';
 
 /**
  * OAuth Callback Page
@@ -59,7 +60,7 @@ const OAuthCallbackPage = () => {
                                         id: payload.userId,
                                         email: payload.email,
                                         username: payload.email.split('@')[0],
-                                        profileImage: '/uploads/profiles/default-avatar.png',
+                                        profileImage: DEFAULT_AVATAR,
                                     };
                                 }
                             }
@@ -91,7 +92,7 @@ const OAuthCallbackPage = () => {
                                 id: payload.userId,
                                 email: payload.email,
                                 username: payload.email.split('@')[0],
-                                profileImage: '/uploads/profiles/default-avatar.png',
+                                profileImage: DEFAULT_AVATAR,
                             };
                         }
                     }
@@ -104,7 +105,7 @@ const OAuthCallbackPage = () => {
                             id: payload.userId,
                             email: payload.email,
                             username: payload.email.split('@')[0],
-                            profileImage: '/uploads/profiles/default-avatar.png',
+                            profileImage: DEFAULT_AVATAR,
                         };
                     }
                 }
@@ -124,7 +125,7 @@ const OAuthCallbackPage = () => {
         };
 
         processCallback();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     if (loading) {

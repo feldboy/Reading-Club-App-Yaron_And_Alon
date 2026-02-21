@@ -4,19 +4,38 @@ import { useAuth } from '../../context/AuthContext';
 import { getProfile, type UserProfile as UserProfileData } from '../../services/user.api';
 import { getUserReviews } from '../../services/review.api';
 import type { Review } from '../../services/review.api';
-import { resolveInternalImageUrl } from '../../utils/imageUtils';
+import { resolveInternalImageUrl, handleBookImageError, DEFAULT_AVATAR, handleImageError } from '../../utils/imageUtils';
 import './UserProfile.css';
+
+/** Premium star rating display */
+const StarRating = ({ rating }: { rating: number }) => (
+    <div className="flex items-center gap-0.5">
+        {[1, 2, 3, 4, 5].map((star) => (
+            <svg
+                key={star}
+                className={`w-3.5 h-3.5 transition-all ${
+                    star <= rating
+                        ? 'text-violet-400 fill-violet-400'
+                        : 'text-white/10 fill-white/10'
+                }`}
+                viewBox="0 0 20 20"
+            >
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+            </svg>
+        ))}
+    </div>
+);
 
 /**
  * User Profile Component Props
  */
 interface UserProfileProps {
-    userId?: string; // If provided, show this user's profile, otherwise show current user
+    userId?: string;
     onEditClick?: () => void;
 }
 
 /**
- * User Profile Component
+ * Premium User Profile Component
  */
 const UserProfile = ({ userId, onEditClick }: UserProfileProps) => {
     const { user: currentUser, isAuthenticated } = useAuth();
@@ -34,8 +53,6 @@ const UserProfile = ({ userId, onEditClick }: UserProfileProps) => {
                 setLoading(true);
                 setError(null);
 
-                // For now, we only support viewing own profile
-                // TODO: Add support for viewing other users' profiles
                 if (!isOwnProfile) {
                     setError('Viewing other profiles not yet implemented');
                     setLoading(false);
@@ -45,13 +62,11 @@ const UserProfile = ({ userId, onEditClick }: UserProfileProps) => {
                 const profileData = await getProfile();
                 setProfile(profileData);
 
-                // Load user's reviews
                 try {
                     const reviewsData = await getUserReviews(profileData.id);
                     setReviews(reviewsData);
                 } catch (err) {
                     console.error('Failed to load reviews:', err);
-                    // Don't fail the whole component if reviews fail
                 }
             } catch (err: any) {
                 console.error('Failed to load profile:', err);
@@ -112,11 +127,9 @@ const UserProfile = ({ userId, onEditClick }: UserProfileProps) => {
             <div className="user-profile-header">
                 <div className="user-profile-avatar">
                     <img
-                        src={resolveInternalImageUrl(profile.profileImage)}
+                        src={profile.profileImage ? resolveInternalImageUrl(profile.profileImage) : DEFAULT_AVATAR}
                         alt={profile.username}
-                        onError={(e) => {
-                            (e.target as HTMLImageElement).src = '/uploads/profiles/default-avatar.png';
-                        }}
+                        onError={handleImageError}
                     />
                 </div>
                 <div className="user-profile-info">
@@ -134,7 +147,8 @@ const UserProfile = ({ userId, onEditClick }: UserProfileProps) => {
                     )}
                 </div>
                 {isOwnProfile && (
-                    <button onClick={handleEditClick} className="btn-secondary edit-profile-btn">
+                    <button onClick={handleEditClick} className="edit-profile-btn">
+                        <span className="material-symbols-outlined" style={{ fontSize: '18px', marginRight: '6px' }}>edit</span>
                         Edit Profile
                     </button>
                 )}
@@ -146,6 +160,7 @@ const UserProfile = ({ userId, onEditClick }: UserProfileProps) => {
                     <div className="no-reviews">
                         <p>No reviews yet. Start reviewing books!</p>
                         <button onClick={() => navigate('/create-review')} className="btn-primary">
+                            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>edit</span>
                             Create First Review
                         </button>
                     </div>
@@ -162,10 +177,7 @@ const UserProfile = ({ userId, onEditClick }: UserProfileProps) => {
                                         <img
                                             src={review.bookImage}
                                             alt={review.bookTitle}
-                                            onError={(e) => {
-                                                (e.target as HTMLImageElement).src =
-                                                    '/uploads/books/default-book.png';
-                                            }}
+                                            onError={handleBookImageError}
                                         />
                                     ) : (
                                         <div className="review-item-placeholder">📚</div>
@@ -175,12 +187,22 @@ const UserProfile = ({ userId, onEditClick }: UserProfileProps) => {
                                     <h3>{review.bookTitle}</h3>
                                     <p className="review-item-author">by {review.bookAuthor}</p>
                                     <div className="review-item-rating">
-                                        {'⭐'.repeat(review.rating)}
+                                        <StarRating rating={review.rating} />
                                     </div>
                                     <p className="review-item-text">{review.reviewText}</p>
                                     <div className="review-item-stats">
-                                        <span>❤️ {review.likesCount}</span>
-                                        <span>💬 {review.commentsCount}</span>
+                                        <span>
+                                            <svg className="w-4 h-4 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
+                                            </svg>
+                                            {review.likesCount}
+                                        </span>
+                                        <span>
+                                            <svg className="w-4 h-4 text-primary" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clipRule="evenodd" />
+                                            </svg>
+                                            {review.commentsCount}
+                                        </span>
                                     </div>
                                 </div>
                             </div>
