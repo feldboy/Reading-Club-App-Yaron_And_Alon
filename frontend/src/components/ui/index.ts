@@ -12,7 +12,6 @@ export {
     Skeleton,
     BookCardSkeleton,
     ReviewCardSkeleton,
-    ClubCardSkeleton,
     ProfileHeaderSkeleton
 } from './Skeleton';
 

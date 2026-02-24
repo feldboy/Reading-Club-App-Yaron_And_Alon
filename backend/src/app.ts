@@ -8,7 +8,6 @@ import booksRoutes from './routes/books.routes';
 import commentRoutes from './routes/comment.routes';
 import reviewRoutes from './routes/review.routes';
 import aiRoutes from './routes/ai.routes';
-import clubRoutes from './routes/club.routes';
 import { setupSwagger } from './config/swagger.config';
 import { setupPassport } from './config/passport.config';
 
@@ -83,7 +82,6 @@ app.get('/health', (_req: Request, res: Response) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/books', booksRoutes);
-app.use('/api/clubs', clubRoutes);
 app.use('/api', commentRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/ai', aiRoutes);
