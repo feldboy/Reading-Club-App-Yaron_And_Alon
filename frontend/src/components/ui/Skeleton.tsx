@@ -67,21 +67,6 @@ export function ReviewCardSkeleton() {
     );
 }
 
-export function ClubCardSkeleton() {
-    return (
-        <div className="glass-card rounded-2xl p-4">
-            <div className="flex gap-4">
-                <Skeleton variant="rounded" width={80} height={80} />
-                <div className="flex-1 space-y-2">
-                    <Skeleton variant="text" className="w-3/4" />
-                    <Skeleton variant="text" className="w-1/2" height={12} />
-                    <Skeleton variant="text" className="w-full" height={12} />
-                </div>
-            </div>
-        </div>
-    );
-}
-
 export function ProfileHeaderSkeleton() {
     return (
         <div className="flex flex-col items-center">

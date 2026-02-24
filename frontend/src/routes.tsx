@@ -53,7 +53,6 @@ const ProtectedRoute = ({ children }: { children: React.ReactElement }) => {
  */
 import CreateReviewPage from './pages/CreateReviewPage';
 import DiscoverPage from './pages/DiscoverPage';
-import ClubsPage from './pages/ClubsPage';
 import BookDetailPage from './pages/BookDetailPage';
 
 /**
@@ -115,10 +114,6 @@ export const router = createBrowserRouter([
             {
                 path: 'discover',
                 element: <DiscoverPage />,
-            },
-            {
-                path: 'clubs',
-                element: <ClubsPage />,
             },
             {
                 path: 'wishlist',
