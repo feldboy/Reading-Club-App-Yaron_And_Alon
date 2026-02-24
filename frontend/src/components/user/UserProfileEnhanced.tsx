@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { getProfile, getWishlist, getLikedReviews, type UserProfile as UserProfileData, type WishlistItem } from '../../services/user.api';
@@ -20,11 +20,10 @@ const StarRating = ({ rating }: { rating: number }) => (
         {[1, 2, 3, 4, 5].map((star) => (
             <svg
                 key={star}
-                className={`w-4 h-4 transition-all ${
-                    star <= rating
-                        ? 'text-violet-400 fill-violet-400 drop-shadow-[0_0_4px_rgba(167,139,250,0.5)]'
-                        : 'text-white/10 fill-white/10'
-                }`}
+                className={`w-4 h-4 transition-all ${star <= rating
+                    ? 'text-violet-400 fill-violet-400 drop-shadow-[0_0_4px_rgba(167,139,250,0.5)]'
+                    : 'text-white/10 fill-white/10'
+                    }`}
                 viewBox="0 0 20 20"
             >
                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
@@ -38,11 +37,19 @@ const UserProfileEnhanced = ({ userId, onEditClick }: UserProfileEnhancedProps) 
     const navigate = useNavigate();
     const [profile, setProfile] = useState<UserProfileData | null>(null);
     const [reviews, setReviews] = useState<Review[]>([]);
+    const [reviewsPage, setReviewsPage] = useState(1);
+    const [reviewsHasMore, setReviewsHasMore] = useState(true);
+    const [loadingMoreReviews, setLoadingMoreReviews] = useState(false);
     const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
     const [likedReviews, setLikedReviews] = useState<Review[]>([]);
+    const [likedPage, setLikedPage] = useState(1);
+    const [likedHasMore, setLikedHasMore] = useState(true);
+    const [loadingMoreLiked, setLoadingMoreLiked] = useState(false);
     const [activeTab, setActiveTab] = useState<TabType>('reviews');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+
+    const REVIEWS_PER_PAGE = 10;
 
     const isOwnProfile = !userId || userId === currentUser?.id;
 
@@ -63,13 +70,17 @@ const UserProfileEnhanced = ({ userId, onEditClick }: UserProfileEnhancedProps) 
 
                 try {
                     const [reviewsData, wishlistData, likedReviewsData] = await Promise.all([
-                        getUserReviews(profileData.id),
+                        getUserReviews(profileData.id, 1, REVIEWS_PER_PAGE),
                         getWishlist(),
-                        getLikedReviews()
+                        getLikedReviews(1, REVIEWS_PER_PAGE)
                     ]);
                     setReviews(reviewsData);
+                    setReviewsPage(1);
+                    setReviewsHasMore(reviewsData.length === REVIEWS_PER_PAGE);
                     setWishlist(wishlistData);
                     setLikedReviews(likedReviewsData);
+                    setLikedPage(1);
+                    setLikedHasMore(likedReviewsData.length === REVIEWS_PER_PAGE);
                 } catch (err) {
                     console.error('Failed to load user data:', err);
                 }
@@ -100,6 +111,38 @@ const UserProfileEnhanced = ({ userId, onEditClick }: UserProfileEnhancedProps) 
     const handleWishlistRemove = (bookId: string) => {
         setWishlist(prev => prev.filter(item => item.bookId !== bookId));
     };
+
+    const loadMoreReviews = useCallback(async () => {
+        if (!profile || loadingMoreReviews || !reviewsHasMore) return;
+        setLoadingMoreReviews(true);
+        try {
+            const nextPage = reviewsPage + 1;
+            const more = await getUserReviews(profile.id, nextPage, REVIEWS_PER_PAGE);
+            setReviews(prev => [...prev, ...more]);
+            setReviewsPage(nextPage);
+            setReviewsHasMore(more.length === REVIEWS_PER_PAGE);
+        } catch (err) {
+            console.error('Failed to load more reviews:', err);
+        } finally {
+            setLoadingMoreReviews(false);
+        }
+    }, [profile, loadingMoreReviews, reviewsHasMore, reviewsPage]);
+
+    const loadMoreLiked = useCallback(async () => {
+        if (loadingMoreLiked || !likedHasMore) return;
+        setLoadingMoreLiked(true);
+        try {
+            const nextPage = likedPage + 1;
+            const more = await getLikedReviews(nextPage, REVIEWS_PER_PAGE);
+            setLikedReviews(prev => [...prev, ...more]);
+            setLikedPage(nextPage);
+            setLikedHasMore(more.length === REVIEWS_PER_PAGE);
+        } catch (err) {
+            console.error('Failed to load more liked reviews:', err);
+        } finally {
+            setLoadingMoreLiked(false);
+        }
+    }, [loadingMoreLiked, likedHasMore, likedPage]);
 
     const handleLogout = async () => {
         await logout();
@@ -232,16 +275,19 @@ const UserProfileEnhanced = ({ userId, onEditClick }: UserProfileEnhancedProps) 
                         {[
                             { label: 'Reviews', value: reviews.length, tab: 'reviews' as TabType },
                             { label: 'Wishlist', value: wishlist.length, tab: 'wishlist' as TabType },
-                            { label: 'Likes', value: reviews.reduce((sum, r) => sum + r.likesCount, 0), tab: null }
+                            { label: 'Liked', value: likedReviews.length, tab: 'likes' as TabType }
                         ].map((stat) => (
                             <button
                                 key={stat.label}
-                                onClick={() => stat.tab && setActiveTab(stat.tab)}
-                                disabled={!stat.tab}
-                                className="p-4 sm:p-6 text-center rounded-2xl transition-all duration-300 cursor-pointer hover:-translate-y-1 disabled:cursor-default disabled:hover:translate-y-0"
+                                onClick={() => setActiveTab(stat.tab)}
+                                className="p-4 sm:p-6 text-center rounded-2xl transition-all duration-300 cursor-pointer hover:-translate-y-1"
                                 style={{
-                                    background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.02) 100%)',
-                                    border: '1px solid rgba(255,255,255,0.06)',
+                                    background: activeTab === stat.tab
+                                        ? 'linear-gradient(135deg, rgba(139,92,246,0.15) 0%, rgba(139,92,246,0.08) 100%)'
+                                        : 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.02) 100%)',
+                                    border: activeTab === stat.tab
+                                        ? '1px solid rgba(139,92,246,0.35)'
+                                        : '1px solid rgba(255,255,255,0.06)',
                                     boxShadow: '0 10px 30px -10px rgba(0,0,0,0.3)'
                                 }}
                             >
@@ -264,11 +310,10 @@ const UserProfileEnhanced = ({ userId, onEditClick }: UserProfileEnhancedProps) 
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
-                            className={`px-5 py-3 font-ui font-bold text-sm transition-all duration-300 cursor-pointer border-b-2 ${
-                                activeTab === tab.id
-                                    ? 'border-primary text-white'
-                                    : 'border-transparent text-white/40 hover:text-white/70'
-                            }`}
+                            className={`px-5 py-3 font-ui font-bold text-sm transition-all duration-300 cursor-pointer border-b-2 ${activeTab === tab.id
+                                ? 'border-primary text-white'
+                                : 'border-transparent text-white/40 hover:text-white/70'
+                                }`}
                         >
                             {tab.label} ({tab.count})
                         </button>
@@ -356,6 +401,29 @@ const UserProfileEnhanced = ({ userId, onEditClick }: UserProfileEnhancedProps) 
                                         </div>
                                     </Link>
                                 ))}
+
+                                {/* Load more reviews */}
+                                {reviewsHasMore && (
+                                    <button
+                                        onClick={loadMoreReviews}
+                                        disabled={loadingMoreReviews}
+                                        className="w-full py-3 rounded-2xl font-ui font-semibold text-sm text-white/50 hover:text-white cursor-pointer transition-all duration-300 hover:-translate-y-0.5 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+                                        style={{
+                                            background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.02) 100%)',
+                                            border: '1px solid rgba(255,255,255,0.06)',
+                                        }}
+                                    >
+                                        {loadingMoreReviews ? (
+                                            <span className="flex items-center justify-center gap-2">
+                                                <span className="size-4 border-2 border-white/20 border-t-primary rounded-full animate-spin" />
+                                                Loading…
+                                            </span>
+                                        ) : 'Load More Reviews'}
+                                    </button>
+                                )}
+                                {!reviewsHasMore && reviews.length > REVIEWS_PER_PAGE && (
+                                    <p className="text-center text-white/20 font-ui text-xs py-3">— All reviews loaded —</p>
+                                )}
                             </div>
                         )}
                     </div>
@@ -518,6 +586,29 @@ const UserProfileEnhanced = ({ userId, onEditClick }: UserProfileEnhancedProps) 
                                         </div>
                                     </Link>
                                 ))}
+
+                                {/* Load more liked reviews */}
+                                {likedHasMore && (
+                                    <button
+                                        onClick={loadMoreLiked}
+                                        disabled={loadingMoreLiked}
+                                        className="w-full py-3 rounded-2xl font-ui font-semibold text-sm text-white/50 hover:text-white cursor-pointer transition-all duration-300 hover:-translate-y-0.5 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+                                        style={{
+                                            background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.02) 100%)',
+                                            border: '1px solid rgba(255,255,255,0.06)',
+                                        }}
+                                    >
+                                        {loadingMoreLiked ? (
+                                            <span className="flex items-center justify-center gap-2">
+                                                <span className="size-4 border-2 border-white/20 border-t-primary rounded-full animate-spin" />
+                                                Loading…
+                                            </span>
+                                        ) : 'Load More'}
+                                    </button>
+                                )}
+                                {!likedHasMore && likedReviews.length > REVIEWS_PER_PAGE && (
+                                    <p className="text-center text-white/20 font-ui text-xs py-3">— All liked reviews loaded —</p>
+                                )}
                             </div>
                         )}
                     </div>

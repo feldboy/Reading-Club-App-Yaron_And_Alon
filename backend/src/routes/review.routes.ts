@@ -13,11 +13,11 @@ const router = Router();
  */
 
 // CRUD routes
-router.post('/', verifyToken, uploadReviewImage.single('bookImage'), reviewController.createReview);
+router.post('/', verifyToken, uploadReviewImage.single('reviewImage'), reviewController.createReview);
 router.get('/', reviewController.getAllReviews);
-router.get('/book/:googleBookId', reviewController.getBookReviews); // Get reviews for a specific book
+router.get('/book/:googleBookId', reviewController.getBookReviews);
 router.get('/:id', reviewController.getReviewById);
-router.put('/:id', verifyToken, uploadReviewImage.single('bookImage'), reviewController.updateReview);
+router.put('/:id', verifyToken, uploadReviewImage.single('reviewImage'), reviewController.updateReview);
 router.delete('/:id', verifyToken, reviewController.deleteReview);
 
 // Like/Unlike routes

@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import type { Review } from '../../services/review.api';
 import LikeButton from './LikeButton';
 import { DEFAULT_AVATAR, handleImageError } from '../../utils/imageUtils';
+import { resolveInternalImageUrl } from '../../utils/imageUtils';
 
 interface ReviewCardEnhancedProps {
     review: Review;
@@ -20,8 +21,8 @@ const StarRating = ({ rating }: { rating: number }) => {
                 <svg
                     key={star}
                     className={`w-4 h-4 sm:w-5 sm:h-5 transition-all duration-300 ${star <= rating
-                            ? 'text-[#7C3AED] fill-[#7C3AED] scale-110'
-                            : 'text-gray-300 dark:text-white/20 fill-gray-300 dark:fill-white/20'
+                        ? 'text-[#7C3AED] fill-[#7C3AED] scale-110'
+                        : 'text-gray-300 dark:text-white/20 fill-gray-300 dark:fill-white/20'
                         }`}
                     viewBox="0 0 20 20"
                     aria-hidden="true"
@@ -163,7 +164,7 @@ const ReviewCardEnhanced = ({ review, currentUserId, onLikeChange, variant = 'de
     // Default variant - standard card
     return (
         <article className="group bg-white dark:bg-white/5 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border-2 border-transparent hover:border-[#7C3AED]/20 dark:hover:border-white/10 animate-fade-in">
-            {/* Book Image */}
+            {/* Book cover banner (Google Books image) */}
             {review.bookImage && (
                 <div className="relative overflow-hidden">
                     <img
@@ -219,6 +220,20 @@ const ReviewCardEnhanced = ({ review, currentUserId, onLikeChange, variant = 'de
                 <p className="font-body text-sm sm:text-base text-[#4C1D95]/80 dark:text-white/80 leading-relaxed mb-4 line-clamp-3">
                     {review.reviewText}
                 </p>
+
+                {/* User's personal photo attached to the review post */}
+                {review.reviewImage && (
+                    <div className="mt-4 mb-4 rounded-2xl overflow-hidden border border-[#7C3AED]/10 dark:border-white/10 shadow-md">
+                        <img
+                            src={resolveInternalImageUrl(review.reviewImage)}
+                            alt="Photo added to review"
+                            className="w-full max-h-64 object-cover"
+                            onError={(e) => {
+                                (e.target as HTMLImageElement).parentElement!.style.display = 'none';
+                            }}
+                        />
+                    </div>
+                )}
 
                 {/* Footer */}
                 <div className="flex items-center justify-between pt-4 border-t-2 border-[#7C3AED]/10 dark:border-white/10">
