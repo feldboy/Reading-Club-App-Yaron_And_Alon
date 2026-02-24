@@ -17,6 +17,7 @@ export interface Review {
     bookISBN?: string;
     rating: number;
     reviewText: string;
+    reviewImage?: string;   // User's personal photo added to the post
     googleBookId?: string;
     likes: string[];
     likesCount: number;
@@ -24,6 +25,25 @@ export interface Review {
     createdAt: string;
     updatedAt: string;
 }
+
+/**
+ * Normalize a raw review from the API:
+ * - Maps the `userId` populated object to `user`
+ * - Ensures `id` is set from `_id` if missing
+ */
+const normalizeReview = (r: any): Review => {
+    const normalized: Review = { ...r, id: r.id || r._id };
+    // When MongoDB populates `userId`, it returns an object with _id, username, etc.
+    if (r.userId && typeof r.userId === 'object') {
+        normalized.user = {
+            id: r.userId._id || r.userId.id,
+            username: r.userId.username,
+            profileImage: r.userId.profileImage || '',
+        };
+        normalized.userId = r.userId._id || r.userId.id;
+    }
+    return normalized;
+};
 
 /**
  * Like/Unlike response
@@ -79,7 +99,7 @@ export const getAllReviews = async (page: number = 1, limit: number = 10): Promi
         params: { page, limit },
     });
     const data = response.data.data;
-    data.reviews = data.reviews.map((r: any) => ({ ...r, id: r._id || r.id }));
+    data.reviews = data.reviews.map(normalizeReview);
     return data;
 };
 
@@ -97,8 +117,7 @@ export interface GetReviewByIdResponse {
  */
 export const getReviewById = async (reviewId: string): Promise<Review> => {
     const response = await api.get<GetReviewByIdResponse>(`/reviews/${reviewId}`);
-    const review = response.data.data as any;
-    return { ...review, id: review.id || review._id }; // Strict override
+    return normalizeReview(response.data.data);
 };
 
 /**
@@ -108,12 +127,7 @@ export const getUserReviews = async (userId: string, page: number = 1, limit: nu
     const response = await api.get<GetAllReviewsResponse>(`/users/${userId}/reviews`, {
         params: { page, limit },
     });
-    // Use GetAllReviewsResponse structure assuming the endpoint returns similar structure
-    // Manual transform to ensure id is present
-    return response.data.data.reviews.map((review: any) => ({
-        ...review,
-        id: review.id || review._id, // Strict override to ensure we use MongoDB ID
-    }));
+    return response.data.data.reviews.map(normalizeReview);
 };
 
 /**
@@ -124,7 +138,7 @@ export const getBookReviews = async (googleBookId: string, page: number = 1, lim
         params: { page, limit },
     });
     const data = response.data.data;
-    data.reviews = data.reviews.map((r: any) => ({ ...r, id: r._id || r.id }));
+    data.reviews = data.reviews.map(normalizeReview);
     return data;
 };
 
@@ -134,11 +148,12 @@ export const getBookReviews = async (googleBookId: string, page: number = 1, lim
 export interface CreateReviewRequest {
     bookTitle: string;
     bookAuthor: string;
-    bookImage?: string | File;
+    bookImage?: string;          // Book cover URL from Google Books
     bookISBN?: string;
     googleBookId?: string;
     rating: number;
     reviewText: string;
+    reviewImage?: File;          // Personal photo uploaded by the user
 }
 
 /**
@@ -161,25 +176,17 @@ export const createReview = async (data: CreateReviewRequest): Promise<Review> =
     formData.append('rating', data.rating.toString());
     formData.append('reviewText', data.reviewText);
 
-    if (data.bookISBN) {
-        formData.append('bookISBN', data.bookISBN);
-    }
-    if (data.googleBookId) {
-        formData.append('googleBookId', data.googleBookId);
-    }
-    // Always send bookImage (can be URL string from Google Books or local upload path)
-    if (data.bookImage !== undefined) {
-        if (data.bookImage instanceof File) {
-            formData.append('bookImage', data.bookImage);
-        } else {
-            formData.append('bookImage', data.bookImage);
-        }
+    if (data.bookISBN) formData.append('bookISBN', data.bookISBN);
+    if (data.googleBookId) formData.append('googleBookId', data.googleBookId);
+    // Book cover URL (Google Books) - sent as text
+    if (data.bookImage) formData.append('bookImage', data.bookImage);
+    // Personal photo - sent as file upload
+    if (data.reviewImage instanceof File) {
+        formData.append('reviewImage', data.reviewImage);
     }
 
     const response = await api.post<CreateReviewResponse>('/reviews', formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data',
-        },
+        headers: { 'Content-Type': 'multipart/form-data' },
     });
     return response.data.data;
 };
@@ -190,11 +197,11 @@ export const createReview = async (data: CreateReviewRequest): Promise<Review> =
 export interface UpdateReviewRequest {
     bookTitle?: string;
     bookAuthor?: string;
-    bookImage?: string | File;
     bookISBN?: string;
     googleBookId?: string;
     rating?: number;
     reviewText?: string;
+    reviewImage?: File | null;   // null = remove image
 }
 
 /**
@@ -219,18 +226,15 @@ export const updateReview = async (reviewId: string, data: UpdateReviewRequest):
     if (data.rating !== undefined) formData.append('rating', data.rating.toString());
     if (data.bookISBN) formData.append('bookISBN', data.bookISBN);
     if (data.googleBookId) formData.append('googleBookId', data.googleBookId);
-    if (data.bookImage) {
-        if (data.bookImage instanceof File) {
-            formData.append('bookImage', data.bookImage);
-        } else {
-            formData.append('bookImage', data.bookImage);
-        }
+    // reviewImage: File = upload new, null = remove
+    if (data.reviewImage instanceof File) {
+        formData.append('reviewImage', data.reviewImage);
+    } else if (data.reviewImage === null) {
+        formData.append('reviewImage', ''); // signal to backend: remove image
     }
 
     const response = await api.put<UpdateReviewResponse>(`/reviews/${reviewId}`, formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data',
-        },
+        headers: { 'Content-Type': 'multipart/form-data' },
     });
     return response.data.data;
 };

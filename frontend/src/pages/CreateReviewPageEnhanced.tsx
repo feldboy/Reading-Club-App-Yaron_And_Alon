@@ -37,6 +37,12 @@ export default function CreateReviewPageEnhanced() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
+    // Image upload state
+    const [reviewImage, setReviewImage] = useState<File | null>(null);
+    const [reviewImagePreview, setReviewImagePreview] = useState<string | null>(null);
+    const imageInputRef = useRef<HTMLInputElement>(null);
+    const [isDragging, setIsDragging] = useState(false);
+
     // Handle AI book selection from navigation state
     useEffect(() => {
         const aiBook = (location.state as any)?.selectedBook as AIBook | undefined;
@@ -99,6 +105,34 @@ export default function CreateReviewPageEnhanced() {
         );
     };
 
+    const handleImageUpload = (file: File) => {
+        if (!file.type.startsWith('image/')) {
+            setError('Please upload a valid image file');
+            return;
+        }
+        if (file.size > 5 * 1024 * 1024) {
+            setError('Image must be smaller than 5MB');
+            return;
+        }
+        setReviewImage(file);
+        const reader = new FileReader();
+        reader.onload = (e) => setReviewImagePreview(e.target?.result as string);
+        reader.readAsDataURL(file);
+    };
+
+    const handleImageDrop = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        setIsDragging(false);
+        const file = e.dataTransfer.files[0];
+        if (file) handleImageUpload(file);
+    };
+
+    const handleRemoveImage = () => {
+        setReviewImage(null);
+        setReviewImagePreview(null);
+        if (imageInputRef.current) imageInputRef.current.value = '';
+    };
+
     const handleSubmit = async () => {
         if (!selectedBook?.title || !selectedBook?.author) {
             setError('Please select a book');
@@ -122,11 +156,12 @@ export default function CreateReviewPageEnhanced() {
             await createReview({
                 bookTitle: selectedBook.title,
                 bookAuthor: selectedBook.author,
-                bookImage: selectedBook.cover || undefined,
+                bookImage: selectedBook.cover || undefined,   // Google Books cover URL
                 bookISBN: selectedBook.id || undefined,
                 googleBookId: selectedBook.id || undefined,
                 rating,
                 reviewText: reviewText.trim(),
+                reviewImage: reviewImage instanceof File ? reviewImage : undefined,
             });
 
             navigate('/');
@@ -454,6 +489,70 @@ export default function CreateReviewPageEnhanced() {
                             <p className="text-[#7C3AED] dark:text-white/70 text-base sm:text-lg">
                                 Help others find your review
                             </p>
+                        </div>
+
+                        {/* Image Upload */}
+                        <div className="space-y-4">
+                            <h3 className="font-heading font-bold text-[#4C1D95] dark:text-white text-xl">
+                                Add a Photo <span className="text-sm font-normal text-[#7C3AED]/60 dark:text-white/40">(Optional)</span>
+                            </h3>
+
+                            {reviewImagePreview ? (
+                                <div className="relative group rounded-2xl overflow-hidden shadow-lg">
+                                    <img
+                                        src={reviewImagePreview}
+                                        alt="Review upload preview"
+                                        className="w-full h-56 object-cover"
+                                    />
+                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                        <button
+                                            onClick={handleRemoveImage}
+                                            className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl font-medium transition-colors cursor-pointer"
+                                        >
+                                            <span className="material-symbols-outlined text-lg">delete</span>
+                                            Remove Photo
+                                        </button>
+                                    </div>
+                                    <div className="absolute top-3 right-3 bg-[#22C55E] text-white rounded-full p-1.5 shadow-md">
+                                        <span className="material-symbols-outlined text-lg">check</span>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div
+                                    className={`relative border-2 border-dashed rounded-2xl p-8 text-center transition-all duration-300 cursor-pointer ${isDragging
+                                        ? 'border-[#7C3AED] bg-[#7C3AED]/10 scale-105'
+                                        : 'border-[#7C3AED]/30 dark:border-white/20 hover:border-[#7C3AED] dark:hover:border-white/40 hover:bg-[#7C3AED]/5'
+                                        }`}
+                                    onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+                                    onDragLeave={() => setIsDragging(false)}
+                                    onDrop={handleImageDrop}
+                                    onClick={() => imageInputRef.current?.click()}
+                                >
+                                    <input
+                                        ref={imageInputRef}
+                                        type="file"
+                                        accept="image/*"
+                                        className="hidden"
+                                        onChange={(e) => {
+                                            const file = e.target.files?.[0];
+                                            if (file) handleImageUpload(file);
+                                        }}
+                                    />
+                                    <div className="flex flex-col items-center gap-3">
+                                        <div className="size-16 rounded-full bg-[#7C3AED]/10 dark:bg-white/10 flex items-center justify-center">
+                                            <span className="material-symbols-outlined text-4xl text-[#7C3AED] dark:text-white/60">add_photo_alternate</span>
+                                        </div>
+                                        <div>
+                                            <p className="font-heading font-bold text-[#4C1D95] dark:text-white text-lg">
+                                                {isDragging ? 'Drop your image here!' : 'Upload a photo'}
+                                            </p>
+                                            <p className="text-[#7C3AED]/60 dark:text-white/40 text-sm mt-1">
+                                                Drag & drop or click to browse · JPEG, PNG, WebP · Max 5MB
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         {/* Tags */}

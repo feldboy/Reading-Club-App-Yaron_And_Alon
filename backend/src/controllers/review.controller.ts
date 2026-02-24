@@ -72,11 +72,14 @@ export const createReview = async (req: Request, res: Response): Promise<void> =
             return;
         }
 
-        let bookImage = req.body.bookImage || '';
+        // bookImage = book cover URL from Google Books (sent as plain text/URL)
+        const bookImage = req.body.bookImage || '';
+
+        // reviewImage = personal photo uploaded by the user (file upload)
+        let reviewImage: string | undefined;
         if ((req as any).file) {
-            bookImage = `/uploads/reviews/${(req as any).file.filename}`;
+            reviewImage = `/uploads/reviews/${(req as any).file.filename}`;
         }
-        // bookImage can be empty - not required (frontend may provide Google Books URL or none)
 
         const review = await reviewService.createReview(userId, {
             bookTitle,
@@ -86,6 +89,7 @@ export const createReview = async (req: Request, res: Response): Promise<void> =
             googleBookId,
             rating: numRating,
             reviewText,
+            reviewImage,
         });
 
         res.status(201).json({ success: true, message: 'Review created successfully', data: review });
@@ -237,9 +241,10 @@ export const updateReview = async (req: Request, res: Response): Promise<void> =
         }
 
         if ((req as any).file) {
-            updates.bookImage = `/uploads/reviews/${(req as any).file.filename}`;
-        } else if (req.body.bookImage) {
-            updates.bookImage = req.body.bookImage;
+            updates.reviewImage = `/uploads/reviews/${(req as any).file.filename}`;
+        } else if (req.body.reviewImage === '') {
+            // Allow clearing the review image (will trigger $unset in service)
+            updates.reviewImage = null;
         }
 
         const review = await reviewService.updateReview(id, userId, updates);

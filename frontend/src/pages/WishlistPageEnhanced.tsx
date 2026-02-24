@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Card, EmptyState, Badge } from '../components/ui';
 import WishlistButton from '../components/ui/WishlistButton';
 import { getWishlist, type WishlistItem } from '../services/user.api';
+import { DEFAULT_BOOK_COVER } from '../utils/imageUtils';
 
 type ViewMode = 'grid' | 'list';
 type SortBy = 'recent' | 'title' | 'author';
@@ -95,8 +96,8 @@ export default function WishlistPageEnhanced() {
                                 <button
                                     onClick={() => setViewMode('grid')}
                                     className={`px-3 py-2 rounded-lg transition-all duration-200 cursor-pointer ${viewMode === 'grid'
-                                            ? 'bg-[#7C3AED] text-white shadow-sm'
-                                            : 'text-[#7C3AED] dark:text-white/60 hover:text-[#4C1D95] dark:hover:text-white'
+                                        ? 'bg-[#7C3AED] text-white shadow-sm'
+                                        : 'text-[#7C3AED] dark:text-white/60 hover:text-[#4C1D95] dark:hover:text-white'
                                         }`}
                                     aria-label="Grid view"
                                 >
@@ -105,8 +106,8 @@ export default function WishlistPageEnhanced() {
                                 <button
                                     onClick={() => setViewMode('list')}
                                     className={`px-3 py-2 rounded-lg transition-all duration-200 cursor-pointer ${viewMode === 'list'
-                                            ? 'bg-[#7C3AED] text-white shadow-sm'
-                                            : 'text-[#7C3AED] dark:text-white/60 hover:text-[#4C1D95] dark:hover:text-white'
+                                        ? 'bg-[#7C3AED] text-white shadow-sm'
+                                        : 'text-[#7C3AED] dark:text-white/60 hover:text-[#4C1D95] dark:hover:text-white'
                                         }`}
                                     aria-label="List view"
                                 >
@@ -161,7 +162,7 @@ export default function WishlistPageEnhanced() {
                                 className="group relative animate-fade-in"
                                 style={{ animationDelay: `${index * 30}ms` }}
                             >
-                                <Link to={`/reviews/${book.bookId}`} className="block h-full">
+                                <Link to={`/books/${book.bookId}`} className="block h-full">
                                     <Card
                                         hoverable
                                         className="overflow-hidden p-0 h-full flex flex-col bg-white dark:bg-white/5"
@@ -171,7 +172,7 @@ export default function WishlistPageEnhanced() {
                                                 <img
                                                     src={
                                                         book.cover?.replace('http:', 'https:') ||
-                                                        'https://via.placeholder.com/128x192?text=No+Cover'
+                                                        DEFAULT_BOOK_COVER
                                                     }
                                                     alt={book.title}
                                                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
@@ -218,7 +219,7 @@ export default function WishlistPageEnhanced() {
                         {sortedWishlist.map((book, index) => (
                             <Link
                                 key={book.bookId}
-                                to={`/reviews/${book.bookId}`}
+                                to={`/books/${book.bookId}`}
                                 className="block animate-fade-in"
                                 style={{ animationDelay: `${index * 30}ms` }}
                             >
@@ -231,7 +232,7 @@ export default function WishlistPageEnhanced() {
                                         <img
                                             src={
                                                 book.cover?.replace('http:', 'https:') ||
-                                                'https://via.placeholder.com/128x192?text=No+Cover'
+                                                DEFAULT_BOOK_COVER
                                             }
                                             alt={book.title}
                                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
@@ -260,7 +261,7 @@ export default function WishlistPageEnhanced() {
                                                 onClick={(e) => {
                                                     e.preventDefault();
                                                     e.stopPropagation();
-                                                    navigate(`/reviews/${book.bookId}`);
+                                                    navigate(`/books/${book.bookId}`);
                                                 }}
                                                 className="px-4 py-2 bg-[#7C3AED]/10 dark:bg-white/5 hover:bg-[#7C3AED]/20 dark:hover:bg-white/10 text-[#7C3AED] dark:text-white rounded-xl font-medium text-sm transition-all duration-300 cursor-pointer hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED]"
                                             >

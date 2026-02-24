@@ -11,6 +11,7 @@ export interface IReview extends Document {
     bookISBN?: string;
     rating: number;
     reviewText: string;
+    reviewImage?: string;   // User's personal photo attached to the review post
     googleBookId?: string;
     likes: mongoose.Types.ObjectId[];
     likesCount: number;
@@ -45,6 +46,9 @@ const ReviewSchema: Schema = new Schema(
         },
         bookISBN: {
             type: String,
+        },
+        reviewImage: {
+            type: String,   // Optional personal photo uploaded by the reviewer
         },
         rating: {
             type: Number,

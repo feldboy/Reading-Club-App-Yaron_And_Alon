@@ -2,6 +2,7 @@ import axios from 'axios';
 import { getHighResBookCover } from '../utils/imageUtils';
 
 const GOOGLE_BOOKS_API_URL = 'https://www.googleapis.com/books/v1/volumes';
+const PAGE_SIZE = 20;
 
 export interface Book {
     id: string;
@@ -14,16 +15,44 @@ export interface Book {
     description?: string;
 }
 
-export const searchBooks = async (query: string): Promise<Book[]> => {
+export interface BooksPage {
+    books: Book[];
+    totalItems: number;
+    hasMore: boolean;
+}
+
+/**
+ * Search Google Books with pagination support.
+ * @param query    Search string (empty → subject:fiction)
+ * @param page     1-based page number (default 1)
+ * @param orderBy  'relevance' | 'newest' (Google Books API param)
+ */
+export const searchBooksPage = async (
+    query: string,
+    page: number = 1,
+    orderBy: 'relevance' | 'newest' = 'relevance'
+): Promise<BooksPage> => {
     try {
-        // If query is empty, default to a broad search to fill the page
         const searchTerm = query.trim() || 'subject:fiction';
+        const startIndex = (page - 1) * PAGE_SIZE;
 
-        const response = await axios.get(`${GOOGLE_BOOKS_API_URL}?q=${searchTerm}&maxResults=20`);
+        const response = await axios.get(GOOGLE_BOOKS_API_URL, {
+            params: {
+                q: searchTerm,
+                maxResults: PAGE_SIZE,
+                startIndex,
+                orderBy,
+                printType: 'books',
+            },
+        });
 
-        if (!response.data.items) return [];
+        const totalItems: number = response.data.totalItems || 0;
 
-        return response.data.items.map((item: any) => {
+        if (!response.data.items) {
+            return { books: [], totalItems, hasMore: false };
+        }
+
+        const books: Book[] = response.data.items.map((item: any) => {
             const volumeInfo = item.volumeInfo || {};
             return {
                 id: item.id,
@@ -36,10 +65,19 @@ export const searchBooks = async (query: string): Promise<Book[]> => {
                 description: volumeInfo.description,
             };
         });
+
+        const hasMore = startIndex + books.length < totalItems;
+        return { books, totalItems, hasMore };
     } catch (error) {
-        console.error('Error fetching books:', error);
-        return [];
+        console.error('Error fetching books page:', error);
+        return { books: [], totalItems: 0, hasMore: false };
     }
+};
+
+/** Legacy helper — kept for backward compatibility with DiscoverPageEnhanced & HomePage */
+export const searchBooks = async (query: string): Promise<Book[]> => {
+    const result = await searchBooksPage(query, 1, 'relevance');
+    return result.books;
 };
 
 export const getBookById = async (bookId: string): Promise<Book | null> => {

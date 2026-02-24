@@ -302,11 +302,6 @@ export default function ReviewDetailPageRedesign() {
                                 </p>
                             </div>
                         </div>
-                        {!isOwnReview && (
-                            <button className="px-6 py-2.5 rounded-lg text-sm font-bold transition-all active:scale-95 bg-rose-600 hover:bg-rose-700 text-white cursor-pointer">
-                                Follow
-                            </button>
-                        )}
                     </div>
                 </div>
 

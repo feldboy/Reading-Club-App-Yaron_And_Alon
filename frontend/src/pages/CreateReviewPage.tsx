@@ -81,6 +81,12 @@ export default function CreateReviewPage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
+    // Review photo upload
+    const [reviewPhoto, setReviewPhoto] = useState<File | null>(null);
+    const [reviewPhotoPreview, setReviewPhotoPreview] = useState<string | null>(null);
+    const [isDraggingPhoto, setIsDraggingPhoto] = useState(false);
+    const photoInputRef = useRef<HTMLInputElement>(null);
+
     const searchRef = useRef<HTMLDivElement>(null);
     const debouncedSearch = useDebounce(searchQuery, 300);
 
@@ -162,8 +168,35 @@ export default function CreateReviewPage() {
         setSearchQuery('');
         setShowResults(false);
         setSearchResults([]);
-        // Advance to rating step on selection
-        if (rating === 0) setRating(0); // keep 0 to nudge user to rate
+        if (rating === 0) setRating(0);
+    };
+
+    const handlePhotoUpload = (file: File) => {
+        if (!file.type.startsWith('image/')) {
+            setError('Please upload a valid image file (JPEG, PNG, WebP)');
+            return;
+        }
+        if (file.size > 5 * 1024 * 1024) {
+            setError('Image must be smaller than 5MB');
+            return;
+        }
+        setReviewPhoto(file);
+        const reader = new FileReader();
+        reader.onload = (e) => setReviewPhotoPreview(e.target?.result as string);
+        reader.readAsDataURL(file);
+    };
+
+    const handlePhotoDrop = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        setIsDraggingPhoto(false);
+        const file = e.dataTransfer.files[0];
+        if (file) handlePhotoUpload(file);
+    };
+
+    const handleRemovePhoto = () => {
+        setReviewPhoto(null);
+        setReviewPhotoPreview(null);
+        if (photoInputRef.current) photoInputRef.current.value = '';
     };
 
     const handleSubmit = async () => {
@@ -190,11 +223,12 @@ export default function CreateReviewPage() {
             await createReview({
                 bookTitle: selectedBook.title,
                 bookAuthor: selectedBook.author,
-                bookImage: selectedBook.cover || '',
+                bookImage: selectedBook.cover || '',       // Google Books cover URL
                 bookISBN: selectedBook.id || undefined,
                 googleBookId: selectedBook.id || undefined,
                 rating,
                 reviewText: reviewText.trim(),
+                reviewImage: reviewPhoto || undefined,     // User's personal photo (File)
             });
             navigate('/');
         } catch (err: any) {
@@ -455,6 +489,87 @@ export default function CreateReviewPage() {
                                 maxLength={MAX_CHARS + 50}
                             />
                         </div>
+                    </div>
+
+                    {/* ── Add a photo to your review (optional) ── */}
+                    <div className="space-y-3 pt-6 border-t border-white/[0.08]">
+                        <div className="flex items-center justify-between">
+                            <label className="font-heading text-white/50 text-[11px] font-bold uppercase tracking-[0.2em]">
+                                Add a Photo to Your Review
+                            </label>
+                            <span className="text-white/30 text-[10px] font-body">Optional</span>
+                        </div>
+
+                        {reviewPhotoPreview ? (
+                            <div className="relative group rounded-2xl overflow-hidden shadow-xl border border-white/10">
+                                <img
+                                    src={reviewPhotoPreview}
+                                    alt="Your review photo"
+                                    className="w-full h-52 object-cover"
+                                />
+                                {/* Overlay on hover */}
+                                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center gap-3">
+                                    <button
+                                        onClick={() => photoInputRef.current?.click()}
+                                        className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-xl text-sm font-semibold transition-colors cursor-pointer backdrop-blur-sm"
+                                    >
+                                        <span className="material-symbols-outlined text-base">edit</span>
+                                        Change
+                                    </button>
+                                    <button
+                                        onClick={handleRemovePhoto}
+                                        className="flex items-center gap-2 px-4 py-2 bg-red-500/80 hover:bg-red-500 text-white rounded-xl text-sm font-semibold transition-colors cursor-pointer"
+                                    >
+                                        <span className="material-symbols-outlined text-base">delete</span>
+                                        Remove
+                                    </button>
+                                </div>
+                                {/* Success badge */}
+                                <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-green-500/90 text-white text-xs font-bold px-2.5 py-1 rounded-full backdrop-blur-sm shadow">
+                                    <span className="material-symbols-outlined text-sm">check_circle</span>
+                                    Photo added
+                                </div>
+                            </div>
+                        ) : (
+                            <div
+                                className={`relative border-2 border-dashed rounded-2xl p-8 text-center transition-all duration-300 cursor-pointer ${isDraggingPhoto
+                                    ? 'border-primary bg-primary/10 scale-[1.02]'
+                                    : 'border-white/10 hover:border-primary/50 hover:bg-white/[0.03]'
+                                    }`}
+                                onDragOver={(e) => { e.preventDefault(); setIsDraggingPhoto(true); }}
+                                onDragLeave={() => setIsDraggingPhoto(false)}
+                                onDrop={handlePhotoDrop}
+                                onClick={() => photoInputRef.current?.click()}
+                            >
+                                <input
+                                    ref={photoInputRef}
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={(e) => {
+                                        const file = e.target.files?.[0];
+                                        if (file) handlePhotoUpload(file);
+                                    }}
+                                />
+                                <div className="flex flex-col items-center gap-3">
+                                    <div className={`size-14 rounded-full flex items-center justify-center transition-colors ${isDraggingPhoto ? 'bg-primary/30' : 'bg-white/5'
+                                        }`}>
+                                        <span className={`material-symbols-outlined text-3xl transition-colors ${isDraggingPhoto ? 'text-primary' : 'text-white/30'
+                                            }`}>
+                                            add_photo_alternate
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <p className="font-heading font-semibold text-white/70 text-sm">
+                                            {isDraggingPhoto ? 'Drop it here!' : 'Upload a photo'}
+                                        </p>
+                                        <p className="font-body text-white/30 text-xs mt-1">
+                                            Drag & drop or click · JPEG, PNG, WebP · Max 5MB
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     {/* Visibility toggle */}

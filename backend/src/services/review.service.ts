@@ -26,6 +26,7 @@ export const createReview = async (
         googleBookId?: string;
         rating: number;
         reviewText: string;
+        reviewImage?: string;
     }
 ): Promise<IReview> => {
     const review = new Review({
@@ -109,6 +110,7 @@ export const updateReview = async (
         googleBookId?: string;
         rating?: number;
         reviewText?: string;
+        reviewImage?: string | null;
     }
 ): Promise<IReview | null> => {
     if (!mongoose.Types.ObjectId.isValid(reviewId)) {
@@ -127,10 +129,19 @@ export const updateReview = async (
         throw new Error('Unauthorized: You can only update your own reviews');
     }
 
+    // Prepare update object
+    const updateObj: any = { $set: { ...updates } };
+
+    // Explicitly handle unsetting the image if it was passed as null
+    if (updates.hasOwnProperty('reviewImage') && updates.reviewImage === null) {
+        delete updateObj.$set.reviewImage;
+        updateObj.$unset = { reviewImage: 1 };
+    }
+
     // Update the review
     const updatedReview = await Review.findByIdAndUpdate(
         reviewId,
-        { $set: updates },
+        updateObj,
         { new: true, runValidators: true }
     ).populate('userId', 'username email profileImage');
 

@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { getReviewById, deleteReview, type Review } from '../services/review.api';
+import { getReviewById, deleteReview, updateReview, type Review } from '../services/review.api';
 import { getWishlist } from '../services/user.api';
 import LikeButton from '../components/review/LikeButton';
 import WishlistButton from '../components/ui/WishlistButton';
@@ -16,11 +16,10 @@ const StarRating = ({ rating }: { rating: number }) => (
         {[1, 2, 3, 4, 5].map((star) => (
             <svg
                 key={star}
-                className={`w-5 h-5 sm:w-6 sm:h-6 transition-all duration-300 ${
-                    star <= rating
-                        ? 'text-violet-400 fill-violet-400 drop-shadow-[0_0_8px_rgba(167,139,250,0.7)]'
-                        : 'text-white/10 fill-white/10'
-                }`}
+                className={`w-5 h-5 sm:w-6 sm:h-6 transition-all duration-300 ${star <= rating
+                    ? 'text-violet-400 fill-violet-400 drop-shadow-[0_0_8px_rgba(167,139,250,0.7)]'
+                    : 'text-white/10 fill-white/10'
+                    }`}
                 viewBox="0 0 20 20"
                 aria-hidden="true"
             >
@@ -41,6 +40,16 @@ export default function ReviewDetailPage() {
     const [isDeleting, setIsDeleting] = useState(false);
     const [commentsKey, setCommentsKey] = useState(0);
     const [isInWishlist, setIsInWishlist] = useState(false);
+
+    // Edit modal state
+    const [isEditOpen, setIsEditOpen] = useState(false);
+    const [editText, setEditText] = useState('');
+    const [editRating, setEditRating] = useState(0);
+    const [editImage, setEditImage] = useState<File | null>(null);
+    const [editImagePreview, setEditImagePreview] = useState<string | null>(null);
+    const [removeReviewImage, setRemoveReviewImage] = useState(false); // user wants to delete the image
+    const [isUpdating, setIsUpdating] = useState(false);
+    const editImageRef = useRef<HTMLInputElement>(null);
 
     const isOwnReview = user?.id === review?.userId;
 
@@ -84,11 +93,7 @@ export default function ReviewDetailPage() {
 
     const handleDelete = async () => {
         if (!review || !isOwnReview) return;
-
-        if (!window.confirm('Are you sure you want to delete this review?')) {
-            return;
-        }
-
+        if (!window.confirm('Are you sure you want to delete this review?')) return;
         setIsDeleting(true);
         try {
             await deleteReview(review.id);
@@ -98,6 +103,56 @@ export default function ReviewDetailPage() {
             alert(err.response?.data?.message || 'Failed to delete review');
         } finally {
             setIsDeleting(false);
+        }
+    };
+
+    const openEdit = () => {
+        if (!review) return;
+        setEditText(review.reviewText);
+        setEditRating(review.rating);
+        setEditImage(null);
+        setRemoveReviewImage(false);
+        setEditImagePreview(review.reviewImage ? resolveInternalImageUrl(review.reviewImage) : null);
+        setIsEditOpen(true);
+    };
+
+    const handleEditImageChange = (file: File) => {
+        if (!file.type.startsWith('image/')) return;
+        if (file.size > 5 * 1024 * 1024) { alert('Image must be under 5MB'); return; }
+        setEditImage(file);
+        setRemoveReviewImage(false);
+        const reader = new FileReader();
+        reader.onload = (e) => setEditImagePreview(e.target?.result as string);
+        reader.readAsDataURL(file);
+    };
+
+    const handleRemoveEditImage = () => {
+        setEditImage(null);
+        setEditImagePreview(null);
+        setRemoveReviewImage(true); // flag: tell backend to delete the image
+        if (editImageRef.current) editImageRef.current.value = '';
+    };
+
+    const handleEditSubmit = async () => {
+        if (!review || !editText.trim()) return;
+        setIsUpdating(true);
+        try {
+            const updated = await updateReview(review.id, {
+                reviewText: editText.trim(),
+                rating: editRating,
+                // If a new file was chosen → upload it
+                // If user removed the image → send null to delete it
+                // If no change → send undefined (don't touch)
+                reviewImage: editImage instanceof File ? editImage
+                    : removeReviewImage ? null
+                        : undefined,
+            });
+            setReview({ ...review, ...updated });
+            setIsEditOpen(false);
+        } catch (err: any) {
+            alert(err.response?.data?.message || 'Failed to update review');
+        } finally {
+            setIsUpdating(false);
         }
     };
 
@@ -312,25 +367,26 @@ export default function ReviewDetailPage() {
                             </div>
                         </div>
                         <div className="flex items-center gap-2">
-                            {isOwnReview ? (
-                                <button
-                                    onClick={handleDelete}
-                                    disabled={isDeleting}
-                                    className="size-10 flex items-center justify-center rounded-full bg-white/[0.03] border border-white/[0.06] text-white/40 hover:text-red-400 hover:bg-red-500/10 hover:border-red-500/20 transition-all duration-300 disabled:opacity-50 cursor-pointer"
-                                    title="Delete review"
-                                >
-                                    <span className="material-symbols-outlined text-lg">delete</span>
-                                </button>
-                            ) : (
-                                <button
-                                    className="px-5 py-2 rounded-full text-sm font-ui font-bold transition-all duration-300 active:scale-95 cursor-pointer"
-                                    style={{
-                                        background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%)',
-                                        border: '1px solid rgba(255,255,255,0.1)'
-                                    }}
-                                >
-                                    Follow
-                                </button>
+                            {isOwnReview && (
+                                <>
+                                    {/* Edit button */}
+                                    <button
+                                        onClick={openEdit}
+                                        className="size-10 flex items-center justify-center rounded-full bg-white/[0.03] border border-white/[0.06] text-white/40 hover:text-primary hover:bg-primary/10 hover:border-primary/20 transition-all duration-300 cursor-pointer"
+                                        title="Edit review"
+                                    >
+                                        <span className="material-symbols-outlined text-lg">edit</span>
+                                    </button>
+                                    {/* Delete button */}
+                                    <button
+                                        onClick={handleDelete}
+                                        disabled={isDeleting}
+                                        className="size-10 flex items-center justify-center rounded-full bg-white/[0.03] border border-white/[0.06] text-white/40 hover:text-red-400 hover:bg-red-500/10 hover:border-red-500/20 transition-all duration-300 disabled:opacity-50 cursor-pointer"
+                                        title="Delete review"
+                                    >
+                                        <span className="material-symbols-outlined text-lg">delete</span>
+                                    </button>
+                                </>
                             )}
                         </div>
                     </div>
@@ -354,6 +410,18 @@ export default function ReviewDetailPage() {
                             {review.reviewText}
                         </p>
                     </article>
+
+                    {/* User's personal photo on the review post */}
+                    {review.reviewImage && (
+                        <div className="mt-6 rounded-2xl overflow-hidden border border-white/[0.06] shadow-xl">
+                            <img
+                                src={resolveInternalImageUrl(review.reviewImage)}
+                                alt="Photo added to review"
+                                className="w-full max-h-96 object-cover"
+                                onError={(e) => { (e.target as HTMLImageElement).parentElement!.style.display = 'none'; }}
+                            />
+                        </div>
+                    )}
 
                     {/* Actions Footer */}
                     <div className="mt-10 pt-6 border-t border-white/[0.04] flex items-center justify-between">
@@ -430,6 +498,129 @@ export default function ReviewDetailPage() {
                     <span className="material-symbols-outlined text-lg">share</span>
                 </button>
             </div>
-        </div>
+
+            {/* ── Edit Modal ── */}
+            {
+                isEditOpen && (
+                    <div
+                        className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+                        style={{ background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(12px)' }}
+                        onClick={(e) => { if (e.target === e.currentTarget) setIsEditOpen(false); }}
+                    >
+                        <div
+                            className="w-full max-w-lg rounded-[28px] p-6 md:p-8 animate-fade-in"
+                            style={{
+                                background: 'linear-gradient(135deg, rgba(20,10,40,0.98) 0%, rgba(10,5,25,0.98) 100%)',
+                                border: '1px solid rgba(139,92,246,0.25)',
+                                boxShadow: '0 40px 80px -20px rgba(0,0,0,0.8), 0 0 60px -20px rgba(139,92,246,0.2)'
+                            }}
+                        >
+                            {/* Header */}
+                            <div className="flex items-center justify-between mb-6">
+                                <h2 className="font-heading text-white text-xl font-bold">Edit Review</h2>
+                                <button
+                                    onClick={() => setIsEditOpen(false)}
+                                    className="size-9 flex items-center justify-center rounded-full bg-white/[0.05] hover:bg-white/[0.1] text-white/50 hover:text-white transition-all cursor-pointer"
+                                >
+                                    <span className="material-symbols-outlined text-lg">close</span>
+                                </button>
+                            </div>
+
+                            {/* Star Rating */}
+                            <div className="mb-5">
+                                <label className="font-heading text-white/40 text-[10px] font-bold uppercase tracking-[0.2em] block mb-2">Rating</label>
+                                <div className="flex gap-2">
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                        <button key={star} onClick={() => setEditRating(star)} className="focus:outline-none">
+                                            <span
+                                                className={`material-symbols-outlined text-3xl cursor-pointer transition-all ${star <= editRating ? 'text-primary' : 'text-white/15'}`}
+                                                style={star <= editRating ? { fontVariationSettings: "'FILL' 1" } : {}}
+                                            >star</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Review Text */}
+                            <div className="mb-5">
+                                <label className="font-heading text-white/40 text-[10px] font-bold uppercase tracking-[0.2em] block mb-2">Review Text</label>
+                                <textarea
+                                    value={editText}
+                                    onChange={(e) => setEditText(e.target.value)}
+                                    rows={6}
+                                    className="w-full bg-white/[0.04] border border-white/[0.08] rounded-2xl p-4 text-white text-sm leading-relaxed placeholder:text-white/25 focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 resize-none transition-all"
+                                    placeholder="Update your review..."
+                                />
+                            </div>
+
+                            {/* Review Image */}
+                            <div className="mb-6">
+                                <label className="font-heading text-white/40 text-[10px] font-bold uppercase tracking-[0.2em] block mb-2">
+                                    Photo <span className="text-white/20 normal-case font-normal">Optional</span>
+                                </label>
+                                {editImagePreview ? (
+                                    <div className="space-y-3">
+                                        <div className="relative rounded-2xl overflow-hidden border border-white/10">
+                                            <img src={editImagePreview} alt="Preview" className="w-full h-40 object-cover" />
+                                        </div>
+                                        <div className="flex gap-3">
+                                            <button
+                                                onClick={() => editImageRef.current?.click()}
+                                                className="flex-1 py-2 bg-white/10 text-white rounded-xl text-sm font-semibold cursor-pointer hover:bg-white/20 transition-colors"
+                                            >
+                                                Change Photo
+                                            </button>
+                                            <button
+                                                onClick={handleRemoveEditImage}
+                                                className="flex-1 py-2 bg-red-500/20 text-red-500 hover:bg-red-500/30 rounded-xl text-sm font-semibold cursor-pointer transition-colors"
+                                            >
+                                                Remove Photo
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div
+                                        onClick={() => editImageRef.current?.click()}
+                                        className="border-2 border-dashed border-white/10 hover:border-primary/50 rounded-2xl p-6 text-center cursor-pointer transition-all hover:bg-white/[0.02]"
+                                    >
+                                        <span className="material-symbols-outlined text-2xl text-white/20 block mb-1">add_photo_alternate</span>
+                                        <p className="text-white/30 text-xs">Click to add a photo</p>
+                                    </div>
+                                )}
+                                <input
+                                    ref={editImageRef}
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={(e) => { const f = e.target.files?.[0]; if (f) handleEditImageChange(f); }}
+                                />
+                            </div>
+
+                            {/* Actions */}
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={() => setIsEditOpen(false)}
+                                    className="flex-1 py-3 rounded-2xl text-white/60 font-ui font-semibold text-sm bg-white/[0.04] border border-white/[0.08] hover:bg-white/[0.08] transition-all cursor-pointer"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleEditSubmit}
+                                    disabled={isUpdating || !editText.trim()}
+                                    className="flex-1 py-3 rounded-2xl text-white font-ui font-bold text-sm transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"
+                                    style={{ background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)', boxShadow: '0 8px 24px -4px rgba(139,92,246,0.4)' }}
+                                >
+                                    {isUpdating ? (
+                                        <div className="size-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                    ) : (
+                                        <><span className="material-symbols-outlined text-base">save</span> Save Changes</>
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
+        </div >
     );
 }
